@@ -21,6 +21,8 @@ environment:
 ## -----------------------------------------------------------------------------
 
 dependencies:
+  flutter:
+    sdk: flutter
   analyzer: ^6.4.1
   tuple: ^2.0.2
 
