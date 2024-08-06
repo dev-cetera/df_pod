@@ -74,7 +74,7 @@ class SharedPod<A, B> extends Pod<A?> {
   Future<void> refresh() async {
     if (fromValue != null) {
       _sharedPreferences ??= await SharedPreferences.getInstance();
-      final v = await _sharedPreferences!.get(key) as B?;
+      final v = _sharedPreferences!.get(key) as B?;
       if (v != null) {
         final newValue = fromValue!(v);
         await super.set(newValue);
