@@ -84,12 +84,12 @@ class PodWidget<T> extends StatefulWidget {
   //
 
   @override
-  _State<T> createState() => _State<T>();
+  State<PodWidget<T>> createState() => _PodWidgetState<T>();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _State<T> extends State<PodWidget<T>> {
+class _PodWidgetState<T> extends State<PodWidget<T>> {
   //
   //
   //
@@ -114,6 +114,7 @@ class _State<T> extends State<PodWidget<T>> {
   @override
   Widget build(BuildContext context) {
     return PodBuilder(
+      key: widget.key,
       pod: _pod,
       child: _staticChild,
       builder: (context, child, _) => widget.builder(

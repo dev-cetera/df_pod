@@ -24,7 +24,7 @@ import '_index.g.dart';
 /// - `builder`: A function that is invoked initially and triggers a widget
 ///   rebuild whenever any of the provided Pods change.
 /// - `onDispose`: An optional function to call when the widget is disposed.
-class PodListWidget extends StatefulWidget {
+class PodListWidget<T> extends StatefulWidget {
   //
   //
   //
@@ -37,7 +37,7 @@ class PodListWidget extends StatefulWidget {
   //
 
   /// The initial value for the Pod.
-  final Iterable initialValues;
+  final Iterable<T> initialValues;
 
   //
   //
@@ -48,7 +48,7 @@ class PodListWidget extends StatefulWidget {
   final Widget Function(
     BuildContext context,
     Widget? child,
-    TPodList podList,
+    TPodList<T> podList,
   ) builder;
 
   //
@@ -85,17 +85,17 @@ class PodListWidget extends StatefulWidget {
   //
 
   @override
-  _State createState() => _State();
+  State<PodListWidget<T>> createState() => _PodListWidgetState<T>();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _State extends State<PodListWidget> {
+class _PodListWidgetState<T> extends State<PodListWidget<T>> {
   //
   //
   //
 
-  late final _podList = this.widget.initialValues.map((e) => Pod.temp(e));
+  late final _podList = this.widget.initialValues.map((e) => Pod<T>.temp(e));
   late final Widget? _staticChild;
 
   //
@@ -115,6 +115,7 @@ class _State extends State<PodListWidget> {
   @override
   Widget build(BuildContext context) {
     return PodListBuilder(
+      key: widget.key,
       podList: _podList,
       child: _staticChild,
       builder: (context, child, _) => widget.builder(

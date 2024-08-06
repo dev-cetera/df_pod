@@ -7,6 +7,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '_index.g.dart';
@@ -61,7 +63,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
 
   /// A function that returns the `Pod<T>?` to be polled.
-  final Pod<T>? Function() podPoller;
+  final FutureOr<Pod<T>>? Function() podPoller;
 
   //
   //
@@ -136,7 +138,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
   //
 
-  Pod<T>? _currentPod;
+  FutureOr<Pod<T>>? _currentPod;
 
   //
   //
@@ -184,6 +186,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   Widget build(BuildContext context) {
     if (_currentPod != null) {
       return PodBuilder(
+        key: widget.key,
         pod: _currentPod,
         builder: widget.builder,
         onDispose: widget.onDispose,

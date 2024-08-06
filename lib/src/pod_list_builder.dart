@@ -7,6 +7,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '_index.g.dart';
@@ -27,20 +29,24 @@ import '_index.g.dart';
 ///   useful for optimization if the child is
 ///   part of a larger widget that does not need to rebuild.
 /// - `onDispose`: An optional function to call when the widget is disposed.
-class PodListBuilder extends StatefulWidget {
+class PodListBuilder<T> extends StatelessWidget {
   //
   //
   //
 
   /// The list of `Pod` objects that this builder listens to.
-  final TPodList podList;
+  final Iterable<FutureOr<PodListenable<T>?>> podList;
 
   //
   //
   //
 
   /// An optional child widget that can be used within the [builder] function.
-  final Widget? child;
+  final Widget Function(
+    BuildContext context,
+    Widget? child,
+    TPodDataList data,
+  ) builder;
 
   //
   //
@@ -48,11 +54,7 @@ class PodListBuilder extends StatefulWidget {
 
   /// A function to rebuild the widget based on the data received from
   /// [podList].
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    TPodDataList data,
-  ) builder;
+  final Widget? child;
 
   //
   //
@@ -91,12 +93,99 @@ class PodListBuilder extends StatefulWidget {
   //
 
   @override
-  State<PodListBuilder> createState() => _PodListBuilderState();
+  Widget build(BuildContext context) {
+    final temp = this.podList;
+    if (temp is List<PodListenable<T>?>) {
+      return _PodListBuilder(
+        key: this.key,
+        podList: temp,
+        builder: builder,
+        onDispose: onDispose,
+        child: child,
+      );
+    }
+    return FutureBuilder(
+      future: () async {
+        return await Future.wait(temp.map((e) => () async {
+              return e;
+            }()));
+      }(),
+      builder: (context, snapshot) {
+        final data = snapshot.data;
+        if (data != null) {
+          return _PodListBuilder(
+            key: key,
+            podList: data,
+            builder: builder,
+            onDispose: onDispose,
+            child: child,
+          );
+        } else {
+          return builder(
+            context,
+            child,
+            List<T?>.filled(temp.length, null),
+          );
+        }
+      },
+    );
+  }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodListBuilderState extends State<PodListBuilder> {
+class _PodListBuilder extends StatefulWidget {
+  //
+  //
+  //
+
+  final TPodList podList;
+
+  //
+  //
+  //
+
+  final Widget? child;
+
+  //
+  //
+  //
+
+  final Widget Function(
+    BuildContext context,
+    Widget? child,
+    TPodDataList data,
+  ) builder;
+
+  //
+  //
+  //
+
+  final void Function()? onDispose;
+
+  //
+  //
+  //
+
+  const _PodListBuilder({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.child,
+    this.onDispose,
+  });
+
+  //
+  //
+  //
+
+  @override
+  State<_PodListBuilder> createState() => _PodListBuilderState();
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class _PodListBuilderState extends State<_PodListBuilder> {
   //
   //
   //
@@ -119,7 +208,7 @@ class _PodListBuilderState extends State<PodListBuilder> {
   //
 
   @override
-  void didUpdateWidget(PodListBuilder oldWidget) {
+  void didUpdateWidget(_PodListBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     _removeListenerFromPods(oldWidget.podList);
     _addListenerToPods(widget.podList);

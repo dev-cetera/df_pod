@@ -7,6 +7,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '_index.g.dart';
@@ -27,13 +29,13 @@ import '_index.g.dart';
 ///   useful for optimization if the child is
 ///   part of a larger widget that does not need to rebuild.
 /// - `onDispose`: An optional function to call when the widget is disposed.
-class PodBuilder<T> extends StatefulWidget {
+class PodBuilder<T> extends StatelessWidget {
   //
   //
   //
 
   /// The Pod that this builder listens to.
-  final PodListenable<T>? pod;
+  final FutureOr<PodListenable<T>?>? pod;
 
   //
   //
@@ -90,12 +92,86 @@ class PodBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<PodBuilder<T>> createState() => _PodBuilderState<T>();
+  Widget build(BuildContext context) {
+    final temp = pod;
+    if (temp is PodListenable<T>?) {
+      return _PodBuilder(
+        key: key,
+        pod: temp,
+        builder: builder,
+        onDispose: onDispose,
+        child: child,
+      );
+    }
+    return FutureBuilder(
+      future: temp,
+      builder: (context, snapshot) {
+        return _PodBuilder(
+          key: key,
+          pod: snapshot.data,
+          builder: builder,
+          onDispose: onDispose,
+          child: child,
+        );
+      },
+    );
+  }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodBuilderState<T> extends State<PodBuilder<T>> {
+class _PodBuilder<T> extends StatefulWidget {
+  //
+  //
+  //
+
+  final PodListenable<T>? pod;
+
+  //
+  //
+  //
+
+  final Widget Function(
+    BuildContext context,
+    Widget? child,
+    T? data,
+  ) builder;
+
+  //
+  //
+  //
+
+  final Widget? child;
+
+  //
+  //
+  //
+
+  final void Function()? onDispose;
+
+  //
+  //
+  //
+
+  const _PodBuilder({
+    super.key,
+    this.pod,
+    required this.builder,
+    this.child,
+    this.onDispose,
+  });
+
+  //
+  //
+  //
+
+  @override
+  State<_PodBuilder<T>> createState() => _PodBuilderState<T>();
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
   //
   //
