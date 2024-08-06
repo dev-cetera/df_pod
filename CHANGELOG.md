@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.1]
+
+- Released @ 8/2024 (UTC)
+- feat: Add FuturePodBuilder and FuturePodListBuilder
+
 ## [0.2.0]
 
 - Released @ 8/2024 (UTC)
