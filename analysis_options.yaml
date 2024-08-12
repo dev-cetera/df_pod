@@ -24,7 +24,6 @@ linter:
     prefer_relative_imports: true
     prefer_single_quotes: true
     require_trailing_commas: true
-    unnecessary_this: false
     camel_case_types: false
     library_private_types_in_public_api: false
 
@@ -42,5 +41,6 @@ analyzer:
     prefer_final_in_for_each: error
     prefer_relative_imports: error
     unnecessary_new: error
+    unnecessary_this: error
     unrelated_type_equality_checks: error
     use_key_in_widget_constructors: error

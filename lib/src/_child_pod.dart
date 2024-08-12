@@ -63,7 +63,7 @@ class ChildPod<A, B> extends Pod<B> {
   @override
   Future<void> refresh() async {
     final newValue = reducer(parents.map((p) => p.value).toList());
-    await this.set(newValue);
+    await set(newValue);
   }
 
   //
@@ -75,7 +75,7 @@ class ChildPod<A, B> extends Pod<B> {
     super.notifyListeners();
     if (this.updateParents != null) {
       final oldParentValues = parents.map((e) => e.value).toList();
-      final newParentValues = updateParents!(oldParentValues, this.value);
+      final newParentValues = updateParents!(oldParentValues, value);
       for (var n = 0; n < parents.length; n++) {
         parents.elementAt(n).set(newParentValues.elementAt(n));
       }

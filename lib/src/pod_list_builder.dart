@@ -97,7 +97,7 @@ class PodListBuilder<T> extends StatelessWidget {
     final temp = this.podList;
     if (temp is List<PodListenable<T>?>) {
       return _PodListBuilder(
-        key: this.key,
+        key: key,
         podList: temp,
         builder: builder,
         onDispose: onDispose,

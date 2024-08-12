@@ -9,7 +9,7 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:df_pod/df_pod.dart';
+import '/df_pod.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 

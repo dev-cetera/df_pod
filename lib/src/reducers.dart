@@ -130,7 +130,7 @@ final class Pods2<A, B> extends Tuple2<A?, B?> implements ManyPods {
       ];
 
   @override
-  List<T> valuesWhereType<T>() => this.toList().whereType<T>().toList();
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -183,7 +183,7 @@ final class Pods3<A, B, C> extends Tuple3<A?, B?, C?> implements ManyPods {
       ];
 
   @override
-  List<T> valuesWhereType<T>() => this.toList().whereType<T>().toList();
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -241,7 +241,7 @@ final class Pods4<A, B, C, D> extends Tuple4<A?, B?, C?, D?>
       ];
 
   @override
-  List<T> valuesWhereType<T>() => this.toList().whereType<T>().toList();
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -303,7 +303,7 @@ final class Pods5<A, B, C, D, E> extends Tuple5<A?, B?, C?, D?, E?>
       ];
 
   @override
-  List<T> valuesWhereType<T>() => this.toList().whereType<T>().toList();
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -369,7 +369,7 @@ final class Pods6<A, B, C, D, E, F> extends Tuple6<A?, B?, C?, D?, E?, F?>
       ];
 
   @override
-  List<T> valuesWhereType<T>() => this.toList().whereType<T>().toList();
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -449,5 +449,5 @@ final class Pods7<A, B, C, D, E, F, G>
       ];
 
   @override
-  List<T> valuesWhereType<T>() => this.toList().whereType<T>().toList();
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }
