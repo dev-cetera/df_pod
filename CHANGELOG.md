@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.0]
+
+- Released @ 8/2024 (UTC)
+- chore: Remove this where unnecessary
+
 ## [0.2.3]
 
 - Released @ 8/2024 (UTC)

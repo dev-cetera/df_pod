@@ -108,7 +108,7 @@ class PodListBuilder<T> extends StatelessWidget {
       future: () async {
         return await Future.wait(temp.map((e) => () async {
               return e;
-            }()));
+            }(),),);
       }(),
       builder: (context, snapshot) {
         final data = snapshot.data;
