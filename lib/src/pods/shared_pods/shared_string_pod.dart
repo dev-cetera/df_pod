@@ -1,32 +1,34 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/widgets.dart';
+import '../../_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class PodListenable<T> extends ValueNotifier<T> {
-  //
-  //
-  //
-
-  PodListenable(super.value);
-
-  //
-  //
-  //
-
-  void addSingleExecutionListener(VoidCallback listener);
-
-  //
-  //
-  //
-
-  void disposeIfMarkedAsTemp();
+final class SharedStringPodCreator {
+  const SharedStringPodCreator._();
+  static Future<SharedStringPod> create(
+    String key, {
+    bool disposable = true,
+    bool temp = false,
+  }) async {
+    final instance = SharedStringPod.empty(
+      key,
+      disposable: disposable,
+      temp: temp,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
 }
+
+typedef SharedStringPod = SharedPod<String, String>;

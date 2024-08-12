@@ -1,8 +1,9 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -10,7 +11,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:tuple/tuple.dart';
 
-import '_index.g.dart';
+import '../_index.g.dart';
 
 part '_child_pod.dart';
 
@@ -181,8 +182,7 @@ class Pod<T> extends BindWithMixinPodListenable<T> {
   static ChildPod<dynamic, T> from3<T, A, B, C>(
     Pods3<A, B, C> instances,
     T Function(Pods3<A, B, C> instances) reducer,
-    (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)?
-        updateParents,
+    (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)? updateParents,
   ) {
     return reduce3Pods(
       instances,
@@ -197,8 +197,7 @@ class Pod<T> extends BindWithMixinPodListenable<T> {
   static ChildPod<dynamic, T> from4<T, A, B, C, D>(
     Pods4<A, B, C, D> instances,
     T Function(Pods4<A, B, C, D> instances) reducer,
-    (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)?
-        updateParents,
+    (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)? updateParents,
   ) {
     return reduce4Pods(
       instances,

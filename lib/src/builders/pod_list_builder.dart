@@ -1,8 +1,9 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -11,48 +12,49 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import '_index.g.dart';
+import '../_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A widget that listens to a [Pod] and rebuilds whenever the Pod's value/state
-/// changes.
+/// A widget that listens to a list of [Pod] instances and rebuilds whenever
+/// any of their values/states change.
 ///
 /// ### Parameters:
 ///
 /// - `key`: An optional key to use for the widget.
-/// - `pod`: The Pod that this builder listens to.
+/// - `podList`: The list of `Pod` objects that this builder listens to.
 /// - `builder`: A function that rebuilds the widget based on the current
-///   state of the observed Pod. It receives the build context, the optional
-///   `child` widget, and the value from the observed `pod`.
+///   states of the observed Pods. It receives the build context, the optional
+///   `child` widget, and the valued from the observed `podList`.
 /// - `child`: An optional child widget that is passed to the `builder` and,
 ///   useful for optimization if the child is
 ///   part of a larger widget that does not need to rebuild.
 /// - `onDispose`: An optional function to call when the widget is disposed.
-class PodBuilder<T> extends StatelessWidget {
+class PodListBuilder<T> extends StatelessWidget {
   //
   //
   //
 
-  /// The Pod that this builder listens to.
-  final FutureOr<PodListenable<T>?>? pod;
+  /// The list of `Pod` objects that this builder listens to.
+  final Iterable<FutureOr<PodListenable<T>?>> podList;
 
   //
   //
   //
 
-  /// A function to rebuild the widget based on the data received from [pod].
+  /// An optional child widget that can be used within the [builder] function.
   final Widget Function(
     BuildContext context,
     Widget? child,
-    T? data,
+    TPodDataList data,
   ) builder;
 
   //
   //
   //
 
-  /// An optional static child widget that is passed to the [builder].
+  /// A function to rebuild the widget based on the data received from
+  /// [podList].
   final Widget? child;
 
   //
@@ -66,22 +68,22 @@ class PodBuilder<T> extends StatelessWidget {
   //
   //
 
-  /// Constructs a `PodBuilder` widget.
+  /// Creates a `PodListBuilder` widget.
   ///
   /// ### Parameters:
   ///
   /// - `key`: An optional key to use for the widget.
-  /// - `pod`: The Pod that this builder listens to.
+  /// - `podList`: The list of `Pod` objects that this builder listens to.
   /// - `builder`: A function that rebuilds the widget based on the current
-  ///   state of the observed Pod. It receives the build context, the optional
-  ///   `child` widget, and the value from the observed `pod`.
-  /// - `child`: An optional child widget that is passed to the `builder` and
-  ///   useful for optimization if the child is part of a larger widget that
-  ///   does not need to rebuild.
+  ///   states of the observed Pods. It receives the build context, the optional
+  ///   `child` widget, and the valued from the observed `podList`.
+  /// - `child`: An optional child widget that is passed to the `builder`,
+  ///   useful for optimization if the child is
+  ///   part of a larger widget that does not need to rebuild.
   /// - `onDispose`: An optional function to call when the widget is disposed.
-  const PodBuilder({
+  const PodListBuilder({
     super.key,
-    this.pod,
+    required this.podList,
     required this.builder,
     this.child,
     this.onDispose,
@@ -93,26 +95,43 @@ class PodBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final temp = pod;
-    if (temp is PodListenable<T>?) {
-      return _PodBuilder(
+    final temp = this.podList;
+    if (temp is List<PodListenable<T>?>) {
+      return _PodListBuilder(
         key: key,
-        pod: temp,
+        podList: temp,
         builder: builder,
         onDispose: onDispose,
         child: child,
       );
     }
     return FutureBuilder(
-      future: temp,
-      builder: (context, snapshot) {
-        return _PodBuilder(
-          key: key,
-          pod: snapshot.data,
-          builder: builder,
-          onDispose: onDispose,
-          child: child,
+      future: () async {
+        return await Future.wait(
+          temp.map(
+            (e) => () async {
+              return e;
+            }(),
+          ),
         );
+      }(),
+      builder: (context, snapshot) {
+        final data = snapshot.data;
+        if (data != null) {
+          return _PodListBuilder(
+            key: key,
+            podList: data,
+            builder: builder,
+            onDispose: onDispose,
+            child: child,
+          );
+        } else {
+          return builder(
+            context,
+            child,
+            List<T?>.filled(temp.length, null),
+          );
+        }
       },
     );
   }
@@ -120,22 +139,12 @@ class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodBuilder<T> extends StatefulWidget {
+class _PodListBuilder extends StatefulWidget {
   //
   //
   //
 
-  final PodListenable<T>? pod;
-
-  //
-  //
-  //
-
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    T? data,
-  ) builder;
+  final TPodList podList;
 
   //
   //
@@ -147,15 +156,25 @@ class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
+  final Widget Function(
+    BuildContext context,
+    Widget? child,
+    TPodDataList data,
+  ) builder;
+
+  //
+  //
+  //
+
   final void Function()? onDispose;
 
   //
   //
   //
 
-  const _PodBuilder({
+  const _PodListBuilder({
     super.key,
-    this.pod,
+    required this.podList,
     required this.builder,
     this.child,
     this.onDispose,
@@ -166,12 +185,12 @@ class _PodBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<_PodBuilder<T>> createState() => _PodBuilderState<T>();
+  State<_PodListBuilder> createState() => _PodListBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodBuilderState<T> extends State<_PodBuilder<T>> {
+class _PodListBuilderState extends State<_PodListBuilder> {
   //
   //
   //
@@ -186,7 +205,38 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   void initState() {
     super.initState();
     _staticChild = widget.child;
-    widget.pod?.addListener(_update);
+    _addListenerToPods(widget.podList);
+  }
+
+  //
+  //
+  //
+
+  @override
+  void didUpdateWidget(_PodListBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _removeListenerFromPods(oldWidget.podList);
+    _addListenerToPods(widget.podList);
+  }
+
+  //
+  //
+  //
+
+  void _addListenerToPods(TPodList pods) {
+    for (final pod in pods) {
+      pod?.addListener(_update);
+    }
+  }
+
+  //
+  //
+  //
+
+  void _removeListenerFromPods(TPodList pods) {
+    for (final pod in pods) {
+      pod?.removeListener(_update);
+    }
   }
 
   //
@@ -205,11 +255,11 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final data = widget.pod?.value;
+    final values = widget.podList.map((e) => e?.value);
     return widget.builder(
       context,
       _staticChild,
-      data,
+      values,
     );
   }
 
@@ -219,8 +269,10 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   void dispose() {
-    widget.pod?.removeListener(_update);
-    widget.pod?.disposeIfMarkedAsTemp();
+    for (final pod in widget.podList) {
+      pod?.removeListener(_update);
+      pod?.disposeIfMarkedAsTemp();
+    }
     widget.onDispose?.call();
     super.dispose();
   }

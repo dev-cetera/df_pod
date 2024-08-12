@@ -1,15 +1,16 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
 import 'package:flutter/widgets.dart';
 
-import '_index.g.dart';
+import '../_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -44,11 +45,7 @@ class PodWidget<T> extends StatefulWidget {
 
   /// A function that is invoked initially and triggers a widget rebuild
   /// whenever the provided Pod changes.
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    Pod<T> pod,
-  ) builder;
+  final PodBuilderFunction<Pod<T>> builder;
 
   //
   //
@@ -113,14 +110,14 @@ class _PodWidgetState<T> extends State<PodWidget<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return PodBuilder(
+    return PodBuilder<T>(
       key: widget.key,
       pod: _pod,
       child: _staticChild,
-      builder: (context, child, _) => widget.builder(
+      builder: (context, _, child) => widget.builder(
         context,
-        child,
         _pod,
+        child,
       ),
     );
   }

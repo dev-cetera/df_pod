@@ -1,33 +1,36 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../_index.g.dart';
+import 'dart:convert';
+
+import '../../_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SharedStringListPodCreator {
-  const SharedStringListPodCreator._();
-  static Future<SharedStringListPod> create(
+final class SharedJsonPodCreator {
+  const SharedJsonPodCreator._();
+  static Future<SharedJsonPod> create(
     String key, {
     bool disposable = true,
     bool temp = false,
   }) async {
-    final instance = SharedStringListPod.empty(
+    final instance = SharedJsonPod.empty(
       key,
       disposable: disposable,
       temp: temp,
-      fromValue: (rawValue) => rawValue,
-      toValue: (value) => value,
+      fromValue: (rawValue) => jsonEncode(rawValue),
+      toValue: (value) => value != null ? jsonDecode(value) : null,
     );
     await instance.refresh();
     return instance;
   }
 }
 
-typedef SharedStringListPod = SharedPod<List<String>, List<String>>;
+typedef SharedJsonPod = SharedPod<String, Map<String, dynamic>>;

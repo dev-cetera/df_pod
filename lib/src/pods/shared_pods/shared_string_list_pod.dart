@@ -1,24 +1,25 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../_index.g.dart';
+import '../../_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SharedBoolPodCreator {
-  const SharedBoolPodCreator._();
-  static Future<SharedBoolPod> create(
+final class SharedStringListPodCreator {
+  const SharedStringListPodCreator._();
+  static Future<SharedStringListPod> create(
     String key, {
     bool disposable = true,
     bool temp = false,
   }) async {
-    final instance = SharedBoolPod.empty(
+    final instance = SharedStringListPod.empty(
       key,
       disposable: disposable,
       temp: temp,
@@ -30,4 +31,4 @@ final class SharedBoolPodCreator {
   }
 }
 
-typedef SharedBoolPod = SharedPod<bool, bool>;
+typedef SharedStringListPod = SharedPod<List<String>, List<String>>;

@@ -1,8 +1,9 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// in root directory.
+// Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// source code is governed by an MIT-style license that can be found in the
+// LICENSE file.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -11,7 +12,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import '_index.g.dart';
+import '../_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -71,11 +72,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
 
   /// A function to rebuild the widget based on the data received from
   /// [podPoller].
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    T? data,
-  ) builder;
+  final PodBuilderFunction<T> builder;
 
   //
   //
@@ -195,8 +192,8 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
     } else {
       return widget.builder(
         context,
-        _staticChild,
         null,
+        _staticChild,
       );
     }
   }
