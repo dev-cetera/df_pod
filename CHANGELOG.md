@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - chore: Remove this where unnecessary
+- chore: Restructure source files and improve docs
 
 ## [0.2.3]
 

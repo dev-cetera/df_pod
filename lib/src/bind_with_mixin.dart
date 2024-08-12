@@ -64,8 +64,8 @@ extension BindParentOnChangeNotifierExtension<T extends ChangeNotifier> on T {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget> extends State<T>
-    implements Disposable {}
+abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget>
+    extends State<T> implements Disposable {}
 
 /// Use `BindWithMixinState<T>` instead of `State<T>` to incorporate
 /// `BindWithMixin`.
@@ -76,12 +76,13 @@ abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget> extends S
 ///   late final pStatus = Pod<String>('init').bindParent(this);
 /// }
 /// ```
-abstract class BindWithMixinState<T extends StatefulWidget> extends _StatefulWidgetWithDisposable<T>
-    with BindWithMixin {}
+abstract class BindWithMixinState<T extends StatefulWidget>
+    extends _StatefulWidgetWithDisposable<T> with BindWithMixin {}
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T> implements Disposable {
+abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T>
+    implements Disposable {
   _ValueNotifierWithDisposable(super.value);
 }
 
@@ -94,14 +95,15 @@ abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T> implemen
 ///   late final pStatus = Pod<String>('init').bindParent(this);;
 /// }
 /// ```
-abstract class BindWithMixinValueNotifier<T> extends _ValueNotifierWithDisposable<T>
-    with BindWithMixin {
+abstract class BindWithMixinValueNotifier<T>
+    extends _ValueNotifierWithDisposable<T> with BindWithMixin {
   BindWithMixinValueNotifier(super.value);
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class _ChangeNotifierWithDisposable extends ChangeNotifier implements Disposable {}
+abstract class _ChangeNotifierWithDisposable extends ChangeNotifier
+    implements Disposable {}
 
 /// Use `BindWithMixinChangeNotifier` instead of ChangeNotifier to incorporate
 /// `BindWithMixin`.
@@ -117,7 +119,8 @@ abstract class BindWithMixinChangeNotifier extends _ChangeNotifierWithDisposable
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class _PodListenableWithDisposable<T> extends PodListenable<T> implements Disposable {
+abstract class _PodListenableWithDisposable<T> extends PodListenable<T>
+    implements Disposable {
   _PodListenableWithDisposable(super.value);
 }
 
@@ -130,7 +133,7 @@ abstract class _PodListenableWithDisposable<T> extends PodListenable<T> implemen
 ///   late final pStatus = Pod<String>('init').bindParent(this);;
 /// }
 /// ```
-abstract class BindWithMixinPodListenable<T> extends _PodListenableWithDisposable<T>
-    with BindWithMixin {
+abstract class BindWithMixinPodListenable<T>
+    extends _PodListenableWithDisposable<T> with BindWithMixin {
   BindWithMixinPodListenable(super.value);
 }
