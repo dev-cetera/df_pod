@@ -8,26 +8,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-/// An exception specifically thrown by the `df_pod` library.
-base class PodException implements Exception {
-  //
-  //
-  //
+import 'pod_exception.dart';
 
-  final String message;
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-  //
-  //
-  //
-
-  PodException(this.message);
-
-  //
-  //
-  //
-
-  @override
-  String toString() {
-    return '$runtimeType: $message';
-  }
+/// TODO: Write docs.
+final class WrongParentPodException extends PodException {
+  WrongParentPodException()
+      : super(
+          "The child's parent must be this Pod instance.",
+        );
 }

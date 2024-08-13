@@ -103,12 +103,3 @@ mixin PodDisposableMixin<T> implements PodListenable<T>, DisposeMixin {
     }
   }
 }
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-class DoNotDisposePodException extends PodException {
-  DoNotDisposePodException()
-      : super(
-          '"dispose" was called on a Pod that was explicitly maked as non-disposable.',
-        );
-}
