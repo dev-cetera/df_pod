@@ -9,6 +9,7 @@
 - feat: Add .global and .temp constructors
 - chore: Restructure to not expose unwanted declarations to public
 - chore: Restructure source files
+- fix: Fixed SharedPod
 
 ## [0.2.3]
 
