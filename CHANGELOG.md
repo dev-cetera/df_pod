@@ -12,6 +12,7 @@
 - fix: Fixed SharedPod
 - refactor: Use switch instead in shared_pod.dart
 - refactor: Address null issues
+- refactor: Update generic type in RespondingBuilder and PodBuilder
 
 ## [0.2.3]
 
