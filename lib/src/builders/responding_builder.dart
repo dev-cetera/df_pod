@@ -21,7 +21,7 @@ class RespondingBuilder<T> extends StatelessWidget {
   //
   //
 
-  final TPodListResponder podListResponder;
+  final TPodListResponder<T> podListResponder;
   final T? Function() getData;
   final bool Function(T data)? isUsableData;
   final TOnDataBuilder<RespondingBuilderSnapshot<T>> builder;

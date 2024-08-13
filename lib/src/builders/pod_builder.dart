@@ -203,7 +203,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
 
   late final Widget? _staticChild;
-  late T? value;
+  late T _value;
 
   //
   //
@@ -212,9 +212,8 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   @override
   void initState() {
     super.initState();
-    // Change from ValueListenableBuilder: Set _staticChild in initState.
     _staticChild = widget.child;
-    value = widget.pod.value;
+    _value = widget.pod.value;
     widget.pod.addListener(_valueChanged);
   }
 
@@ -227,7 +226,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.pod != widget.pod) {
       oldWidget.pod.removeListener(_valueChanged);
-      value = widget.pod.value;
+      _value = widget.pod.value;
       widget.pod.addListener(_valueChanged);
     }
   }
@@ -237,10 +236,9 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
 
   void _valueChanged() {
-    // Change from ValueListenableBuilder: Only do setState if widget is mounted.
     if (mounted) {
       setState(() {
-        value = widget.pod.value;
+        _value = widget.pod.value;
       });
     }
   }
@@ -251,10 +249,9 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final value = widget.pod.value;
     return widget.builder(
       context,
-      value,
+      _value,
       _staticChild,
     );
   }
@@ -266,11 +263,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   @override
   void dispose() {
     widget.pod.removeListener(_valueChanged);
-    // Change from ValueListenableBuilder: Dispose the Pod if marked as
-    // temporary.
     letAsOrNull<PodDisposableMixin>(widget.pod)?.disposeIfTemp();
-    // Change from ValueListenableBuilder: Invoke a callback on dispose that
-    // can be used for debugging of Pod-linking purposes.
     widget.onDispose?.call();
     super.dispose();
   }

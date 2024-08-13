@@ -44,7 +44,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
 
   /// An optional child widget that can be used within the [builder] function.
-  final TOnDataBuilder<TPodDataList> builder;
+  final TOnDataBuilder<TPodDataList<T?>> builder;
 
   //
   //
@@ -189,6 +189,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   //
 
   late final Widget? _staticChild;
+  late Iterable<T> _values;
 
   //
   //
@@ -198,6 +199,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   void initState() {
     super.initState();
     _staticChild = widget.child;
+    _values = widget.podList.map((e) => e.value);
     _addListenerToPods(widget.podList);
   }
 
@@ -208,8 +210,11 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   @override
   void didUpdateWidget(_PodListBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _removeListenerFromPods(oldWidget.podList);
-    _addListenerToPods(widget.podList);
+    if (oldWidget.podList != widget.podList) {
+      _removeListenerFromPods(oldWidget.podList);
+      _values = widget.podList.map((e) => e.value);
+      _addListenerToPods(widget.podList);
+    }
   }
 
   //
@@ -218,7 +223,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   void _addListenerToPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.addListener(_update);
+      pod.addListener(_valueChanged);
     }
   }
 
@@ -228,7 +233,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   void _removeListenerFromPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.removeListener(_update);
+      pod.removeListener(_valueChanged);
     }
   }
 
@@ -236,9 +241,11 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   //
   //
 
-  void _update() {
+  void _valueChanged() {
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _values = widget.podList.map((e) => e.value);
+      });
     }
   }
 
@@ -248,10 +255,9 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final values = widget.podList.map((e) => e.value);
     return widget.builder(
       context,
-      values,
+      _values,
       _staticChild,
     );
   }
@@ -263,7 +269,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   @override
   void dispose() {
     for (final pod in widget.podList) {
-      pod.removeListener(_update);
+      pod.removeListener(_valueChanged);
       letAsOrNull<PodDisposableMixin<T>>(pod)?.disposeIfTemp();
     }
     widget.onDispose?.call();

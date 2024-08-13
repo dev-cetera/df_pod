@@ -128,12 +128,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
 
   late final Widget? _staticChild = widget.child;
-
-  //
-  //
-  //
-
-  FutureOrPod<T?>? _currentPod;
+  FutureOrPod<T>? _currentPod;
 
   //
   //
@@ -180,11 +175,10 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   Widget build(BuildContext context) {
     if (_currentPod != null) {
-      return PodBuilder(
+      return PodBuilder<T>(
         key: widget.key,
         pod: _currentPod!,
-        builder: (context, value, child) =>
-            widget.builder(context, value, child),
+        builder: (context, value, child) => widget.builder(context, value, child),
         onDispose: widget.onDispose,
         child: _staticChild,
       );
