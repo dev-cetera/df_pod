@@ -14,15 +14,8 @@ import '_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A mixin for classes that need to implement a `dispose` method.
-mixin Disposable {
-  void dispose();
-}
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
 /// A mixin to manage the disposal of `Pod` instances.
-mixin BindWithMixin on Disposable {
+mixin BindWithMixin on DisposeMixin {
   //
   //
   //
@@ -64,27 +57,22 @@ extension BindParentOnChangeNotifierExtension<T extends ChangeNotifier> on T {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget>
-    extends State<T> implements Disposable {}
-
 /// Use `BindWithMixinState<T>` instead of `State<T>` to incorporate
 /// `BindWithMixin`.
 ///
 /// Example:
 /// ```dart
-/// class ExampleState extends BindWithMixinState<ExampleWidget> {
+/// class ExampleWidgetState extends BindWithMixinState<ExampleWidget> {
 ///   late final pStatus = Pod<String>('init').bindParent(this);
 /// }
 /// ```
 abstract class BindWithMixinState<T extends StatefulWidget>
     extends _StatefulWidgetWithDisposable<T> with BindWithMixin {}
 
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget> extends State<T>
+    implements DisposeMixin {}
 
-abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T>
-    implements Disposable {
-  _ValueNotifierWithDisposable(super.value);
-}
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// Use `BindWithMixinValueNotifier<T>` instead of ValueNotifier<T> to incorporate
 /// `BindWithMixin`.
@@ -100,40 +88,50 @@ abstract class BindWithMixinValueNotifier<T>
   BindWithMixinValueNotifier(super.value);
 }
 
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T> implements DisposeMixin {
+  _ValueNotifierWithDisposable(super.value);
+}
 
-abstract class _ChangeNotifierWithDisposable extends ChangeNotifier
-    implements Disposable {}
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// Use `BindWithMixinChangeNotifier` instead of ChangeNotifier to incorporate
 /// `BindWithMixin`.
 ///
 /// Example:
 /// ```dart
-/// class MyChangeNotifier extends BindWithMixinChangeNotifier> {
+/// class ExampleChangeNotifier extends BindWithMixinChangeNotifier> {
 ///   late final pStatus = Pod<String>('init').bindParent(this);;
 /// }
 /// ```
 abstract class BindWithMixinChangeNotifier extends _ChangeNotifierWithDisposable
     with BindWithMixin {}
 
+abstract class _ChangeNotifierWithDisposable extends ChangeNotifier implements DisposeMixin {}
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class _PodListenableWithDisposable<T> extends PodListenable<T>
-    implements Disposable {
-  _PodListenableWithDisposable(super.value);
-}
-
-/// Use `BindWithMixinPodListenable<T>` instead of PodListenable<T> to incorporate
+/// Use `BindWithMixinPodNotifier<T>` instead of PodNotifier<T> to incorporate
 /// `BindWithMixin`.
 ///
 /// Example:
 /// ```dart
-/// class ExamplePodListenable<T> extends BindWithMixinPodListenable<T>> {
+/// class ExamplePodNotifier<T> extends BindWithMixinPodNotifier<T>> {
 ///   late final pStatus = Pod<String>('init').bindParent(this);;
 /// }
 /// ```
-abstract class BindWithMixinPodListenable<T>
-    extends _PodListenableWithDisposable<T> with BindWithMixin {
-  BindWithMixinPodListenable(super.value);
+abstract class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
+    with BindWithMixin {
+  BindWithMixinPodNotifier(
+    super.value, {
+    required super.disposable,
+    required super.temp,
+  });
+}
+
+abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T> implements DisposeMixin {
+  _PodNotifierWithDisposable(
+    super.value, {
+    required super.disposable,
+    required super.temp,
+  });
 }

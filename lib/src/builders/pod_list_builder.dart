@@ -10,9 +10,10 @@
 
 import 'dart:async';
 
+import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 
-import '../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -271,7 +272,7 @@ class _PodListBuilderState extends State<_PodListBuilder> {
   void dispose() {
     for (final pod in widget.podList) {
       pod?.removeListener(_update);
-      pod?.disposeIfMarkedAsTemp();
+      letAsOrNull<PodDisposableMixin>(pod)?.disposeIfTemp();
     }
     widget.onDispose?.call();
     super.dispose();

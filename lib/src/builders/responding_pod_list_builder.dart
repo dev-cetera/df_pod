@@ -8,6 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 
 import '../_index.g.dart';
@@ -243,7 +244,7 @@ class _RespondingPodListBuilderState extends State<RespondingPodListBuilder> {
   void dispose() {
     for (final pod in _currentWatchList) {
       pod?.removeListener(_update);
-      pod?.disposeIfMarkedAsTemp();
+      letAsOrNull<PodDisposableMixin>(pod)?.disposeIfTemp();
     }
     widget.onDispose?.call();
     super.dispose();

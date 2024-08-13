@@ -8,6 +8,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_type/df_type.dart';
+
 import '_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -33,7 +35,7 @@ abstract class PodListHelper<T extends Object?> {
   /// the `Pod` objects are no longer needed, to release resources.
   void dispose() {
     for (final pod in pods) {
-      pod?.dispose();
+      letAsOrNull<PodDisposableMixin>(pod)?.dispose();
     }
   }
 
@@ -44,9 +46,9 @@ abstract class PodListHelper<T extends Object?> {
   /// Disposes only those `Pod` objects in the list that are marked as
   /// temporary. This method is useful for selectively releasing resources used
   /// by temporary `Pod` objects.
-  void disposeIfMarkedAsTemp() {
+  void disposeIfTemp() {
     for (final pod in pods) {
-      pod?.disposeIfMarkedAsTemp();
+      letAsOrNull<PodDisposableMixin>(pod)?.disposeIfTemp();
     }
   }
 }

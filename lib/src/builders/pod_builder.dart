@@ -10,10 +10,11 @@
 
 import 'dart:async';
 
+import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 
-import '../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -153,7 +154,7 @@ class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A custom builder widget similar to [ValueListenableBuilder] that supports
+/// A custom builder widget similar to [PodListenableBuilder] that supports
 /// nullable [pod], an [onDispose] callback, and auto-disposes the [Pod]
 /// if marked as temporary.
 class _PodBuilder<T> extends StatefulWidget {
@@ -161,7 +162,7 @@ class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final PodListenable<T>? pod;
+  final ValueListenable<T>? pod;
 
   //
   //
@@ -218,6 +219,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   @override
   void initState() {
     super.initState();
+    // Change from ValueListenableBuilder: Set _staticChild in initState.
     _staticChild = widget.child;
     value = widget.pod?.value;
     widget.pod?.addListener(_valueChanged);
@@ -242,6 +244,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
 
   void _valueChanged() {
+    // Change from ValueListenableBuilder: Only do setState if widget is mounted.
     if (mounted) {
       setState(() {
         value = widget.pod?.value;
@@ -269,10 +272,13 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   void dispose() {
-    widget
-      ..pod?.removeListener(_valueChanged)
-      ..pod?.disposeIfMarkedAsTemp()
-      ..onDispose?.call();
+    widget.pod?.removeListener(_valueChanged);
+    // Change from ValueListenableBuilder: Dispose the Pod if marked as
+    // temporary.
+    letAsOrNull<PodDisposableMixin>(widget.pod)?.disposeIfTemp();
+    // Change from ValueListenableBuilder: Invoke a callback on dispose that
+    // can be used for debugging of Pod-linking purposes.
+    widget.onDispose?.call();
     super.dispose();
   }
 }

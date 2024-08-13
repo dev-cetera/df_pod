@@ -12,7 +12,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import '../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -64,7 +64,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
 
   /// A function that returns the `Pod<T>?` to be polled.
-  final FutureOr<Pod<T>>? Function() podPoller;
+  final FutureOr<PodListenable<T>>? Function() podPoller;
 
   //
   //
@@ -135,7 +135,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
   //
 
-  FutureOr<Pod<T>>? _currentPod;
+  FutureOr<PodListenable<T>>? _currentPod;
 
   //
   //

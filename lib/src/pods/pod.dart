@@ -11,7 +11,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:tuple/tuple.dart';
 
-import '../_index.g.dart';
+import '/src/_index.g.dart';
 
 part '_child_pod.dart';
 
@@ -67,15 +67,7 @@ part '_child_pod.dart';
 /// - `value`: The initial value for the Pod.
 /// - `temp`: An optional flag to mark the Pod as temporary.
 
-class Pod<T> extends BindWithMixinPodListenable<T> {
-  //
-  //
-  //
-
-  /// Whether this Pod is marked as temporary. Pods marked as temporary are
-  /// disposed by consumers like [PodBuilder] when they are no longer needed.
-  bool markedAsTemp;
-
+class Pod<T> extends BindWithMixinPodNotifier<T> {
   //
   //
   //
@@ -88,10 +80,10 @@ class Pod<T> extends BindWithMixinPodListenable<T> {
   //
   //
 
-  /// Whether this Pod is disposable. If `false`, the Pod will not be disposed
-  /// when [dispose] is called. Instead, it will continue to exist until the
-  /// application is closed.
-  bool disposable;
+  // /// Whether this Pod is disposable. If `false`, the Pod will not be disposed
+  // /// when [dispose] is called. Instead, it will continue to exist until the
+  // /// application is closed.
+  // bool disposable;
 
   //
   //
@@ -108,30 +100,16 @@ class Pod<T> extends BindWithMixinPodListenable<T> {
   /// dispose when this class disposes.
   Pod(
     super.value, {
-    bool temp = false,
-    this.disposable = true,
-  })  : markedAsTemp = temp,
-        assert(
-          temp && disposable == true || !temp,
-          'Temporary Pods must be disposable.',
-        );
-
-  //
-  //
-  //
-
-  /// A flag indicating whether the Pod has been disposed.
-  bool _isDisposed = false;
-
-  /// Whether the Pod has been disposed.
-  bool get isDisposed => this._isDisposed;
+    super.disposable = true,
+    super.temp = false,
+  });
 
   //
   //
   //
 
   /// Casts [other] to `Pod<T>`.
-  static Pod<T> cast<T>(PodListenable<T> other) => other as Pod<T>;
+  static Pod<T> cast<T>(PodListenable<T> other) => other.asPod();
 
   //
   //
@@ -517,77 +495,16 @@ class Pod<T> extends BindWithMixinPodListenable<T> {
   //
   //
   //
-
-  /// Adds a listener to this Pod that is called only once.
-  ///
-  /// ### Parameters:
-  ///
-  /// - `listener`: The listener to be called only once.
-  @override
-  void addSingleExecutionListener(VoidCallback listener) {
-    late final VoidCallback templistener;
-    templistener = () {
-      listener();
-      removeListener(templistener);
-    };
-    addListener(templistener);
-  }
-
-  //
-  //
-  //
-
-  /// Disposes this Pod and removes all listeners if it is marked as temporary.
-  ///
-  /// This automatically by consumers like [PodBuilder] to dispose their Pods
-  /// that are marked as temporary.
-  ///
-  /// Custom widgets that accept a Pod as a parameter can leverage this method
-  /// to automatically manage the lifecycle of temporary Pods. By calling this
-  /// method in the widget's dispose function, it ensures that temporary Pods
-  /// are appropriately disposed of when the widget itself is disposed,
-  /// maintaining resource efficiency and avoiding memory leaks.
-  ///
-  /// ### Example:
-  ///
-  /// ```dart
-  /// @override
-  /// void dispose() {
-  ///   super.dispose();
-  ///   myPod.disposeIfMarkedAsTemp();
-  /// }
-  @override
-  void disposeIfMarkedAsTemp() {
-    if (markedAsTemp) {
-      dispose();
-    }
-  }
-
-  //
-  //
-  //
-
-  @override
-  void dispose() {
-    if (!_isDisposed) {
-      if (disposable) {
-        super.dispose();
-        this._isDisposed = true;
-      } else {
-        throw DoNotDisposePodException();
-      }
-    }
-  }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class DoNotDisposePodException extends PodException {
-  DoNotDisposePodException()
-      : super(
-          '"dispose" was called on a Pod that was explicitly maked as non-disposable.',
-        );
-}
+// class DoNotDisposePodException extends PodException {
+//   DoNotDisposePodException()
+//       : super(
+//           '"dispose" was called on a Pod that was explicitly maked as non-disposable.',
+//         );
+// }
 
 class WrongParentPodException extends PodException {
   WrongParentPodException()

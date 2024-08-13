@@ -11,4 +11,9 @@
 class PodException implements Exception {
   final String message;
   PodException(this.message);
+
+  @override
+  String toString() {
+    return '$runtimeType: $message';
+  }
 }

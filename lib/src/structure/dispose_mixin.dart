@@ -8,26 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/widgets.dart';
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-abstract class PodListenable<T> extends ValueNotifier<T> {
-  //
-  //
-  //
-
-  PodListenable(super.value);
-
-  //
-  //
-  //
-
-  void addSingleExecutionListener(VoidCallback listener);
-
-  //
-  //
-  //
-
-  void disposeIfMarkedAsTemp();
+/// A mixin that adds a [dispose] method to a class.
+mixin DisposeMixin {
+  void dispose();
 }
