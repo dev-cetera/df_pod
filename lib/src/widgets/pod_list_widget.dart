@@ -46,11 +46,7 @@ class PodListWidget<T> extends StatefulWidget {
 
   /// A function that is invoked initially and triggers a widget rebuild
   /// whenever any of the provided Pods change.
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    TPodList<T> podList,
-  ) builder;
+  final TOnDataBuilder<TPodList<T>> builder;
 
   //
   //
@@ -119,10 +115,10 @@ class _PodListWidgetState<T> extends State<PodListWidget<T>> {
       key: widget.key,
       podList: _podList,
       child: _staticChild,
-      builder: (context, child, _) => widget.builder(
+      builder: (context, _, child) => widget.builder(
         context,
-        child,
         _podList,
+        child,
       ),
     );
   }

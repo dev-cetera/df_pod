@@ -45,7 +45,7 @@ class PodWidget<T> extends StatefulWidget {
 
   /// A function that is invoked initially and triggers a widget rebuild
   /// whenever the provided Pod changes.
-  final PodBuilderFunction<Pod<T>> builder;
+  final TOnDataBuilder<Pod<T>> builder;
 
   //
   //

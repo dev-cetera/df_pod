@@ -8,21 +8,28 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-//
-typedef TPodList<T extends Object?> = Iterable<PodListenable<T>?>;
-typedef TPodDataList<T extends Object?> = Iterable<T>;
-typedef TPodListResponder<T extends Object?> = TPodList<T> Function();
-
+/// Builds a [Widget] when given a concrete value of a [Pod<T>].
+///
+/// If the `child` parameter provided to the [PodBuilder] is not
+/// null, the same `child` widget is passed back to this [PodBuilder]
+/// and should typically be incorporated in the returned widget tree.
+///
+/// See Also:
+///
+///  - [PodBuilder], a widget which invokes this builder each time a [Pod]
+/// changes value.
 typedef TOnDataBuilder<T> = Widget Function(
   BuildContext context,
+  T value,
   Widget? child,
-  T snapshot,
 );
 
 typedef TOnLoadingBuilder = Widget Function(
@@ -35,13 +42,8 @@ typedef TOnNoDataBuilder = Widget Function(
   Widget? child,
 );
 
-typedef TRespondingBuilder<T> = Widget Function(
-  BuildContext context,
-  Widget? child,
-  RespondingBuilderSnapshot<T> snapshot,
-);
+typedef TPodList<T extends Object?> = Iterable<PodListenable<T>>;
+typedef TPodDataList<T extends Object?> = Iterable<T>;
+typedef TPodListResponder<T extends Object?> = TPodList<T> Function();
 
-mixin PodServiceMixin {
-  Future<void> startService();
-  Future<void> stopService();
-}
+typedef FutureOrPod<T> = FutureOr<PodListenable<T>>;

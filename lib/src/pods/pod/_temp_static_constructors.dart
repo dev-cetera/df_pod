@@ -12,8 +12,8 @@ part of 'pod.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// Reduces many [Pod] - [instances] to a single [ChildPod.temp] instance
-/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// Reduces many Pod [instances] to a single [ChildPod.temp] instance via
+/// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
 ChildPod<A, B> _tempFromMany<A, B>(
   List<Pod<A>> instances,
@@ -28,9 +28,9 @@ ChildPod<A, B> _tempFromMany<A, B>(
   );
 }
 
-/// Reduces a tuple of 2 [Pod] * [instances] to a single [ChildPod.temp]
-/// instance via [reducer]. Optionally provide [updateParents] to define how
-/// parent Pods should be updated when this Pod changes.
+/// Reduces a tuple of 2 Pod [instances] to a single [ChildPod.temp] instance
+/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// should be updated when this Pod changes.
 ChildPod<dynamic, T> _tempFrom2<T, A, B>(
   Pods2<A, B> instances,
   T Function(Pods2<A, B> instances) reducer,
@@ -44,14 +44,13 @@ ChildPod<dynamic, T> _tempFrom2<T, A, B>(
   );
 }
 
-/// Reduces a tuple of 3 [Pod] * [instances] to a single [ChildPod.temp]
-/// instance via [reducer]. Optionally provide [updateParents] to define how
-/// parent Pods should be updated when this Pod changes.
+/// Reduces a tuple of 3 Pod [instances] to a single [ChildPod.temp] instance
+/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// should be updated when this Pod changes.
 ChildPod<dynamic, T> _tempFrom3<T, A, B, C>(
   Pods3<A, B, C> instances,
   T Function(Pods3<A, B, C> instances) reducer,
-  (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)?
-      updateParents,
+  (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)? updateParents,
 ) {
   return reduce3Pods(
     instances,
@@ -61,14 +60,13 @@ ChildPod<dynamic, T> _tempFrom3<T, A, B, C>(
   );
 }
 
-/// Reduces a tuple of 4 [Pod] * [instances] to a single [ChildPod.temp]
-/// instance via [reducer]. Optionally provide [updateParents] to define how
-/// parent Pods should be updated when this Pod changes.
+/// Reduces a tuple of 4 Pod [instances] to a single [ChildPod.temp] instance
+/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// should be updated when this Pod changes.
 ChildPod<dynamic, T> _tempFrom4<T, A, B, C, D>(
   Pods4<A, B, C, D> instances,
   T Function(Pods4<A, B, C, D> instances) reducer,
-  (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)?
-      updateParents,
+  (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)? updateParents,
 ) {
   return reduce4Pods(
     instances,
@@ -78,9 +76,9 @@ ChildPod<dynamic, T> _tempFrom4<T, A, B, C, D>(
   );
 }
 
-/// Reduces a tuple of 5 [Pod] * [instances] to a single [ChildPod.temp]
-/// instance via [reducer]. Optionally provide [updateParents] to define how
-/// parent Pods should be updated when this Pod changes.
+/// Reduces a tuple of 5 Pod [instances] to a single [ChildPod.temp] instance
+/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// should be updated when this Pod changes.
 ChildPod<dynamic, T> _tempFrom5<T, A, B, C, D, E>(
   Pods5<A, B, C, D, E> instances,
   T Function(Pods5<A, B, C, D, E> instances) reducer,
@@ -97,9 +95,9 @@ ChildPod<dynamic, T> _tempFrom5<T, A, B, C, D, E>(
   );
 }
 
-/// Reduces a tuple of 7 [Pod] * [instances] to a single [ChildPod.temp]
-/// instance via [reducer]. Optionally provide [updateParents] to define how
-/// parent Pods should be updated when this Pod changes.
+/// Reduces a tuple of 7 Pod [instances] to a single [ChildPod.temp] instance
+/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// should be updated when this Pod changes.
 ChildPod<dynamic, T> _tempFrom6<T, A, B, C, D, E, F>(
   Pods6<A, B, C, D, E, F> instances,
   T Function(Pods6<A, B, C, D, E, F> instances) reducer,
@@ -116,9 +114,9 @@ ChildPod<dynamic, T> _tempFrom6<T, A, B, C, D, E, F>(
   );
 }
 
-/// Reduces a tuple of 7 [Pod] * [instances] to a single [ChildPod.temp]
-/// instance via [reducer]. Optionally provide [updateParents] to define how
-/// parent Pods should be updated when this Pod changes.
+/// Reduces a tuple of 7 Pod [instances] to a single [ChildPod.temp] instance
+/// via [reducer]. Optionally provide [updateParents] to define how parent Pods
+/// should be updated when this Pod changes.
 ChildPod<dynamic, T> _tempFrom7<T, A, B, C, D, E, F, G>(
   Pods7<A, B, C, D, E, F, G> instances,
   T Function(Pods7<A, B, C, D, E, F, G> instances) reducer,

@@ -23,7 +23,7 @@ export 'exceptions/pod_exception.dart';
 export 'exceptions/do_not_dispose_pod_exception.dart';
 export 'exceptions/no_remove_child_pod_exception.dart';
 export '_experimental/lazy.dart';
-export 'typedefs/types.dart';
+export 'utils/typedefs.dart';
 export 'pods/pod_listenable.dart';
 export 'pods/pod_notifier.dart';
 export 'pods/child_pod.dart';

@@ -24,7 +24,7 @@ class RespondingBuilder<T> extends StatelessWidget {
   final TPodListResponder podListResponder;
   final T? Function() getData;
   final bool Function(T data)? isUsableData;
-  final TRespondingBuilder<T> builder;
+  final TOnDataBuilder<RespondingBuilderSnapshot<T>> builder;
   final Widget? child;
 
   //
@@ -48,11 +48,10 @@ class RespondingBuilder<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return RespondingPodListBuilder(
       podListResponder: podListResponder,
-      builder: (context, staticChild, _) {
+      builder: (context, _, staticChild) {
         final data = this.getData();
         final hasData = data is T;
-        final hasUsableData =
-            hasData && (this.isUsableData?.call(data) ?? true);
+        final hasUsableData = hasData && (this.isUsableData?.call(data) ?? true);
         final snapshot = RespondingBuilderSnapshot<T>(
           data: data,
           hasData: hasData,
@@ -60,8 +59,8 @@ class RespondingBuilder<T> extends StatelessWidget {
         );
         final widget = this.builder(
           context,
-          staticChild,
           snapshot,
+          staticChild,
         );
         return widget;
       },

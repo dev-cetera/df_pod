@@ -88,11 +88,8 @@ class RespondingPodListBuilder extends StatefulWidget {
 
   /// A function to rebuild the widget based on the data received from
   /// [podListResponder].
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    TPodDataList data,
-  ) builder;
+
+  final TOnDataBuilder<TPodDataList> builder;
 
   //
   //
@@ -143,8 +140,7 @@ class RespondingPodListBuilder extends StatefulWidget {
   //
 
   @override
-  State<RespondingPodListBuilder> createState() =>
-      _RespondingPodListBuilderState();
+  State<RespondingPodListBuilder> createState() => _RespondingPodListBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -194,7 +190,7 @@ class _RespondingPodListBuilderState extends State<RespondingPodListBuilder> {
 
   void _addListenerToPods(TPodList pods) {
     for (final pod in pods) {
-      pod?.addListener(_update);
+      pod.addListener(_update);
     }
   }
 
@@ -204,7 +200,7 @@ class _RespondingPodListBuilderState extends State<RespondingPodListBuilder> {
 
   void _removeListenerFromPods(TPodList pods) {
     for (final pod in pods) {
-      pod?.removeListener(_update);
+      pod.removeListener(_update);
     }
   }
 
@@ -228,11 +224,11 @@ class _RespondingPodListBuilderState extends State<RespondingPodListBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final values = _currentWatchList.map((pod) => pod?.value);
+    final values = _currentWatchList.map((pod) => pod.value);
     return widget.builder(
       context,
-      _staticChild,
       values,
+      _staticChild,
     );
   }
 
@@ -243,7 +239,7 @@ class _RespondingPodListBuilderState extends State<RespondingPodListBuilder> {
   @override
   void dispose() {
     for (final pod in _currentWatchList) {
-      pod?.removeListener(_update);
+      pod.removeListener(_update);
       letAsOrNull<PodDisposableMixin>(pod)?.disposeIfTemp();
     }
     widget.onDispose?.call();
