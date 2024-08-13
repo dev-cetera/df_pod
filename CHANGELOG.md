@@ -12,6 +12,7 @@
 - refactor: Use switch instead in shared_pod.dart
 - refactor: Address null issues
 - refactor: Update generic type in RespondingBuilder and PodBuilder
+- chore: End of day
 
 ## [0.2.3]
 

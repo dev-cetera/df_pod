@@ -50,7 +50,8 @@ ChildPod<dynamic, T> _from2<T, T1, T2>(
 ChildPod<dynamic, T> _from3<T, T1, T2, T3>(
   Pods3<T1, T2, T3> instances,
   T Function(Pods3<T1, T2, T3> instances) reducer, [
-  (T1?, T2?, T3?) Function(Tuple3<T1, T2, T3> parentValues, T childValue)? updateParents,
+  (T1?, T2?, T3?) Function(Tuple3<T1, T2, T3> parentValues, T childValue)?
+      updateParents,
 ]) {
   return reduce3Pods(
     instances,
@@ -66,7 +67,9 @@ ChildPod<dynamic, T> _from3<T, T1, T2, T3>(
 ChildPod<dynamic, T> _from4<T, T1, T2, T3, T4>(
   Pods4<T1, T2, T3, T4> instances,
   T Function(Pods4<T1, T2, T3, T4> instances) reducer, [
-  (T1?, T2?, T3?, T4?) Function(Tuple4<T1, T2, T3, T4> parentValues, T childValue)? updateParents,
+  (T1?, T2?, T3?, T4?) Function(
+          Tuple4<T1, T2, T3, T4> parentValues, T childValue,)?
+      updateParents,
 ]) {
   return reduce4Pods(
     instances,
@@ -138,7 +141,8 @@ ChildPod<dynamic, T> _from7<T, T1, T2, T3, T4, T5, T6, T7>(
 ChildPod<T1, T2> _createChildPod<T1, T2>({
   required List<Pod<T1>> parents,
   required T2 Function(List<T1> parentValues) reducer,
-  required List<T1> Function(List<T1> parentValues, T2 childValue)? updateParents,
+  required List<T1> Function(List<T1> parentValues, T2 childValue)?
+      updateParents,
 }) {
   return ChildPod<T1, T2>(
     parents: parents,
