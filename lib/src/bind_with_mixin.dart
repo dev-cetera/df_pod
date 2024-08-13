@@ -69,8 +69,8 @@ extension BindParentOnChangeNotifierExtension<T extends ChangeNotifier> on T {
 abstract class BindWithMixinState<T extends StatefulWidget>
     extends _StatefulWidgetWithDisposable<T> with BindWithMixin {}
 
-abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget> extends State<T>
-    implements DisposeMixin {}
+abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget>
+    extends State<T> implements DisposeMixin {}
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -88,7 +88,8 @@ abstract class BindWithMixinValueNotifier<T>
   BindWithMixinValueNotifier(super.value);
 }
 
-abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T> implements DisposeMixin {
+abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T>
+    implements DisposeMixin {
   _ValueNotifierWithDisposable(super.value);
 }
 
@@ -106,7 +107,8 @@ abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T> implemen
 abstract class BindWithMixinChangeNotifier extends _ChangeNotifierWithDisposable
     with BindWithMixin {}
 
-abstract class _ChangeNotifierWithDisposable extends ChangeNotifier implements DisposeMixin {}
+abstract class _ChangeNotifierWithDisposable extends ChangeNotifier
+    implements DisposeMixin {}
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -128,7 +130,8 @@ abstract class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
   });
 }
 
-abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T> implements DisposeMixin {
+abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T>
+    implements DisposeMixin {
   _PodNotifierWithDisposable(
     super.value, {
     required super.disposable,

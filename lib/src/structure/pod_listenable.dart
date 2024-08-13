@@ -57,25 +57,25 @@ abstract class PodListenable<T> extends ValueListenable<T> {}
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// An extension on [PodListenable] that provides utility methods for casting 
+/// An extension on [PodListenable] that provides utility methods for casting
 /// to a [Pod] instance.
 extension AsPodOnPodListenableX<T> on PodListenable<T> {
   /// Attempts to cast this [PodListenable] to a [Pod] instance. Returns `null`
   /// if the cast is unsuccessful.
   ///
   /// Prefer using [asPod] unless there is a specific need for [asPodOrNull].
-  /// 
-  /// This method is marked as [visibleForTesting] to remind developers 
-  /// to structure their code in a way that avoids frequent casting, 
+  ///
+  /// This method is marked as [visibleForTesting] to remind developers
+  /// to structure their code in a way that avoids frequent casting,
   /// ensuring clearer and more maintainable code.
   @visibleForTesting
   Pod<T>? asPodOrNull() => letAsOrNull<Pod<T>>(this);
 
   /// Attempts to cast this [PodListenable] to a [Pod] instance. Throw an if
   /// the cast is unsuccessful.
-  /// 
-  /// This method is marked as [visibleForTesting] to remind developers 
-  /// to structure their code in a way that avoids frequent casting, 
+  ///
+  /// This method is marked as [visibleForTesting] to remind developers
+  /// to structure their code in a way that avoids frequent casting,
   /// ensuring clearer and more maintainable code.
   @visibleForTesting
   Pod<T> asPod() => this as Pod<T>;
