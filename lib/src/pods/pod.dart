@@ -109,6 +109,7 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
   //
 
   /// Casts [other] to `Pod<T>`.
+  // ignore: invalid_use_of_visible_for_testing_member
   static Pod<T> cast<T>(PodListenable<T> other) => other.asPod();
 
   //

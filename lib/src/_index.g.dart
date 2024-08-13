@@ -10,7 +10,6 @@
 // --- PUBLIC FILES ---
 export 'pod_list_helper.dart';
 export 'lint_rules_plugin.dart';
-export 'bind_with_mixin.dart';
 export 'reducers.dart';
 export 'experimental/lazy.dart';
 export 'builders/responding_pod_list_builder.dart';
@@ -19,8 +18,17 @@ export 'builders/responding_builder.dart';
 export 'builders/polling_pod_builder.dart';
 export 'builders/pod_builder.dart';
 export 'exceptions/pod_exception.dart';
+export 'bind_with_mixin/bind_with_mixin_state.dart';
+export 'bind_with_mixin/bind_with_mixin.dart';
+export 'bind_with_mixin/bind_with_mixin_change_notifier copy.dart';
+export 'bind_with_mixin/bind_with_mixin_pod_notifier.dart';
+export 'bind_with_mixin/bind_with_mixin_value_notifier.dart';
 export 'typedefs/types.dart';
 export 'pods/pod.dart';
+export 'pods/pod_listenable.dart';
+export 'dispose_mixin.dart';
+export 'pods/pod_notifier.dart';
+export 'pods/pod_disposable_mixin.dart';
 export 'pods/shared_pods/shared_bool_pod.dart';
 export 'pods/shared_pods/shared_json_pod.dart';
 export 'pods/shared_pods/shared_pod.dart';
@@ -30,10 +38,6 @@ export 'pods/shared_pods/shared_enum_pod.dart';
 export 'pods/shared_pods/shared_string_pod.dart';
 export 'pods/shared_pods/shared_string_list_pod.dart';
 export 'lint_rules/must_dispose_pods_rule.dart';
-export 'structure/pod_disposable_mixin.dart';
-export 'structure/pod_listenable.dart';
-export 'structure/4_pod_notifier.dart';
-export 'structure/dispose_mixin.dart';
 export 'widgets/pod_widget.dart';
 export 'widgets/pod_list_widget.dart';
 

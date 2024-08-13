@@ -60,7 +60,7 @@ class Lazy<T> {
 
 /// An extension on all types [T] that adds a `lazy` getter, allowing for easy
 /// construction of [Lazy<T>] instances.
-extension LazyExtension<T> on T {
+extension LazyX<T> on T {
   Lazy<T> get lazy => Lazy<T>();
 }
 
@@ -68,7 +68,7 @@ extension LazyExtension<T> on T {
 
 /// An extension on [Lazy<T>] instances that adds a `wait` getter, allowing for
 /// asynchronous waiting until the value is initialized.
-extension LazyWaiterExtension<T> on Lazy<T> {
+extension LazyWaiterX<T> on Lazy<T> {
   /// Returns a [Future] that resolves with a tuple containing a [bool]
   /// indicating whether the value has been initialized, and the current value
   /// of the [Lazy<T>] instance.

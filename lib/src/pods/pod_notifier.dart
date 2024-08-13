@@ -14,7 +14,8 @@ import 'pod_disposable_mixin.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// TODO: Add docs.
+/// An enhanced alternative to [ValueNotifier] that provides additional
+/// lifecycle management capabilities through the [PodDisposableMixin].
 class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
   //
   //
@@ -32,7 +33,7 @@ class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
     this.temp = false,
   }) : assert(
           temp && disposable == true || !temp,
-          'A PodNotifier marked as temp must also be disposable.',
+          'A PodNotifier marked as "temp" must also be marked as "disposable".',
         );
 
   /// Adds a [listener] to this [PodNotifier] that will be triggered only once.
@@ -51,7 +52,7 @@ class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
     addListener(tempListener);
   }
 
-  /// Dipsoses this [PodNotifier] if [disposable] and sets [isDisposed] to
+  /// Dipsoses this [PodNotifier] if [disposable], then sets [isDisposed] to
   /// `true`. Successive calls to this method will be ignored.
   @override
   void dispose() {
