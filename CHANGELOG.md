@@ -11,6 +11,7 @@
 - chore: Restructure source files
 - fix: Fixed SharedPod
 - refactor: Use switch instead in shared_pod.dart
+- refactor: Address null issues
 
 ## [0.2.3]
 
