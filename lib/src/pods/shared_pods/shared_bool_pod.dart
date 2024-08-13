@@ -8,14 +8,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedBoolPodCreator {
   const SharedBoolPodCreator._();
-  static Future<SharedBoolPod> local(String key) async {
-    final instance = SharedBoolPod(
+  static Future<_SharedBoolPod> local(String key) async {
+    final instance = _SharedBoolPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -24,8 +24,8 @@ final class SharedBoolPodCreator {
     return instance;
   }
 
-  static Future<SharedBoolPod> temp(String key) async {
-    final instance = SharedBoolPod.temp(
+  static Future<_SharedBoolPod> temp(String key) async {
+    final instance = _SharedBoolPod.temp(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -34,8 +34,8 @@ final class SharedBoolPodCreator {
     return instance;
   }
 
-  static Future<SharedBoolPod> global(String key) async {
-    final instance = SharedBoolPod.global(
+  static Future<_SharedBoolPod> global(String key) async {
+    final instance = _SharedBoolPod.global(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -45,4 +45,4 @@ final class SharedBoolPodCreator {
   }
 }
 
-typedef SharedBoolPod = SharedPod<bool, bool>;
+typedef _SharedBoolPod = SharedPod<bool, bool>;

@@ -8,17 +8,17 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedEnumPodCreator {
   const SharedEnumPodCreator._();
-  static Future<SharedEnumPod<T>> create<T extends Enum>(
+  static Future<_SharedEnumPod<T>> create<T extends Enum>(
     String key,
     Iterable<T?> options,
   ) async {
-    final instance = SharedEnumPod<T>(
+    final instance = _SharedEnumPod<T>(
       key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
@@ -32,11 +32,11 @@ final class SharedEnumPodCreator {
     return instance;
   }
 
-  static Future<SharedEnumPod<T>> temp<T extends Enum>(
+  static Future<_SharedEnumPod<T>> temp<T extends Enum>(
     String key,
     Iterable<T?> options,
   ) async {
-    final instance = SharedEnumPod<T>.temp(
+    final instance = _SharedEnumPod<T>.temp(
       key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
@@ -50,11 +50,11 @@ final class SharedEnumPodCreator {
     return instance;
   }
 
-  static Future<SharedEnumPod<T>> global<T extends Enum>(
+  static Future<_SharedEnumPod<T>> global<T extends Enum>(
     String key,
     Iterable<T?> options,
   ) async {
-    final instance = SharedEnumPod<T>.global(
+    final instance = _SharedEnumPod<T>.global(
       key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
@@ -69,4 +69,4 @@ final class SharedEnumPodCreator {
   }
 }
 
-typedef SharedEnumPod<T extends Enum> = SharedPod<String, T>;
+typedef _SharedEnumPod<T extends Enum> = SharedPod<String, T>;

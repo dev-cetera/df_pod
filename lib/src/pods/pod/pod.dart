@@ -8,6 +8,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
 import 'package:tuple/tuple.dart';
 
 import '/src/utils/_reducers.dart';
@@ -31,9 +33,7 @@ base class Pod<T> extends BindWithMixinPodNotifier<T> {
 
   Pod.global(super.value) : super.global();
 
-  // ignore: invalid_use_of_visible_for_testing_member
-  static Pod<T> cast<T>(PodListenable<T> other) =>
-      other.asPodNotifier().asPod();
+  static Pod<T> cast<T>(PodListenable<T> other) => other.asPodNotifier().asPod();
 
   static const fromMany = _fromMany;
   static const from2 = _from2;
@@ -56,10 +56,8 @@ base class Pod<T> extends BindWithMixinPodNotifier<T> {
   @override
   set value(T newValue) => this.set(newValue);
 
-  T call() => updateValue;
-
   T get updateValue {
-    Future.delayed(Duration.zero, notifyListeners);
+    this.refresh();
     return value;
   }
 

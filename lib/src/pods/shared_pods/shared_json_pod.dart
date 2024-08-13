@@ -10,14 +10,14 @@
 
 import 'dart:convert';
 
-import '../../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedJsonPodCreator {
   const SharedJsonPodCreator._();
-  static Future<SharedJsonPod> local(String key) async {
-    final instance = SharedJsonPod(
+  static Future<_SharedJsonPod> local(String key) async {
+    final instance = _SharedJsonPod(
       key,
       fromValue: (rawValue) => jsonEncode(rawValue),
       toValue: (value) => value != null ? jsonDecode(value) : null,
@@ -26,8 +26,8 @@ final class SharedJsonPodCreator {
     return instance;
   }
 
-  static Future<SharedJsonPod> temp(String key) async {
-    final instance = SharedJsonPod.temp(
+  static Future<_SharedJsonPod> temp(String key) async {
+    final instance = _SharedJsonPod.temp(
       key,
       fromValue: (rawValue) => jsonEncode(rawValue),
       toValue: (value) => value != null ? jsonDecode(value) : null,
@@ -36,8 +36,8 @@ final class SharedJsonPodCreator {
     return instance;
   }
 
-  static Future<SharedJsonPod> global(String key) async {
-    final instance = SharedJsonPod.global(
+  static Future<_SharedJsonPod> global(String key) async {
+    final instance = _SharedJsonPod.global(
       key,
       fromValue: (rawValue) => jsonEncode(rawValue),
       toValue: (value) => value != null ? jsonDecode(value) : null,
@@ -47,4 +47,4 @@ final class SharedJsonPodCreator {
   }
 }
 
-typedef SharedJsonPod = SharedPod<String, Map<String, dynamic>>;
+typedef _SharedJsonPod = SharedPod<String, Map<String, dynamic>>;

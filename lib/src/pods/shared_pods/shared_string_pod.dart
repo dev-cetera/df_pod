@@ -8,18 +8,18 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedStringPodCreator {
   const SharedStringPodCreator._();
-  static Future<SharedStringPod> local(
+  static Future<_SharedStringPod> local(
     String key, {
     bool disposable = true,
     bool temp = false,
   }) async {
-    final instance = SharedStringPod(
+    final instance = _SharedStringPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -28,12 +28,12 @@ final class SharedStringPodCreator {
     return instance;
   }
 
-  static Future<SharedStringPod> temp(
+  static Future<_SharedStringPod> temp(
     String key, {
     bool disposable = true,
     bool temp = false,
   }) async {
-    final instance = SharedStringPod.temp(
+    final instance = _SharedStringPod.temp(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -42,12 +42,12 @@ final class SharedStringPodCreator {
     return instance;
   }
 
-  static Future<SharedStringPod> global(
+  static Future<_SharedStringPod> global(
     String key, {
     bool disposable = true,
     bool temp = false,
   }) async {
-    final instance = SharedStringPod.global(
+    final instance = _SharedStringPod.global(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -57,4 +57,4 @@ final class SharedStringPodCreator {
   }
 }
 
-typedef SharedStringPod = SharedPod<String, String>;
+typedef _SharedStringPod = SharedPod<String, String>;

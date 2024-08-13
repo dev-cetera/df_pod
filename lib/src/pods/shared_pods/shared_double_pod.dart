@@ -8,14 +8,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedDoublePodCreator {
   const SharedDoublePodCreator._();
-  static Future<SharedDoublePod> local(String key) async {
-    final instance = SharedDoublePod(
+  static Future<_SharedDoublePod> local(String key) async {
+    final instance = _SharedDoublePod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -24,8 +24,8 @@ final class SharedDoublePodCreator {
     return instance;
   }
 
-  static Future<SharedDoublePod> temp(String key) async {
-    final instance = SharedDoublePod.temp(
+  static Future<_SharedDoublePod> temp(String key) async {
+    final instance = _SharedDoublePod.temp(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -34,8 +34,8 @@ final class SharedDoublePodCreator {
     return instance;
   }
 
-  static Future<SharedDoublePod> global(String key) async {
-    final instance = SharedDoublePod.global(
+  static Future<_SharedDoublePod> global(String key) async {
+    final instance = _SharedDoublePod.global(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -45,4 +45,4 @@ final class SharedDoublePodCreator {
   }
 }
 
-typedef SharedDoublePod = SharedPod<double, double>;
+typedef _SharedDoublePod = SharedPod<double, double>;

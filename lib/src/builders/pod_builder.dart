@@ -52,7 +52,7 @@ typedef PodBuilderFunction<T> = ValueWidgetBuilder<T?>;
 /// - `onDispose`: An optional function that is invoked when this [PodBuilder]
 ///   gets disposed.
 ///
-/// ### See also:
+/// ### See Also:
 ///
 /// - [ValueListenable], which is what [Pod] is inspired by.
 /// - [ValueListenableBuilder], which is what [PodBuilder] is inspired by.
@@ -154,7 +154,7 @@ class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A custom builder widget similar to [PodListenableBuilder] that supports
+/// A custom builder widget similar to [ValueListenableBuilder] that supports
 /// nullable [pod], an [onDispose] callback, and auto-disposes the [Pod]
 /// if marked as temporary.
 class _PodBuilder<T> extends StatefulWidget {

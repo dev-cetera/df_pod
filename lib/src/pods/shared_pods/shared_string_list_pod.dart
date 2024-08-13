@@ -14,8 +14,8 @@ import '/src/_index.g.dart';
 
 final class SharedStringListPodCreator {
   const SharedStringListPodCreator._();
-  static Future<SharedStringListPod> local(String key) async {
-    final instance = SharedStringListPod(
+  static Future<_SharedStringListPod> local(String key) async {
+    final instance = _SharedStringListPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -24,8 +24,8 @@ final class SharedStringListPodCreator {
     return instance;
   }
 
-  static Future<SharedStringListPod> temp(String key) async {
-    final instance = SharedStringListPod.temp(
+  static Future<_SharedStringListPod> temp(String key) async {
+    final instance = _SharedStringListPod.temp(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -34,8 +34,8 @@ final class SharedStringListPodCreator {
     return instance;
   }
 
-  static Future<SharedStringListPod> global(String key) async {
-    final instance = SharedStringListPod.global(
+  static Future<_SharedStringListPod> global(String key) async {
+    final instance = _SharedStringListPod.global(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -45,4 +45,4 @@ final class SharedStringListPodCreator {
   }
 }
 
-typedef SharedStringListPod = SharedPod<List<String>, List<String>>;
+typedef _SharedStringListPod = SharedPod<List<String>, List<String>>;
