@@ -1,11 +1,12 @@
-// // .title
+// //.title
 // // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-// // Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// // in root directory.
-
+// //
+// // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// // source code is governed by an MIT-style license that can be found in the
+// // LICENSE file.
+// //
 // // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-// // .title~
+// //.title~
 
 // import 'package:analyzer/dart/ast/token.dart';
 // import 'package:analyzer/error/error.dart';

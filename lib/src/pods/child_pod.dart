@@ -8,7 +8,9 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-part of 'pod.dart';
+// ignore_for_file: invalid_use_of_protected_member
+
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -92,5 +94,36 @@ final class ChildPod<A, B> extends Pod<B> {
       parent.removeListener(refresh);
     }
     super.dispose();
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+extension _AddOrRemoveChildren<T> on Pod<T> {
+  //
+  //
+  //
+
+  void _addChild(ChildPod child) {
+    if (!child.parents.contains(this)) {
+      throw WrongParentPodException();
+    }
+    if ($children.contains(child)) {
+      throw ChildAlreadyAddedPodException();
+    }
+    addListener(child.refresh);
+    $children.add(child);
+  }
+
+  //
+  //
+  //
+
+  void _removeChild(ChildPod child) {
+    final didRemove = $children.remove(child);
+    if (!didRemove) {
+      throw NoRemoveChildPodException();
+    }
+    removeListener(child.refresh);
   }
 }

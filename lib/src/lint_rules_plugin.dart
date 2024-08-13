@@ -1,11 +1,13 @@
 // //.title
 // // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 // //
-// // Dart/Flutter (DF) Packages by DevCetra.com & contributors. See LICENSE file
-// // in root directory.
+// // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
+// // source code is governed by an MIT-style license that can be found in the
+// // LICENSE file.
 // //
 // // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 // //.title~
+
 // import 'package:custom_lint_builder/custom_lint_builder.dart';
 
 // import 'lint_rules/must_dispose_pods_rule.dart';

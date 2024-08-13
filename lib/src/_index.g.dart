@@ -22,10 +22,11 @@ export 'exceptions/wrong_parent_pod_exception.dart';
 export 'exceptions/pod_exception.dart';
 export 'exceptions/do_not_dispose_pod_exception.dart';
 export 'exceptions/no_remove_child_pod_exception.dart';
-export 'supplementary/lazy.dart';
+export '_experimental/lazy.dart';
 export 'typedefs/types.dart';
 export 'pods/pod_listenable.dart';
 export 'pods/pod_notifier.dart';
+export 'pods/child_pod.dart';
 export 'pods/pod_disposable_mixin.dart';
 export 'pods/shared_pods/shared_bool_pod.dart';
 export 'pods/shared_pods/shared_json_pod.dart';
@@ -50,7 +51,6 @@ export 'bind_with_mixin/bind_with_mixin_value_notifier.dart';
 // export 'utils/_reducers.dart';
 // export 'pods/pod/_temp_static_constructors.dart';
 // export 'pods/pod/_static_constructors.dart';
-// export 'pods/pod/_child_pod.dart';
 
 // --- GENERATED FILES (EXCLUDED) ---
 // None found.
