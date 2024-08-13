@@ -12,7 +12,7 @@ part of 'pod.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class ChildPod<A, B> extends Pod<B> {
+final class ChildPod<A, B> extends Pod<B> {
   //
   //
   //

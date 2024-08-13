@@ -10,7 +10,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 

@@ -10,7 +10,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -51,8 +51,7 @@ class RespondingBuilder<T> extends StatelessWidget {
       builder: (context, staticChild, _) {
         final data = this.getData();
         final hasData = data is T;
-        final hasUsableData =
-            hasData && (this.isUsableData?.call(data) ?? true);
+        final hasUsableData = hasData && (this.isUsableData?.call(data) ?? true);
         final snapshot = RespondingBuilderSnapshot<T>(
           data: data,
           hasData: hasData,

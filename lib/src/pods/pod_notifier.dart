@@ -17,7 +17,7 @@ import '/src/_index.g.dart';
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
 /// lifecycle management capabilities through the [PodDisposableMixin].
-class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
+abstract base class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
   //
   //
   //

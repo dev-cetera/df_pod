@@ -14,7 +14,7 @@ import '/df_pod.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class SharedPod<A, B> extends Pod<A?> {
+base class SharedPod<A, B> extends Pod<A?> {
   //
   //
   //

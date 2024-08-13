@@ -8,66 +8,18 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/widgets.dart';
 import 'package:tuple/tuple.dart';
 
+import '/src/utils/_reducers.dart';
 import '/src/_index.g.dart';
 
 part '_child_pod.dart';
+part '_static_constructors.dart';
+part '_temp_static_constructors.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A versatile alternative to [ValueNotifier].
-///
-/// It is designed to hold a single value and notifies listeners not only when
-/// the value itself changes but also when mutable states within the value
-/// change.
-///
-/// ### Limitations
-///
-/// Listeners will not be notified when mutable state within the value itself
-/// change:
-///
-/// ```dart
-/// final pod = Pod<List<int>>([0, 1, 2]);
-/// pod.value.add(3); // This will NOT notify listeners
-/// ```
-///
-/// ### Solutions
-///
-/// 1. Notifying listeners with `refresh`:
-///
-/// ```dart
-/// pod.value.add(3);
-/// pod.refresh(); // This will notify listeners
-/// ```
-///
-/// 2. Notifying listeners with `set`:
-///
-/// ```dart
-/// pod.set([3, 4, 5]); // This will notify listeners
-/// ```
-///
-/// 3. Notifying listeners with `update`:
-///
-/// ```dart
-/// pod.update((e) => e..add(3)); // This will notify listeners
-/// ```
-///
-/// 4. Notifying listeners with `call` or `updateValue`:
-///
-/// ```dart
-/// // These will notify listeners
-/// pod().add(3);
-/// pod.updateValue.add(3);
-/// ```
-///
-/// ### Parameters:
-///
-/// - `value`: The initial value for the Pod.
-/// - `temp`: An optional flag to mark the Pod as temporary.
-
-class Pod<T> extends BindWithMixinPodNotifier<T> {
+base class Pod<T> extends BindWithMixinPodNotifier<T> {
   //
   //
   //
@@ -76,38 +28,7 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
   /// this Pod's value is always current.
   T? _cachedValue;
 
-  //
-  //
-  //
-
-  // /// Whether this Pod is disposable. If `false`, the Pod will not be disposed
-  // /// when [dispose] is called. Instead, it will continue to exist until the
-  // /// application is closed.
-  // bool disposable;
-
-  //
-  //
-  //
-
-  /// Creates a `Pod<T>`.
-  ///
-  /// ### Parameters:
-  ///
-  /// - `value`: The initial value for the Pod.
-  /// - `temp`: An optional flag to mark the Pod as temporary.
-  /// - `disposable`: Whether this Pod can be disposed or not.
-  /// - `bindWith`: The class to bind itself with. This means this Pod will
-  /// dispose when this class disposes.
   Pod(super.value);
-
-  //
-  //
-  //
-
-  /// Casts [other] to `Pod<T>`.
-  // ignore: invalid_use_of_visible_for_testing_member
-  static Pod<T> cast<T>(PodListenable<T> other) =>
-      other.asPodNotifier().asPod();
 
   Pod.temp(super.value) : super.temp();
 
@@ -117,121 +38,29 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
   //
   //
 
-  /// Reduces many [Pod] - [instances] to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<A, B> fromMany<A, B>(
-    List<Pod<A>> instances,
-    B Function(ManyPods<A> instances) reducer,
-    List<A> Function(List<A> parentValues, B childValue)? updateParents,
-  ) {
-    return reduceManyPods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
+  /// Casts [other] to [Pod].
+  // ignore: invalid_use_of_visible_for_testing_member
+  static Pod<T> cast<T>(PodListenable<T> other) => other.asPodNotifier().asPod();
 
-  /// Reduces a tuple of 2 [Pod] * [instances]to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<dynamic, T> from2<T, A, B>(
-    Pods2<A, B> instances,
-    T Function(Pods2<A, B> instances) reducer,
-    (A?, B?) Function(Tuple2<A, B> parentValues, T childValue)? updateParents,
-  ) {
-    return reduce2Pods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
+  //
+  //
+  //
 
-  /// Reduces a tuple of 3 [Pod] * [instances]to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<dynamic, T> from3<T, A, B, C>(
-    Pods3<A, B, C> instances,
-    T Function(Pods3<A, B, C> instances) reducer,
-    (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)?
-        updateParents,
-  ) {
-    return reduce3Pods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
+  static const fromMany = _fromMany;
+  static const from2 = _from2;
+  static const from3 = _from3;
+  static const from4 = _from4;
+  static const from5 = _from5;
+  static const from6 = _from6;
+  static const from7 = _from7;
 
-  /// Reduces a tuple of 4 [Pod] * [instances]to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<dynamic, T> from4<T, A, B, C, D>(
-    Pods4<A, B, C, D> instances,
-    T Function(Pods4<A, B, C, D> instances) reducer,
-    (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)?
-        updateParents,
-  ) {
-    return reduce4Pods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
-
-  /// Reduces a tuple of 5 [Pod] * [instances]to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<dynamic, T> from5<T, A, B, C, D, E>(
-    Pods5<A, B, C, D, E> instances,
-    T Function(Pods5<A, B, C, D, E> instances) reducer,
-    (A?, B?, C?, D?, E?) Function(
-      Tuple5<A, B, C, D, E> parentValues,
-      T childValue,
-    )? updateParents,
-  ) {
-    return reduce5Pods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
-
-  /// Reduces a tuple of 7 [Pod] * [instances]to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<dynamic, T> from6<T, A, B, C, D, E, F>(
-    Pods6<A, B, C, D, E, F> instances,
-    T Function(Pods6<A, B, C, D, E, F> instances) reducer,
-    (A?, B?, C?, D?, E?, F?) Function(
-      Tuple6<A, B, C, D, E, F> parentValues,
-      T childValue,
-    )? updateParents,
-  ) {
-    return reduce6Pods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
-
-  /// Reduces a tuple of 7 [Pod] * [instances]to a single [ChildPod] instance via
-  /// [reducer]. Optionally provide [updateParents] to define how parent Pods
-  /// should be updated when this Pod changes.
-  static ChildPod<dynamic, T> from7<T, A, B, C, D, E, F, G>(
-    Pods7<A, B, C, D, E, F, G> instances,
-    T Function(Pods7<A, B, C, D, E, F, G> instances) reducer,
-    (A?, B?, C?, D?, E?, F?, G?) Function(
-      Tuple7<A, B, C, D, E, F, G> parentValues,
-      T childValue,
-    )? updateParents,
-  ) {
-    return reduce7Pods(
-      instances,
-      reducer,
-      updateParents,
-    );
-  }
+  static const tempFromMany = _tempFromMany;
+  static const tempFrom2 = _tempFrom2;
+  static const tempFrom3 = _tempFrom3;
+  static const tempFrom4 = _tempFrom4;
+  static const tempFrom5 = _tempFrom5;
+  static const tempFrom6 = _tempFrom6;
+  static const tempFrom7 = _tempFrom7;
 
   //
   //

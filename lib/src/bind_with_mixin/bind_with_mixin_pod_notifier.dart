@@ -21,15 +21,14 @@ import '/src/_index.g.dart';
 ///   late final pStatus = Pod<String>('init')..bindParent(this);;
 /// }
 /// ```
-abstract class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
+abstract base class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
     with BindWithMixin {
   BindWithMixinPodNotifier(super.value);
   BindWithMixinPodNotifier.temp(super.value) : super.temp();
   BindWithMixinPodNotifier.global(super.value) : super.global();
 }
 
-abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T>
-    implements DisposeMixin {
+abstract base class _PodNotifierWithDisposable<T> extends PodNotifier<T> implements DisposeMixin {
   _PodNotifierWithDisposable(super.value);
   _PodNotifierWithDisposable.temp(super.value) : super.temp();
   _PodNotifierWithDisposable.global(super.value) : super.global();
