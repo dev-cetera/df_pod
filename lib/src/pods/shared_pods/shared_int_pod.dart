@@ -14,15 +14,29 @@ import '../../_index.g.dart';
 
 final class SharedIntPodCreator {
   const SharedIntPodCreator._();
-  static Future<SharedIntPod> create(
-    String key, {
-    bool disposable = true,
-    bool temp = false,
-  }) async {
-    final instance = SharedIntPod.empty(
+  static Future<SharedIntPod> local(String key) async {
+    final instance = SharedIntPod(
       key,
-      disposable: disposable,
-      temp: temp,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedIntPod> temp(String key) async {
+    final instance = SharedIntPod.temp(
+      key,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedIntPod> global(String key) async {
+    final instance = SharedIntPod.global(
+      key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
     );

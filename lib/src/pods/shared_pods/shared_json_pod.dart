@@ -16,15 +16,29 @@ import '../../_index.g.dart';
 
 final class SharedJsonPodCreator {
   const SharedJsonPodCreator._();
-  static Future<SharedJsonPod> create(
-    String key, {
-    bool disposable = true,
-    bool temp = false,
-  }) async {
-    final instance = SharedJsonPod.empty(
+  static Future<SharedJsonPod> local(String key) async {
+    final instance = SharedJsonPod(
       key,
-      disposable: disposable,
-      temp: temp,
+      fromValue: (rawValue) => jsonEncode(rawValue),
+      toValue: (value) => value != null ? jsonDecode(value) : null,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedJsonPod> temp(String key) async {
+    final instance = SharedJsonPod.temp(
+      key,
+      fromValue: (rawValue) => jsonEncode(rawValue),
+      toValue: (value) => value != null ? jsonDecode(value) : null,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedJsonPod> global(String key) async {
+    final instance = SharedJsonPod.global(
+      key,
       fromValue: (rawValue) => jsonEncode(rawValue),
       toValue: (value) => value != null ? jsonDecode(value) : null,
     );

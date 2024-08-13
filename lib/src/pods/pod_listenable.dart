@@ -12,6 +12,7 @@ import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/widgets.dart';
 
+import '../exceptions/cannot_cast_pod_exception.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -57,26 +58,33 @@ abstract class PodListenable<T> extends ValueListenable<T> {}
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// An extension on [PodListenable] that provides utility methods for casting
-/// to a [Pod] instance.
-extension AsPodOnPodListenableX<T> on PodListenable<T> {
-  /// Attempts to cast this [PodListenable] to a [Pod] instance. Returns `null`
-  /// if the cast is unsuccessful.
+/// An extension on [PodListenable] that provides utility methods for
+/// down-casting to [PodNotifier] instances.
+extension AsPodNotifierOnPodListenableX<T> on PodListenable<T> {
+  /// Attempts to cast this [PodListenable] to a [PodNotifier] instance.
+  /// Returns `null` if the cast is unsuccessful.
   ///
-  /// Prefer using [asPod] unless there is a specific need for [asPodOrNull].
+  /// Prefer using [asPodNotifier] unless there is a specific need for
+  /// [asPodNotifierOrNull].
   ///
-  /// This method is marked as [visibleForTesting] to remind developers
+  /// Note: This method is marked as [visibleForTesting] to remind developers
   /// to structure their code in a way that avoids frequent casting,
   /// ensuring clearer and more maintainable code.
   @visibleForTesting
-  Pod<T>? asPodOrNull() => letAsOrNull<Pod<T>>(this);
+  PodNotifier<T>? asPodNotifierOrNull() => letAsOrNull<PodNotifier<T>>(this);
 
-  /// Attempts to cast this [PodListenable] to a [Pod] instance. Throw an if
-  /// the cast is unsuccessful.
+  /// Attempts to cast this [PodListenable] to a [PodNotifier] instance.
+  /// Throws a [CannotCastPodException] an if the cast is unsuccessful.
   ///
-  /// This method is marked as [visibleForTesting] to remind developers
+  /// Note: This method is marked as [visibleForTesting] to remind developers
   /// to structure their code in a way that avoids frequent casting,
   /// ensuring clearer and more maintainable code.
   @visibleForTesting
-  Pod<T> asPod() => this as Pod<T>;
+  PodNotifier<T> asPodNotifier() {
+    try {
+      return this as PodNotifier<T>;
+    } catch (_) {
+      throw CannotCastPodException();
+    }
+  }
 }

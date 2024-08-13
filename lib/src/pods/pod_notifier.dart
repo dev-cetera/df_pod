@@ -8,9 +8,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 
-import 'pod_disposable_mixin.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -27,10 +28,38 @@ class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
   @override
   final bool temp;
 
-  PodNotifier(
+  /// Creates a new [Pod] from the given [value].
+  ///
+  /// This [Pod] is not automatically disposed of, so it is important to
+  /// manually [dispose] of it when it is no longer needed to free up resources.
+  PodNotifier(T value) : this._unsafe(value, disposable: true, temp: false);
+
+  /// Creates a new temporary [PodNotifier] from the given [value].
+  ///
+  /// Temporary Pods are designed to be used with widgets that support them,
+  /// such as [PodBuilder] and other builders in the `df_pod` package.
+  /// These Pods are automatically disposed of when the associated widget
+  /// is removed from the widget tree, ensuring efficient resource management
+  /// without manual intervention.
+  ///
+  /// Use temporary Pods when you want a Pod to have a lifecycle tied to
+  /// the widget tree, avoiding the need to manage disposal explicitly.
+  PodNotifier.temp(T value) : this._unsafe(value, disposable: true, temp: true);
+
+  /// Creates a new non-disposable/global [PodNotifier] from the given [value].
+  ///
+  /// These Pods cannot be disposed of, and attempting to do so will throw a
+  /// [DoNotDisposePodException].
+  ///
+  /// Non-disposable Pods should not be used in local scopes. They are intended
+  /// to be used as global variables that persist throughout the lifetime of
+  /// your app.
+  PodNotifier.global(T value) : this._unsafe(value, disposable: false, temp: false);
+
+  PodNotifier._unsafe(
     super.value, {
-    this.disposable = true,
-    this.temp = false,
+    required this.disposable,
+    required this.temp,
   }) : assert(
           temp && disposable == true || !temp,
           'A PodNotifier marked as "temp" must also be marked as "disposable".',
@@ -59,5 +88,37 @@ class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
     super.maybeDispose(
       super.dispose,
     );
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+/// An extension on [PodNotifier] that provides utility methods for
+/// down-casting to [Pod] instances.
+extension AsPodOnPodNotifierX<T> on PodNotifier<T> {
+  /// Attempts to cast this [PodNotifier] to a [Pod] instance. Returns `null`
+  /// if the cast is unsuccessful.
+  ///
+  /// Prefer using [asPod] unless there is a specific need for [asPodOrNull].
+  ///
+  /// Note: This method is marked as [visibleForTesting] to remind developers
+  /// to structure their code in a way that avoids frequent casting,
+  /// ensuring clearer and more maintainable code.
+  @visibleForTesting
+  Pod<T>? asPodOrNull() => letAsOrNull<Pod<T>>(this);
+
+  /// Attempts to cast this [PodListenable] to a [PodNotifier] instance.
+  /// Throws a [CannotCastPodException] an if the cast is unsuccessful.
+  ///
+  /// Note: This method is marked as [visibleForTesting] to remind developers
+  /// to structure their code in a way that avoids frequent casting,
+  /// ensuring clearer and more maintainable code.
+  @visibleForTesting
+  Pod<T> asPod() {
+    try {
+      return this as Pod<T>;
+    } catch (_) {
+      throw CannotCastPodException();
+    }
   }
 }

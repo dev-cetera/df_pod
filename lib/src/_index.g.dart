@@ -18,6 +18,7 @@ export 'builders/responding_builder.dart';
 export 'builders/polling_pod_builder.dart';
 export 'builders/pod_builder.dart';
 export 'exceptions/child_already_added_pod_exception.dart';
+export 'exceptions/cannot_cast_pod_exception.dart';
 export 'exceptions/wrong_parent_pod_exception.dart';
 export 'exceptions/pod_exception.dart';
 export 'exceptions/do_not_dispose_pod_exception.dart';

@@ -8,21 +8,35 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../../_index.g.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedStringListPodCreator {
   const SharedStringListPodCreator._();
-  static Future<SharedStringListPod> create(
-    String key, {
-    bool disposable = true,
-    bool temp = false,
-  }) async {
-    final instance = SharedStringListPod.empty(
+  static Future<SharedStringListPod> local(String key) async {
+    final instance = SharedStringListPod(
       key,
-      disposable: disposable,
-      temp: temp,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedStringListPod> temp(String key) async {
+    final instance = SharedStringListPod.temp(
+      key,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedStringListPod> global(String key) async {
+    final instance = SharedStringListPod.global(
+      key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
     );

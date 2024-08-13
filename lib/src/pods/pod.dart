@@ -98,11 +98,7 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
   /// - `disposable`: Whether this Pod can be disposed or not.
   /// - `bindWith`: The class to bind itself with. This means this Pod will
   /// dispose when this class disposes.
-  Pod(
-    super.value, {
-    super.disposable = true,
-    super.temp = false,
-  });
+  Pod(super.value);
 
   //
   //
@@ -110,16 +106,11 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
 
   /// Casts [other] to `Pod<T>`.
   // ignore: invalid_use_of_visible_for_testing_member
-  static Pod<T> cast<T>(PodListenable<T> other) => other.asPod();
+  static Pod<T> cast<T>(PodListenable<T> other) => other.asPodNotifier().asPod();
 
-  //
-  //
-  //
+  Pod.temp(super.value) : super.temp();
 
-  /// Creates a temporary `Pod<T>`.
-  ///
-  /// - `value`: The initial value for the Pod.
-  Pod.temp(T value) : this(value, temp: true);
+  Pod.global(super.value) : super.global();
 
   //
   //
@@ -485,11 +476,10 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
     B Function(T value) reducer, [
     List<T> Function(List parentValues, B childValue)? updateParents,
   ]) {
-    return ChildPod<T, B>(
+    return ChildPod<T, B>.temp(
       parents: [this],
       reducer: (e) => reducer(e.first),
       updateParents: updateParents,
-      temp: true,
     );
   }
 }

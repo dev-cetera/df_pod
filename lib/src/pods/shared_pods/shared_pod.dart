@@ -30,13 +30,23 @@ class SharedPod<A, B> extends Pod<A?> {
   //
   //
 
-  SharedPod.empty(
+  SharedPod(
     this.key, {
-    super.disposable = true,
-    super.temp = false,
     this.fromValue,
     this.toValue,
   }) : super(null);
+
+  SharedPod.temp(
+    this.key, {
+    this.fromValue,
+    this.toValue,
+  }) : super.temp(null);
+
+  SharedPod.global(
+    this.key, {
+    this.fromValue,
+    this.toValue,
+  }) : super.global(null);
 
   //
   //

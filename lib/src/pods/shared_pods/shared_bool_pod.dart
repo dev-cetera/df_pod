@@ -14,15 +14,29 @@ import '../../_index.g.dart';
 
 final class SharedBoolPodCreator {
   const SharedBoolPodCreator._();
-  static Future<SharedBoolPod> create(
-    String key, {
-    bool disposable = true,
-    bool temp = false,
-  }) async {
-    final instance = SharedBoolPod.empty(
+  static Future<SharedBoolPod> local(String key) async {
+    final instance = SharedBoolPod(
       key,
-      disposable: disposable,
-      temp: temp,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedBoolPod> temp(String key) async {
+    final instance = SharedBoolPod.temp(
+      key,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedBoolPod> global(String key) async {
+    final instance = SharedBoolPod.global(
+      key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
     );

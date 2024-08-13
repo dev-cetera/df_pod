@@ -29,10 +29,8 @@ class ChildPod<A, B> extends Pod<B> {
     required this.parents,
     required this.reducer,
     required this.updateParents,
-    bool temp = false,
   }) : super(
           reducer(parents.map((p) => p.value).toList()),
-          temp: temp,
         ) {
     for (var parent in parents) {
       parent._addChild(this);
@@ -44,17 +42,17 @@ class ChildPod<A, B> extends Pod<B> {
   //
   //
 
-  factory ChildPod.temp({
-    required List<Pod<A>> parents,
-    required B Function(List<A> parentValues) reducer,
-    List<A> Function(List<A> parentValues, B childValue)? updateParents,
-  }) {
-    return ChildPod(
-      parents: parents,
-      reducer: reducer,
-      updateParents: updateParents,
-      temp: true,
-    );
+  ChildPod.temp({
+    required this.parents,
+    required this.reducer,
+    required this.updateParents,
+  }) : super.temp(
+          reducer(parents.map((p) => p.value).toList()),
+        ) {
+    for (var parent in parents) {
+      parent._addChild(this);
+      parent.addListener(refresh);
+    }
   }
 
   //

@@ -14,15 +14,41 @@ import '../../_index.g.dart';
 
 final class SharedStringPodCreator {
   const SharedStringPodCreator._();
-  static Future<SharedStringPod> create(
+  static Future<SharedStringPod> local(
     String key, {
     bool disposable = true,
     bool temp = false,
   }) async {
-    final instance = SharedStringPod.empty(
+    final instance = SharedStringPod(
       key,
-      disposable: disposable,
-      temp: temp,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedStringPod> temp(
+    String key, {
+    bool disposable = true,
+    bool temp = false,
+  }) async {
+    final instance = SharedStringPod.temp(
+      key,
+      fromValue: (rawValue) => rawValue,
+      toValue: (value) => value,
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedStringPod> global(
+    String key, {
+    bool disposable = true,
+    bool temp = false,
+  }) async {
+    final instance = SharedStringPod.global(
+      key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
     );

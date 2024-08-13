@@ -8,28 +8,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '/src/_index.g.dart';
+import 'pod_exception.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// Use `BindWithMixinPodNotifier<T>` instead of PodNotifier<T> to incorporate
-/// `BindWithMixin`.
-///
-/// Example:
-/// ```dart
-/// class MyPodNotifier<T> extends BindWithMixinPodNotifier<T>> {
-///   late final pStatus = Pod<String>('init')..bindParent(this);;
-/// }
-/// ```
-abstract class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
-    with BindWithMixin {
-  BindWithMixinPodNotifier(super.value);
-  BindWithMixinPodNotifier.temp(super.value) : super.temp();
-  BindWithMixinPodNotifier.global(super.value) : super.global();
-}
-
-abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T> implements DisposeMixin {
-  _PodNotifierWithDisposable(super.value);
-  _PodNotifierWithDisposable.temp(super.value) : super.temp();
-  _PodNotifierWithDisposable.global(super.value) : super.global();
+/// TODO: Write docs.
+final class CannotCastPodException extends PodException {
+  CannotCastPodException()
+      : super(
+          'Cannot cast due to incompatible types.',
+        );
 }

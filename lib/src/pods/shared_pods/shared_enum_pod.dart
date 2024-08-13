@@ -16,14 +16,46 @@ final class SharedEnumPodCreator {
   const SharedEnumPodCreator._();
   static Future<SharedEnumPod<T>> create<T extends Enum>(
     String key,
-    Iterable<T?> options, {
-    bool disposable = true,
-    bool temp = false,
-  }) async {
-    final instance = SharedEnumPod<T>.empty(
+    Iterable<T?> options,
+  ) async {
+    final instance = SharedEnumPod<T>(
       key,
-      disposable: disposable,
-      temp: temp,
+      fromValue: (rawValue) => rawValue?.name,
+      toValue: (value) {
+        return options.firstWhere(
+          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
+          orElse: () => null,
+        );
+      },
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedEnumPod<T>> temp<T extends Enum>(
+    String key,
+    Iterable<T?> options,
+  ) async {
+    final instance = SharedEnumPod<T>.temp(
+      key,
+      fromValue: (rawValue) => rawValue?.name,
+      toValue: (value) {
+        return options.firstWhere(
+          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
+          orElse: () => null,
+        );
+      },
+    );
+    await instance.refresh();
+    return instance;
+  }
+
+  static Future<SharedEnumPod<T>> global<T extends Enum>(
+    String key,
+    Iterable<T?> options,
+  ) async {
+    final instance = SharedEnumPod<T>.global(
+      key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
         return options.firstWhere(
