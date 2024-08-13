@@ -17,9 +17,8 @@ import '/src/_index.g.dart';
 extension ReduceManyPodsOnPodIterableExtension on List<Pod> {
   /// Reduces a set of [Pod] instances to a single [ChildPod] instance.
   ChildPod<dynamic, T> reduceManyPods<T>(
-    T Function(ManyPods values) reducer,
-    List<dynamic> Function(List<dynamic> parentValues, T childValue)?
-        updateParents,
+    T Function(ManyPods<dynamic> values) reducer,
+    List<dynamic> Function(List<dynamic> parentValues, T childValue)? updateParents,
     _ChildPodInstantiator<dynamic, T> instantiator,
   ) {
     return _reduceToSinglePod(
@@ -36,11 +35,11 @@ extension ReduceManyPodsOnPodIterableExtension on List<Pod> {
 /// Reduces many Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<A, B> reduceManyPods<A, B>(
-  final List<Pod<A>> instances,
-  B Function(ManyPods<A> values) reducer,
-  List<A> Function(List<A> parentValues, B childValue)? updateParents,
-  _ChildPodInstantiator<A, B> instantiator,
+ChildPod<T1, T2> reduceManyPods<T1, T2>(
+  final List<Pod<T1>> instances,
+  T2 Function(ManyPods<T1> values) reducer,
+  List<T1> Function(List<T1> parentValues, T2 childValue)? updateParents,
+  _ChildPodInstantiator<T1, T2> instantiator,
 ) {
   return instantiator(
     parents: instances,
@@ -53,13 +52,13 @@ const _reduceToSinglePod = reduceManyPods;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A tuple of many [Pod] instances.
-base class ManyPods<A> {
+/// T1 tuple of many [Pod] instances.
+base class ManyPods<T> {
   //
   //
   //
 
-  final List<Pod<A>?> pods;
+  final List<Pod<T>?> pods;
 
   //
   //
@@ -71,7 +70,7 @@ base class ManyPods<A> {
   //
   //
 
-  List<A?> toList() => pods.map((pod) => pod?.value).toList();
+  List<T?> toList() => pods.map((pod) => pod?.value).toList();
 
   //
   //
@@ -94,10 +93,10 @@ base class ManyPods<A> {
 /// Reduces a tuple of 2 Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<dynamic, T> reduce2Pods<T, A, B>(
-  Pods2<A, B> instances,
-  T Function(Pods2<A, B> values) reducer,
-  (A?, B?) Function(Tuple2<A, B> parentValues, T childValue)? updateParents,
+ChildPod<dynamic, T> reduce2Pods<T, T1, T2>(
+  Pods2<T1, T2> instances,
+  T Function(Pods2<T1, T2> values) reducer,
+  (T1?, T2?) Function(Tuple2<T1, T2> parentValues, T childValue)? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
   return instantiator(
@@ -115,23 +114,23 @@ ChildPod<dynamic, T> reduce2Pods<T, A, B>(
   );
 }
 
-/// A tuple of 2 [Pod] instances.
-final class Pods2<A, B> extends Tuple2<A?, B?> implements ManyPods {
-  final Pod<A>? pA;
-  final Pod<B>? pB;
+/// T1 tuple of 2 [Pod] instances.
+final class Pods2<T1, T2> extends Tuple2<T1?, T2?> implements ManyPods<dynamic> {
+  final Pod<T1>? p1;
+  final Pod<T2>? p2;
 
   Pods2([
-    this.pA,
-    this.pB,
+    this.p1,
+    this.p2,
   ]) : super(
-          pA?.value,
-          pB?.value,
+          p1?.value,
+          p2?.value,
         );
 
   @override
   List<Pod<dynamic>?> get pods => [
-        pA,
-        pB,
+        p1,
+        p2,
       ];
 
   @override
@@ -143,11 +142,10 @@ final class Pods2<A, B> extends Tuple2<A?, B?> implements ManyPods {
 /// Reduces a tuple of 3 Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<dynamic, T> reduce3Pods<T, A, B, C>(
-  Pods3<A, B, C> instances,
-  T Function(Pods3<A, B, C> values) reducer,
-  (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)?
-      updateParents,
+ChildPod<dynamic, T> reduce3Pods<T, T1, T2, T3>(
+  Pods3<T1, T2, T3> instances,
+  T Function(Pods3<T1, T2, T3> values) reducer,
+  (T1?, T2?, T3?) Function(Tuple3<T1, T2, T3> parentValues, T childValue)? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
   return instantiator(
@@ -165,27 +163,27 @@ ChildPod<dynamic, T> reduce3Pods<T, A, B, C>(
   );
 }
 
-/// A tuple of 3 [Pod] instances.
-final class Pods3<A, B, C> extends Tuple3<A?, B?, C?> implements ManyPods {
-  final Pod<A>? pA;
-  final Pod<B>? pB;
-  final Pod<C>? pC;
+/// T1 tuple of 3 [Pod] instances.
+final class Pods3<T1, T2, T3> extends Tuple3<T1?, T2?, T3?> implements ManyPods<dynamic> {
+  final Pod<T1>? p1;
+  final Pod<T2>? p2;
+  final Pod<T3>? p3;
 
   Pods3([
-    this.pA,
-    this.pB,
-    this.pC,
+    this.p1,
+    this.p2,
+    this.p3,
   ]) : super(
-          pA?.value,
-          pB?.value,
-          pC?.value,
+          p1?.value,
+          p2?.value,
+          p3?.value,
         );
 
   @override
   List<Pod<dynamic>?> get pods => [
-        pA,
-        pB,
-        pC,
+        p1,
+        p2,
+        p3,
       ];
 
   @override
@@ -197,11 +195,10 @@ final class Pods3<A, B, C> extends Tuple3<A?, B?, C?> implements ManyPods {
 /// Reduces a tuple of 4 Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<dynamic, T> reduce4Pods<T, A, B, C, D>(
-  Pods4<A, B, C, D> instances,
-  T Function(Pods4<A, B, C, D> values) reducer,
-  (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)?
-      updateParents,
+ChildPod<dynamic, T> reduce4Pods<T, T1, T2, T3, T4>(
+  Pods4<T1, T2, T3, T4> instances,
+  T Function(Pods4<T1, T2, T3, T4> values) reducer,
+  (T1?, T2?, T3?, T4?) Function(Tuple4<T1, T2, T3, T4> parentValues, T childValue)? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
   return instantiator(
@@ -219,32 +216,31 @@ ChildPod<dynamic, T> reduce4Pods<T, A, B, C, D>(
   );
 }
 
-/// A tuple of 4 [Pod] instances.
-final class Pods4<A, B, C, D> extends Tuple4<A?, B?, C?, D?>
-    implements ManyPods {
-  final Pod<A>? pA;
-  final Pod<B>? pB;
-  final Pod<C>? pC;
-  final Pod<D>? pD;
+/// T1 tuple of 4 [Pod] instances.
+final class Pods4<T1, T2, T3, T4> extends Tuple4<T1?, T2?, T3?, T4?> implements ManyPods<dynamic> {
+  final Pod<T1>? p1;
+  final Pod<T2>? p2;
+  final Pod<T3>? p3;
+  final Pod<T4>? p4;
 
   Pods4([
-    this.pA,
-    this.pB,
-    this.pC,
-    this.pD,
+    this.p1,
+    this.p2,
+    this.p3,
+    this.p4,
   ]) : super(
-          pA?.value,
-          pB?.value,
-          pC?.value,
-          pD?.value,
+          p1?.value,
+          p2?.value,
+          p3?.value,
+          p4?.value,
         );
 
   @override
   List<Pod<dynamic>?> get pods => [
-        pA,
-        pB,
-        pC,
-        pD,
+        p1,
+        p2,
+        p3,
+        p4,
       ];
 
   @override
@@ -256,11 +252,10 @@ final class Pods4<A, B, C, D> extends Tuple4<A?, B?, C?, D?>
 /// Reduces a tuple of 5 Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<dynamic, T> reduce5Pods<T, A, B, C, D, E>(
-  Pods5<A, B, C, D, E> instances,
-  T Function(Pods5<A, B, C, D, E> values) reducer,
-  (A?, B?, C?, D?, E?) Function(Tuple5<A, B, C, D, E>, T childValue)?
-      updateParents,
+ChildPod<dynamic, T> reduce5Pods<T, T1, T2, T3, T4, T5>(
+  Pods5<T1, T2, T3, T4, T5> instances,
+  T Function(Pods5<T1, T2, T3, T4, T5> values) reducer,
+  (T1?, T2?, T3?, T4?, T5?) Function(Tuple5<T1, T2, T3, T4, T5>, T childValue)? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
   return instantiator(
@@ -278,36 +273,36 @@ ChildPod<dynamic, T> reduce5Pods<T, A, B, C, D, E>(
   );
 }
 
-/// A tuple of 5 [Pod] instances.
-final class Pods5<A, B, C, D, E> extends Tuple5<A?, B?, C?, D?, E?>
-    implements ManyPods {
-  final Pod<A>? pA;
-  final Pod<B>? pB;
-  final Pod<C>? pC;
-  final Pod<D>? pD;
-  final Pod<E>? pE;
+/// T1 tuple of 5 [Pod] instances.
+final class Pods5<T1, T2, T3, T4, T5> extends Tuple5<T1?, T2?, T3?, T4?, T5?>
+    implements ManyPods<dynamic> {
+  final Pod<T1>? p1;
+  final Pod<T2>? p2;
+  final Pod<T3>? p3;
+  final Pod<T4>? p4;
+  final Pod<T5>? p5;
 
   Pods5([
-    this.pA,
-    this.pB,
-    this.pC,
-    this.pD,
-    this.pE,
+    this.p1,
+    this.p2,
+    this.p3,
+    this.p4,
+    this.p5,
   ]) : super(
-          pA?.value,
-          pB?.value,
-          pC?.value,
-          pD?.value,
-          pE?.value,
+          p1?.value,
+          p2?.value,
+          p3?.value,
+          p4?.value,
+          p5?.value,
         );
 
   @override
   List<Pod<dynamic>?> get pods => [
-        pA,
-        pB,
-        pC,
-        pD,
-        pE,
+        p1,
+        p2,
+        p3,
+        p4,
+        p5,
       ];
 
   @override
@@ -319,10 +314,10 @@ final class Pods5<A, B, C, D, E> extends Tuple5<A?, B?, C?, D?, E?>
 /// Reduces a tuple of 6 Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<dynamic, T> reduce6Pods<T, A, B, C, D, E, F>(
-  Pods6<A, B, C, D, E, F> instances,
-  T Function(Pods6<A, B, C, D, E, F> instances) reducer,
-  (A?, B?, C?, D?, E?, F?) Function(Tuple6<A, B, C, D, E, F>, T childValue)?
+ChildPod<dynamic, T> reduce6Pods<T, T1, T2, T3, T4, T5, T6>(
+  Pods6<T1, T2, T3, T4, T5, T6> instances,
+  T Function(Pods6<T1, T2, T3, T4, T5, T6> instances) reducer,
+  (T1?, T2?, T3?, T4?, T5?, T6?) Function(Tuple6<T1, T2, T3, T4, T5, T6>, T childValue)?
       updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
@@ -341,40 +336,40 @@ ChildPod<dynamic, T> reduce6Pods<T, A, B, C, D, E, F>(
   );
 }
 
-/// A tuple of 6 [Pod] instances.
-final class Pods6<A, B, C, D, E, F> extends Tuple6<A?, B?, C?, D?, E?, F?>
-    implements ManyPods {
-  final Pod<A>? pA;
-  final Pod<B>? pB;
-  final Pod<C>? pC;
-  final Pod<D>? pD;
-  final Pod<E>? pE;
-  final Pod<F>? pF;
+/// T1 tuple of 6 [Pod] instances.
+final class Pods6<T1, T2, T3, T4, T5, T6> extends Tuple6<T1?, T2?, T3?, T4?, T5?, T6?>
+    implements ManyPods<dynamic> {
+  final Pod<T1>? p1;
+  final Pod<T2>? p2;
+  final Pod<T3>? p3;
+  final Pod<T4>? p4;
+  final Pod<T5>? p5;
+  final Pod<T6>? p6;
 
   Pods6([
-    this.pA,
-    this.pB,
-    this.pC,
-    this.pD,
-    this.pE,
-    this.pF,
+    this.p1,
+    this.p2,
+    this.p3,
+    this.p4,
+    this.p5,
+    this.p6,
   ]) : super(
-          pA?.value,
-          pB?.value,
-          pC?.value,
-          pD?.value,
-          pE?.value,
-          pF?.value,
+          p1?.value,
+          p2?.value,
+          p3?.value,
+          p4?.value,
+          p5?.value,
+          p6?.value,
         );
 
   @override
   List<Pod<dynamic>?> get pods => [
-        pA,
-        pB,
-        pC,
-        pD,
-        pE,
-        pF,
+        p1,
+        p2,
+        p3,
+        p4,
+        p5,
+        p6,
       ];
 
   @override
@@ -386,11 +381,11 @@ final class Pods6<A, B, C, D, E, F> extends Tuple6<A?, B?, C?, D?, E?, F?>
 /// Reduces a tuple of 7 Pod [instances]to a single [ChildPod] instance via
 /// [reducer]. Optionally provide [updateParents] to define how parent Pods
 /// should be updated when this Pod changes.
-ChildPod<dynamic, T> reduce7Pods<T, A, B, C, D, E, F, G>(
-  Pods7<A, B, C, D, E, F, G> instances,
-  T Function(Pods7<A, B, C, D, E, F, G> instances) reducer,
-  (A?, B?, C?, D?, E?, F?, G?) Function(
-    Tuple7<A, B, C, D, E, F, G>,
+ChildPod<dynamic, T> reduce7Pods<T, T1, T2, T3, T4, T5, T6, T7>(
+  Pods7<T1, T2, T3, T4, T5, T6, T7> instances,
+  T Function(Pods7<T1, T2, T3, T4, T5, T6, T7> instances) reducer,
+  (T1?, T2?, T3?, T4?, T5?, T6?, T7?) Function(
+    Tuple7<T1, T2, T3, T4, T5, T6, T7>,
     T childValue,
   )? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
@@ -418,44 +413,44 @@ ChildPod<dynamic, T> reduce7Pods<T, A, B, C, D, E, F, G>(
   );
 }
 
-/// A tuple of 7 [Pod] instances.
-final class Pods7<A, B, C, D, E, F, G>
-    extends Tuple7<A?, B?, C?, D?, E?, F?, G?> implements ManyPods {
-  final Pod<A>? pA;
-  final Pod<B>? pB;
-  final Pod<C>? pC;
-  final Pod<D>? pD;
-  final Pod<E>? pE;
-  final Pod<F>? pF;
-  final Pod<G>? pG;
+/// T1 tuple of 7 [Pod] instances.
+final class Pods7<T1, T2, T3, T4, T5, T6, T7> extends Tuple7<T1?, T2?, T3?, T4?, T5?, T6?, T7?>
+    implements ManyPods<dynamic> {
+  final Pod<T1>? p1;
+  final Pod<T2>? p2;
+  final Pod<T3>? p3;
+  final Pod<T4>? p4;
+  final Pod<T5>? p5;
+  final Pod<T6>? p6;
+  final Pod<T7>? p7;
 
   Pods7([
-    this.pA,
-    this.pB,
-    this.pC,
-    this.pD,
-    this.pE,
-    this.pF,
-    this.pG,
+    this.p1,
+    this.p2,
+    this.p3,
+    this.p4,
+    this.p5,
+    this.p6,
+    this.p7,
   ]) : super(
-          pA?.value,
-          pB?.value,
-          pC?.value,
-          pD?.value,
-          pE?.value,
-          pF?.value,
-          pG?.value,
+          p1?.value,
+          p2?.value,
+          p3?.value,
+          p4?.value,
+          p5?.value,
+          p6?.value,
+          p7?.value,
         );
 
   @override
   List<Pod<dynamic>?> get pods => [
-        pA,
-        pB,
-        pC,
-        pD,
-        pE,
-        pF,
-        pG,
+        p1,
+        p2,
+        p3,
+        p4,
+        p5,
+        p6,
+        p7,
       ];
 
   @override
@@ -464,8 +459,8 @@ final class Pods7<A, B, C, D, E, F, G>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef _ChildPodInstantiator<A, B> = ChildPod<A, B> Function({
-  required List<Pod<A>> parents,
-  required B Function(List<A> parentValues) reducer,
-  required List<A> Function(List<A> parentValues, B childValue)? updateParents,
+typedef _ChildPodInstantiator<T1, T2> = ChildPod<T1, T2> Function({
+  required List<Pod<T1>> parents,
+  required T2 Function(List<T1> parentValues) reducer,
+  required List<T1> Function(List<T1> parentValues, T2 childValue)? updateParents,
 });

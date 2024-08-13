@@ -12,7 +12,6 @@
 
 import 'package:tuple/tuple.dart';
 
-import '/src/utils/_reducers.dart';
 import '/src/_index.g.dart';
 
 part '_static_constructors.dart';
@@ -33,8 +32,7 @@ base class Pod<T> extends BindWithMixinPodNotifier<T> {
 
   Pod.global(super.value) : super.global();
 
-  static Pod<T> cast<T>(PodListenable<T> other) =>
-      other.asPodNotifier().asPod();
+  static Pod<T> cast<T>(PodListenable<T> other) => other.asPodNotifier().asPod();
 
   static const fromMany = _fromMany;
   static const from2 = _from2;

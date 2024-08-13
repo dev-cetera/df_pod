@@ -8,7 +8,6 @@
 - chore: Separate each exception into its own file
 - feat: Add .global and .temp constructors
 - chore: Restructure to not expose unwanted declarations to public
-- chore: Restructure source files
 - fix: Fixed SharedPod
 - refactor: Use switch instead in shared_pod.dart
 - refactor: Address null issues

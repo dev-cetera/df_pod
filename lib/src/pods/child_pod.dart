@@ -31,12 +31,10 @@ final class ChildPod<A, B> extends Pod<B> {
     required this.parents,
     required this.reducer,
     required this.updateParents,
-  }) : super(
-          reducer(parents.map((p) => p.value).toList()),
-        ) {
+  }) : super(reducer(parents.map((p) => p.value).toList())) {
     for (var parent in parents) {
+      print('!!!! ${parent.value}');
       parent._addChild(this);
-      parent.addListener(refresh);
     }
   }
 
@@ -53,7 +51,6 @@ final class ChildPod<A, B> extends Pod<B> {
         ) {
     for (var parent in parents) {
       parent._addChild(this);
-      parent.addListener(refresh);
     }
   }
 
@@ -64,6 +61,7 @@ final class ChildPod<A, B> extends Pod<B> {
   @override
   Future<void> refresh() async {
     final newValue = reducer(parents.map((p) => p.value).toList());
+    print('REFRESHING CHILD ${newValue}');
     await set(newValue);
   }
 
