@@ -28,7 +28,8 @@ abstract class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
   BindWithMixinPodNotifier.global(super.value) : super.global();
 }
 
-abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T> implements DisposeMixin {
+abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T>
+    implements DisposeMixin {
   _PodNotifierWithDisposable(super.value);
   _PodNotifierWithDisposable.temp(super.value) : super.temp();
   _PodNotifierWithDisposable.global(super.value) : super.global();

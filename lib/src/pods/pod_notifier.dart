@@ -54,7 +54,8 @@ class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
   /// Non-disposable Pods should not be used in local scopes. They are intended
   /// to be used as global variables that persist throughout the lifetime of
   /// your app.
-  PodNotifier.global(T value) : this._unsafe(value, disposable: false, temp: false);
+  PodNotifier.global(T value)
+      : this._unsafe(value, disposable: false, temp: false);
 
   PodNotifier._unsafe(
     super.value, {
