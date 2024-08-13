@@ -8,6 +8,7 @@
 - chore: Separate each exception into its own file
 - feat: Add .global and .temp constructors
 - chore: Restructure to not expose unwanted declarations to public
+- chore: Restructure source files
 
 ## [0.2.3]
 

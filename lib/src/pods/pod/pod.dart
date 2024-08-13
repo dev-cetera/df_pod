@@ -81,7 +81,7 @@ base class Pod<T> extends BindWithMixinPodNotifier<T> {
   }
 
   /// Maps `this` [Pod] to a new [Pod] using the specified [reducer].
-  /// 
+  ///
   /// Optionally, provide [updateParents] to define how parent Pods should be
   /// updated when this Pod changes.
   ChildPod<T, B> map<B>(
@@ -96,7 +96,7 @@ base class Pod<T> extends BindWithMixinPodNotifier<T> {
   }
 
   /// Maps `this` [Pod] to a new [Pod.temp] using the specified [reducer].
-  /// 
+  ///
   /// Optionally, provide [updateParents] to define how parent Pods should be
   /// updated when this Pod changes.
   ChildPod<T, B> mapToTemp<B>(
