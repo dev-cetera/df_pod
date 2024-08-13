@@ -23,8 +23,8 @@ import '/src/_index.g.dart';
 ///   late final pStatus = Pod<String>('init')..bindParent(this);
 /// }
 /// ```
-abstract class BindWithMixinState<T extends StatefulWidget> extends _StatefulWidgetWithDisposable<T>
-    with BindWithMixin {}
+abstract class BindWithMixinState<T extends StatefulWidget>
+    extends _StatefulWidgetWithDisposable<T> with BindWithMixin {}
 
-abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget> extends State<T>
-    implements DisposeMixin {}
+abstract class _StatefulWidgetWithDisposable<T extends StatefulWidget>
+    extends State<T> implements DisposeMixin {}

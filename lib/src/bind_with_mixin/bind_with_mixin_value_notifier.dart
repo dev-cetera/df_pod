@@ -23,11 +23,12 @@ import '/src/_index.g.dart';
 ///   late final pStatus = Pod<String>('init')..bindParent(this);;
 /// }
 /// ```
-abstract class BindWithMixinValueNotifier<T> extends _ValueNotifierWithDisposable<T>
-    with BindWithMixin {
+abstract class BindWithMixinValueNotifier<T>
+    extends _ValueNotifierWithDisposable<T> with BindWithMixin {
   BindWithMixinValueNotifier(super.value);
 }
 
-abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T> implements DisposeMixin {
+abstract class _ValueNotifierWithDisposable<T> extends ValueNotifier<T>
+    implements DisposeMixin {
   _ValueNotifierWithDisposable(super.value);
 }

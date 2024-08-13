@@ -26,7 +26,8 @@ import '/src/_index.g.dart';
 abstract class BindWithMixinChangeNotifier extends _ChangeNotifierWithDisposable
     with BindWithMixin {}
 
-abstract class _ChangeNotifierWithDisposable extends ChangeNotifier implements DisposeMixin {}
+abstract class _ChangeNotifierWithDisposable extends ChangeNotifier
+    implements DisposeMixin {}
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
