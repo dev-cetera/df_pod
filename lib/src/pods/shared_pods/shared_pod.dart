@@ -56,30 +56,27 @@ base class SharedPod<A, B> extends Pod<A?> {
   Future<void> set(A? newValue) async {
     _sharedPreferences ??= await SharedPreferences.getInstance();
     final v = toValue(newValue);
-    if (v != null) {
-      if (v is String) {
-        await _sharedPreferences!.setString(key, v);
-        await super.set(newValue);
-      }
-      if (v is Iterable<String>) {
-        await _sharedPreferences!.setStringList(key, v.toList());
-        await super.set(newValue);
-      }
-      if (v is bool) {
-        await _sharedPreferences!.setBool(key, v);
-        await super.set(newValue);
-      }
-      if (v is int) {
-        await _sharedPreferences!.setInt(key, v);
-        await super.set(newValue);
-      }
-      if (v is double) {
-        await _sharedPreferences!.setDouble(key, v);
-        await super.set(newValue);
-      }
-      return;
+    switch (v) {
+      case String s:
+        await _sharedPreferences!.setString(key, s);
+        break;
+      case Iterable<String> list:
+        await _sharedPreferences!.setStringList(key, list.toList());
+        break;
+      case bool b:
+        await _sharedPreferences!.setBool(key, b);
+        break;
+      case int i:
+        await _sharedPreferences!.setInt(key, i);
+        break;
+      case double d:
+        await _sharedPreferences!.setDouble(key, d);
+        break;
+      default:
+        await _sharedPreferences!.remove(key);
+        return;
     }
-    await _sharedPreferences!.remove(key);
+    await super.set(newValue);
   }
 
   //
