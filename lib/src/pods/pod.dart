@@ -161,7 +161,8 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
   static ChildPod<dynamic, T> from3<T, A, B, C>(
     Pods3<A, B, C> instances,
     T Function(Pods3<A, B, C> instances) reducer,
-    (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)? updateParents,
+    (A?, B?, C?) Function(Tuple3<A, B, C> parentValues, T childValue)?
+        updateParents,
   ) {
     return reduce3Pods(
       instances,
@@ -176,7 +177,8 @@ class Pod<T> extends BindWithMixinPodNotifier<T> {
   static ChildPod<dynamic, T> from4<T, A, B, C, D>(
     Pods4<A, B, C, D> instances,
     T Function(Pods4<A, B, C, D> instances) reducer,
-    (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)? updateParents,
+    (A?, B?, C?, D?) Function(Tuple4<A, B, C, D> parentValues, T childValue)?
+        updateParents,
   ) {
     return reduce4Pods(
       instances,

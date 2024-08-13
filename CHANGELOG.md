@@ -5,6 +5,7 @@
 - Released @ 8/2024 (UTC)
 - chore: Remove this where unnecessary
 - chore: Restructure source files and improve docs
+- chore: Separate each exception into its own file
 
 ## [0.2.3]
 
