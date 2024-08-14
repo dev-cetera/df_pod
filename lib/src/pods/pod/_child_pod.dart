@@ -12,7 +12,8 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent, TChild> extends PodNotifier<TChild> with PodMixin<TChild> {
+final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
+    with PodMixin<TChild> {
   //
   //
   //

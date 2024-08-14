@@ -55,5 +55,6 @@ mixin EasyDisposeChangeNotifierMixin on DisposeMixin {
 extension DisposeOnOnChangeNotifierX<T extends ChangeNotifier> on T {
   /// Registers `this` ChangeNotifier with [parent], ensuring it is disposed
   /// when the [parent] is disposed.
-  T disposeOn<P extends EasyDisposeChangeNotifierMixin>(P parent) => parent.registerChild(this);
+  T disposeOn<P extends EasyDisposeChangeNotifierMixin>(P parent) =>
+      parent.registerChild(this);
 }

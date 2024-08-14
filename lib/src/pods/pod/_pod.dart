@@ -25,7 +25,8 @@ base class Pod<T> extends PodNotifier<T> with PodMixin<T> {
 
   Pod.global(super.value) : super.global();
 
-  static Pod<T> cast<T>(PodListenable<T> other) => other.asPodNotifier().asPod();
+  static Pod<T> cast<T>(PodListenable<T> other) =>
+      other.asPodNotifier().asPod();
 
   T get updateValue {
     this.refresh();
