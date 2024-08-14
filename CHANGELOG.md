@@ -13,6 +13,7 @@
 - refactor: Address null issues
 - refactor: Update generic type in RespondingBuilder and PodBuilder
 - chore: End of day
+- fix: Fix reducer bug
 
 ## [0.2.3]
 

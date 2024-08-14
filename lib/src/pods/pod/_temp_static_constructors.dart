@@ -68,8 +68,9 @@ ChildPod<dynamic, T> _tempFrom4<T, T1, T2, T3, T4>(
   Pods4<T1, T2, T3, T4> instances,
   T Function(Pods4<T1, T2, T3, T4> instances) reducer, [
   (T1?, T2?, T3?, T4?) Function(
-          Tuple4<T1, T2, T3, T4> parentValues, T childValue,)?
-      updateParents,
+    Tuple4<T1, T2, T3, T4> parentValues,
+    T childValue,
+  )? updateParents,
 ]) {
   return reduce4Pods(
     instances,

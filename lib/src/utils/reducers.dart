@@ -215,8 +215,9 @@ ChildPod<dynamic, T> reduce4Pods<T, T1, T2, T3, T4>(
   Pods4<T1, T2, T3, T4> instances,
   T Function(Pods4<T1, T2, T3, T4> values) reducer,
   (T1?, T2?, T3?, T4?) Function(
-          Tuple4<T1, T2, T3, T4> parentValues, T childValue,)?
-      updateParents,
+    Tuple4<T1, T2, T3, T4> parentValues,
+    T childValue,
+  )? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
   return instantiator(
@@ -365,8 +366,9 @@ ChildPod<dynamic, T> reduce6Pods<T, T1, T2, T3, T4, T5, T6>(
   Pods6<T1, T2, T3, T4, T5, T6> instances,
   T Function(Pods6<T1, T2, T3, T4, T5, T6> instances) reducer,
   (T1?, T2?, T3?, T4?, T5?, T6?) Function(
-          Tuple6<T1, T2, T3, T4, T5, T6>, T childValue,)?
-      updateParents,
+    Tuple6<T1, T2, T3, T4, T5, T6>,
+    T childValue,
+  )? updateParents,
   _ChildPodInstantiator<dynamic, T> instantiator,
 ) {
   return instantiator(
