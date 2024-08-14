@@ -18,4 +18,3 @@ part '_child_pod.dart';
 part '_pod_disposable_mixin.dart';
 part '_pod_notifier.dart';
 part '_pod.dart';
-part 'bind_with_mixin/_bind_with_mixin.dart';

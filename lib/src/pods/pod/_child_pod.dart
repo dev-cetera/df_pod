@@ -12,8 +12,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent, TChild> extends BindWithMixinPodNotifier<TChild>
-    with PodMixin<TChild> {
+final class ChildPod<TParent, TChild> extends PodNotifier<TChild> with PodMixin<TChild> {
   //
   //
   //
@@ -88,33 +87,4 @@ final class ChildPod<TParent, TChild> extends BindWithMixinPodNotifier<TChild>
   }
 }
 
-// // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-extension _AddOrRemoveChildren<T> on PodMixin<T> {
-  //
-  //
-  //
-
-  void _addChild(ChildPod child) {
-    if (!child._responder().contains(this)) {
-      throw WrongParentPodException();
-    }
-    if (_children.contains(child)) {
-      throw ChildAlreadyAddedPodException();
-    }
-    addListener(child._refresh);
-    _children.add(child);
-  }
-
-  //
-  //
-  //
-
-  void _removeChild(ChildPod child) {
-    final didRemove = _children.remove(child);
-    if (!didRemove) {
-      throw NoRemoveChildPodException();
-    }
-    removeListener(child._refresh);
-  }
-}
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

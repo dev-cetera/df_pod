@@ -14,8 +14,7 @@ part of 'parts.dart';
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
 /// lifecycle management capabilities through the [PodDisposableMixin].
-abstract class PodNotifier<T> extends ChangeNotifier
-    with PodDisposableMixin<T> {
+abstract class PodNotifier<T> extends ChangeNotifier with PodDisposableMixin<T> {
   //
   //
   //
@@ -57,8 +56,7 @@ abstract class PodNotifier<T> extends ChangeNotifier
   /// Non-disposable Pods should not be used in local scopes. They are intended
   /// to be used as global variables that persist throughout the lifetime of
   /// your app.
-  PodNotifier.global(T value)
-      : this._unsafe(value, disposable: false, temp: false);
+  PodNotifier.global(T value) : this._unsafe(value, disposable: false, temp: false);
 
   PodNotifier._unsafe(
     this._value, {

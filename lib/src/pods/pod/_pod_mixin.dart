@@ -14,7 +14,32 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-mixin PodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
+mixin PodMixin<T> on PodNotifier<T> {
+  //
+  //
+  //
+
+  final _children = <PodMixin>[];
+
+  void _addChild(ChildPod child) {
+    if (!child._responder().contains(this)) {
+      throw WrongParentPodException();
+    }
+    if (_children.contains(child)) {
+      throw ChildAlreadyAddedPodException();
+    }
+    addListener(child._refresh);
+    _children.add(child);
+  }
+
+  void _removeChild(ChildPod child) {
+    final didRemove = _children.remove(child);
+    if (!didRemove) {
+      throw NoRemoveChildPodException();
+    }
+    removeListener(child._refresh);
+  }
+
   //
   //
   //
@@ -33,26 +58,7 @@ mixin PodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
     });
   }
 
-  ChildPod<dynamic, C> respondAndReduce<C, O>(
-    PodMixin<O>? Function() other,
-    TNullableReducerFn2<C, T, O> reducer,
-  ) {
-    return PodReducer2.reduce<C, T, O>(
-      () => (this, other()),
-      reducer,
-    );
-  }
-
-  ChildPod<dynamic, C> respondAndReduceToTemp<C, O>(
-    PodMixin<O>? Function() other,
-    TNullableReducerFn2<C, T, O> reducer,
-  ) {
-    return PodReducer2.reduceToTemp<C, T, O>(
-      () => (this, other()),
-      reducer,
-    );
-  }
-
+  /// Reduces the current Pod and [other] into a single [ChildPod].
   ChildPod<dynamic, C> reduce<C, O>(
     PodMixin<O> other,
     TReducerFn2<C, T, O> reducer,
@@ -63,6 +69,7 @@ mixin PodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
     );
   }
 
+  /// Reduces the current Pod and [other] into a single temporary [ChildPod].
   ChildPod<dynamic, C> reduceToTemp<C, O>(
     PodMixin<O> other,
     TReducerFn2<C, T, O> reducer,
@@ -87,5 +94,14 @@ mixin PodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
       responder: () => [this],
       reducer: (e) => reducer(e.firstOrNull),
     );
+  }
+
+  /// Disposes all children before disposing `this`.
+  @override
+  void dispose() {
+    for (final child in _children) {
+      child.dispose();
+    }
+    super.dispose();
   }
 }
