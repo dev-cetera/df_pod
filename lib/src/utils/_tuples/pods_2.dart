@@ -8,39 +8,32 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-// ignore_for_file: invalid_use_of_visible_for_testing_member
+import 'package:tuple/tuple.dart';
 
-part of 'parts.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class Pod<T> extends BindWithMixinPodNotifier<T> with PodMixin<T> {
-  //
-  //
-  //
+/// T2 tuple of 2 [PodMixin] instances.
+final class Pods2<P1, P2> extends Tuple2<P1?, P2?>
+    implements ManyPods<dynamic> {
+  final PodMixin<P1>? p1;
+  final PodMixin<P2>? p2;
 
-  Pod(super.value);
+  Pods2(this.p1, this.p2) : super(null, null);
 
-  Pod.temp(super.value) : super.temp();
+  @override
+  P1? get item1 => p1?.value;
 
-  Pod.global(super.value) : super.global();
+  @override
+  P2? get item2 => p2?.value;
 
-  static Pod<T> cast<T>(PodListenable<T> other) =>
-      other.asPodNotifier().asPod();
+  @override
+  List<PodMixin<dynamic>?> get pods => [
+        p1,
+        p2,
+      ];
 
-  T get updateValue {
-    this.refresh();
-    return value;
-  }
-
-  Future<void> set(T newValue) => super._set(newValue);
-
-  Future<void> update(T Function(T oldValue) updater) async {
-    final newValue = updater(value);
-    await set(newValue);
-  }
-
-  Future<void> refresh() async {
-    await Future.delayed(Duration.zero, notifyListeners);
-  }
+  @override
+  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
 }

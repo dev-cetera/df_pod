@@ -46,4 +46,13 @@ typedef TPodList<T extends Object?> = Iterable<PodListenable<T>>;
 typedef TPodDataList<T extends Object?> = Iterable<T>;
 typedef TPodListResponder<T extends Object?> = TPodList<T> Function();
 
-typedef FutureOrPod<T> = FutureOr<PodListenable<T>>;
+typedef TFutureOrPod<T> = FutureOr<PodListenable<T>>;
+
+typedef TReducerFn<T> = PodMixin<T>? Function();
+
+typedef TPodsResponderFn<T> = Iterable<PodMixin<T>?> Function();
+
+// For a funcion that reduces multiple parent values to a child Pod.
+typedef TValuesReducerFn<TChild, TParentList> = TChild Function(
+  List<TParentList?> parentValues,
+);

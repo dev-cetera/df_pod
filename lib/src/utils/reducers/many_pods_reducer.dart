@@ -8,39 +8,39 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-// ignore_for_file: invalid_use_of_visible_for_testing_member
-
-part of 'parts.dart';
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class Pod<T> extends BindWithMixinPodNotifier<T> with PodMixin<T> {
-  //
-  //
-  //
+/// A final class to handle reducing operations for many Pods.
+final class ManyPodsReducer {
+  ManyPodsReducer._();
 
-  Pod(super.value);
-
-  Pod.temp(super.value) : super.temp();
-
-  Pod.global(super.value) : super.global();
-
-  static Pod<T> cast<T>(PodListenable<T> other) =>
-      other.asPodNotifier().asPod();
-
-  T get updateValue {
-    this.refresh();
-    return value;
+  /// Reduces many Pods into a [ChildPod].
+  static ChildPod<T1, T2> reduce<T1, T2>(
+    List<Pod<T1>> Function() responder,
+    T2 Function(ManyPods<T1> values) reducer,
+  ) {
+    return ChildPod<T1, T2>(
+      responder: responder,
+      reducer: (_) {
+        final response = responder();
+        return reducer(ManyPods(response));
+      },
+    );
   }
 
-  Future<void> set(T newValue) => super._set(newValue);
-
-  Future<void> update(T Function(T oldValue) updater) async {
-    final newValue = updater(value);
-    await set(newValue);
-  }
-
-  Future<void> refresh() async {
-    await Future.delayed(Duration.zero, notifyListeners);
+  /// Reduces many Pods into a temporary [ChildPod].
+  static ChildPod<T1, T2> reduceToTemp<T1, T2>(
+    List<Pod<T1>> Function() responder,
+    T2 Function(ManyPods<T1> values) reducer,
+  ) {
+    return ChildPod<T1, T2>.temp(
+      responder: responder,
+      reducer: (_) {
+        final response = responder();
+        return reducer(ManyPods(response));
+      },
+    );
   }
 }

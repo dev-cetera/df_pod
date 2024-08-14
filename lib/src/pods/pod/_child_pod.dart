@@ -12,23 +12,25 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
-    with BasePodMixin<C> {
+final class ChildPod<TParent, TChild> extends BindWithMixinPodNotifier<TChild>
+    with PodMixin<TChild> {
   //
   //
   //
 
-  final List<BindWithMixinPodNotifier<P>?> Function() responder;
-  final C Function(List<P?> parentValues) reducer;
+  final TPodsResponderFn<TParent> _responder;
+  final TValuesReducerFn<TChild, TParent> _reducer;
 
   //
   //
   //
 
   ChildPod({
-    required this.responder,
-    required this.reducer,
-  }) : super(
+    required TPodsResponderFn<TParent> responder,
+    required TValuesReducerFn<TChild, TParent> reducer,
+  })  : _reducer = reducer,
+        _responder = responder,
+        super(
           reducer(responder().map((p) => p?.value).toList()),
         ) {
     _initializeParents();
@@ -39,9 +41,11 @@ final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
   //
 
   ChildPod.temp({
-    required this.responder,
-    required this.reducer,
-  }) : super.temp(
+    required TPodsResponderFn<TParent> responder,
+    required TValuesReducerFn<TChild, TParent> reducer,
+  })  : _reducer = reducer,
+        _responder = responder,
+        super.temp(
           reducer(responder().map((p) => p?.value).toList()),
         ) {
     _initializeParents();
@@ -52,7 +56,7 @@ final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
   //
 
   void _initializeParents() {
-    final parents = responder();
+    final parents = _responder();
     for (var parent in parents) {
       parent?._addChild(this);
       parent?.addListener(_refresh);
@@ -64,8 +68,8 @@ final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
   //
 
   Future<void> _refresh() async {
-    final parents = responder();
-    final newValue = reducer(parents.map((p) => p?.value).toList());
+    final parents = _responder();
+    final newValue = _reducer(parents.map((p) => p?.value).toList());
     await _set(newValue);
   }
 
@@ -75,7 +79,7 @@ final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
 
   @override
   void dispose() {
-    final parents = responder();
+    final parents = _responder();
     for (var parent in parents) {
       parent?._removeChild(this);
       parent?.removeListener(_refresh);
@@ -86,13 +90,13 @@ final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
 
 // // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-extension _AddOrRemoveChildren<T> on BindWithMixinPodNotifier<T> {
+extension _AddOrRemoveChildren<T> on PodMixin<T> {
   //
   //
   //
 
   void _addChild(ChildPod child) {
-    if (!child.responder().contains(this)) {
+    if (!child._responder().contains(this)) {
       throw WrongParentPodException();
     }
     if (_children.contains(child)) {

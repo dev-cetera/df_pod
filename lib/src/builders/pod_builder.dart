@@ -50,7 +50,7 @@ class PodBuilder<T> extends StatelessWidget {
   /// awaited, and the [builder] will be called once the future completes. While
   /// awaiting, the builder receives a `null` value. If [pod] is not a future or
   /// it is `null`, its current value or `null` is passed to the [builder].
-  final FutureOrPod<T> pod;
+  final TFutureOrPod<T> pod;
 
   //
   //

@@ -26,11 +26,10 @@ abstract class PodNotifier<T> extends ChangeNotifier
   @override
   final bool temp;
 
-  @protected
-  T $value;
+  T _value;
 
   @override
-  T get value => $value;
+  T get value => _value;
 
   /// Creates a new [Pod] from the given [value].
   ///
@@ -62,7 +61,7 @@ abstract class PodNotifier<T> extends ChangeNotifier
       : this._unsafe(value, disposable: false, temp: false);
 
   PodNotifier._unsafe(
-    this.$value, {
+    this._value, {
     required this.disposable,
     required this.temp,
   }) : assert(

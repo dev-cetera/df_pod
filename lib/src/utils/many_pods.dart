@@ -8,14 +8,25 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_type/df_type.dart';
-import 'package:flutter/foundation.dart';
-
 import '/src/_index.g.dart';
 
-part '_pod_mixin.dart';
-part '_child_pod.dart';
-part '_pod_disposable_mixin.dart';
-part '_pod_notifier.dart';
-part '_pod.dart';
-part 'bind_with_mixin/_bind_with_mixin.dart';
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class ManyPods<T> {
+  final List<PodMixin<T>?> pods;
+
+  const ManyPods(this.pods);
+
+  List<T?> toList() => pods.map((pod) => pod?.value).toList();
+
+  /// Returns a list of Pod values where the type matches the generic type [A].
+  List<A> valuesWhereType<A>() {
+    final results = <A>[];
+    for (var pod in pods) {
+      if (pod?.value is A) {
+        results.add(pod?.value as A);
+      }
+    }
+    return results;
+  }
+}

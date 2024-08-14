@@ -37,7 +37,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
 
   /// The list of `Pod` objects that this builder listens to.
-  final Iterable<FutureOrPod<T>> podList;
+  final Iterable<TFutureOrPod<T>> podList;
 
   //
   //

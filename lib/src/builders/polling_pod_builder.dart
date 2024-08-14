@@ -62,7 +62,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
 
   /// A function that returns the `Pod<T>?` to be polled.
-  final FutureOrPod<T>? Function() podPoller;
+  final TFutureOrPod<T>? Function() podPoller;
 
   //
   //
@@ -128,7 +128,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
 
   late final Widget? _staticChild = widget.child;
-  FutureOrPod<T>? _currentPod;
+  TFutureOrPod<T>? _currentPod;
 
   //
   //

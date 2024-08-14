@@ -14,7 +14,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-mixin BasePodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
+mixin PodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
   //
   //
   //
@@ -28,26 +28,46 @@ mixin BasePodMixin<T> implements PodNotifier<T>, BindWithMixinPodNotifier<T> {
   Future<void> _set(T newValue) async {
     _cachedValue = newValue;
     await Future.delayed(Duration.zero, () {
-      $value = _cachedValue ?? newValue;
+      _value = _cachedValue ?? newValue;
       notifyListeners();
     });
   }
 
-  ChildPod<dynamic, C> reduceAndRespond<C, O>(
-    BasePodMixin<O>? Function() other,
-    C Function(BasePodMixin<T>? p1, BasePodMixin<O>? p2) reducer,
+  ChildPod<dynamic, C> respondAndReduce<C, O>(
+    PodMixin<O>? Function() other,
+    TNullableReducerFn2<C, T, O> reducer,
   ) {
-    return reduce2Pods(
+    return PodReducer2.reduce<C, T, O>(
+      () => (this, other()),
+      reducer,
+    );
+  }
+
+  ChildPod<dynamic, C> respondAndReduceToTemp<C, O>(
+    PodMixin<O>? Function() other,
+    TNullableReducerFn2<C, T, O> reducer,
+  ) {
+    return PodReducer2.reduceToTemp<C, T, O>(
       () => (this, other()),
       reducer,
     );
   }
 
   ChildPod<dynamic, C> reduce<C, O>(
-    BasePodMixin<O> other,
-    C Function(BasePodMixin<T> p1, BasePodMixin<O> p2) reducer,
+    PodMixin<O> other,
+    TReducerFn2<C, T, O> reducer,
   ) {
-    return reduce2Pods<C, T, O>(
+    return PodReducer2.reduce<C, T, O>(
+      () => (this, other),
+      (a, b) => reducer(a!, b!),
+    );
+  }
+
+  ChildPod<dynamic, C> reduceToTemp<C, O>(
+    PodMixin<O> other,
+    TReducerFn2<C, T, O> reducer,
+  ) {
+    return PodReducer2.reduceToTemp<C, T, O>(
       () => (this, other),
       (a, b) => reducer(a!, b!),
     );
