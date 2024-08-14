@@ -12,8 +12,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
-    with PodMixin<TChild> {
+final class ChildPod<TParent, TChild> extends PodNotifier<TChild> with AnyPod<TChild> {
   //
   //
   //
@@ -25,41 +24,63 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  ChildPod({
+  factory ChildPod({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
-  })  : _reducer = reducer,
-        _responder = responder,
-        super(
-          reducer(responder().map((p) => p?.value).toList()),
-        ) {
-    _initializeParents();
+  }) {
+    final parents = responder();
+    final initialValue = reducer(parents.map((p) => p?.value).toList());
+    final temp = ChildPod._(
+      responder: responder,
+      reducer: reducer,
+      initialValue: initialValue,
+    );
+    temp._initializeParents(parents);
+    return temp;
   }
 
-  //
-  //
-  //
-
-  ChildPod.temp({
+  ChildPod._({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
+    required TChild initialValue,
   })  : _reducer = reducer,
         _responder = responder,
-        super.temp(
-          reducer(responder().map((p) => p?.value).toList()),
-        ) {
-    _initializeParents();
+        super(initialValue);
+
+  //
+  //
+  //
+
+  factory ChildPod.temp({
+    required TPodsResponderFn<TParent> responder,
+    required TValuesReducerFn<TChild, TParent> reducer,
+  }) {
+    final parents = responder();
+    final initialValue = reducer(parents.map((p) => p?.value).toList());
+    final temp = ChildPod._temp(
+      responder: responder,
+      reducer: reducer,
+      initialValue: initialValue,
+    );
+    temp._initializeParents(parents);
+    return temp;
   }
 
+  ChildPod._temp({
+    required TPodsResponderFn<TParent> responder,
+    required TValuesReducerFn<TChild, TParent> reducer,
+    required TChild initialValue,
+  })  : _reducer = reducer,
+        _responder = responder,
+        super.temp(initialValue);
+
   //
   //
   //
 
-  void _initializeParents() {
-    final parents = _responder();
+  void _initializeParents(Iterable<AnyPod<TParent>?> parents) {
     for (var parent in parents) {
       parent?._addChild(this);
-      parent?.addListener(_refresh);
     }
   }
 
@@ -69,6 +90,7 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
 
   Future<void> _refresh() async {
     final parents = _responder();
+    _initializeParents(parents);
     final newValue = _reducer(parents.map((p) => p?.value).toList());
     await _set(newValue);
   }
@@ -82,10 +104,7 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
     final parents = _responder();
     for (var parent in parents) {
       parent?._removeChild(this);
-      parent?.removeListener(_refresh);
     }
     super.dispose();
   }
 }
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

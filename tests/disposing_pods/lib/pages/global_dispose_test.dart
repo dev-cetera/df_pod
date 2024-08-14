@@ -3,7 +3,7 @@
 //
 // Test Questions:
 //
-// - What happens if we try to dispose a "global" Pod?
+// What happens if we try to dispose a "global" Pod?
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~

@@ -14,41 +14,28 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-mixin PodMixin<T> on PodNotifier<T> {
+mixin AnyPod<T> on PodNotifier<T> {
   //
   //
   //
 
-  final _children = <PodMixin>[];
+  final _children = <AnyPod>{};
 
   void _addChild(ChildPod child) {
-    if (!child._responder().contains(this)) {
-      throw WrongParentPodException();
+    if (!_children.contains(child)) {
+      addListener(child._refresh);
+      _children.add(child);
     }
-    if (_children.contains(child)) {
-      throw ChildAlreadyAddedPodException();
-    }
-    addListener(child._refresh);
-    _children.add(child);
   }
 
   void _removeChild(ChildPod child) {
     final didRemove = _children.remove(child);
-    if (!didRemove) {
-      throw NoRemoveChildPodException();
+    if (didRemove) {
+      removeListener(child._refresh);
     }
-    removeListener(child._refresh);
   }
 
-  //
-  //
-  //
-
   T? _cachedValue;
-
-  //
-  //
-  //
 
   Future<void> _set(T newValue) async {
     _cachedValue = newValue;
@@ -60,7 +47,7 @@ mixin PodMixin<T> on PodNotifier<T> {
 
   /// Reduces the current Pod and [other] into a single [ChildPod].
   ChildPod<dynamic, C> reduce<C, O>(
-    PodMixin<O> other,
+    AnyPod<O> other,
     TReducerFn2<C, T, O> reducer,
   ) {
     return PodReducer2.reduce<C, T, O>(
@@ -71,7 +58,7 @@ mixin PodMixin<T> on PodNotifier<T> {
 
   /// Reduces the current Pod and [other] into a single temporary [ChildPod].
   ChildPod<dynamic, C> reduceToTemp<C, O>(
-    PodMixin<O> other,
+    AnyPod<O> other,
     TReducerFn2<C, T, O> reducer,
   ) {
     return PodReducer2.reduceToTemp<C, T, O>(
@@ -99,7 +86,9 @@ mixin PodMixin<T> on PodNotifier<T> {
   /// Disposes all children before disposing `this`.
   @override
   void dispose() {
-    for (final child in _children) {
+    // Copy the set to prevent concurrent modification issues during iteration.
+    final copy = Set.of(_children);
+    for (final child in copy) {
       child.dispose();
     }
     super.dispose();

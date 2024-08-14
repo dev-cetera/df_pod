@@ -14,11 +14,10 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// T2 tuple of 2 [PodMixin] instances.
-final class Pods2<P1, P2> extends Tuple2<P1?, P2?>
-    implements ManyPods<dynamic> {
-  final PodMixin<P1>? p1;
-  final PodMixin<P2>? p2;
+/// T2 tuple of 2 [AnyPod] instances.
+final class Pods2<P1, P2> extends Tuple2<P1?, P2?> implements ManyPods<dynamic> {
+  final AnyPod<P1>? p1;
+  final AnyPod<P2>? p2;
 
   Pods2(this.p1, this.p2) : super(null, null);
 
@@ -29,7 +28,7 @@ final class Pods2<P1, P2> extends Tuple2<P1?, P2?>
   P2? get item2 => p2?.value;
 
   @override
-  List<PodMixin<dynamic>?> get pods => [
+  List<AnyPod<dynamic>?> get pods => [
         p1,
         p2,
       ];

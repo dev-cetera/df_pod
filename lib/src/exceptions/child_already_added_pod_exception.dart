@@ -13,9 +13,9 @@ import 'pod_exception.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// TODO: Write docs.
-final class ChildAlreadyAddedPodException extends PodException {
-  ChildAlreadyAddedPodException()
-      : super(
-          'The child is already added to this Pod.',
-        );
-}
+// final class ChildAlreadyAddedPodException extends PodException {
+//   ChildAlreadyAddedPodException()
+//       : super(
+//           'The child is already added to this Pod.',
+//         );
+// }

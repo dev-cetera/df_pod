@@ -13,9 +13,9 @@ import 'pod_exception.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// TODO: Write docs.
-final class NoRemoveChildPodException extends PodException {
-  NoRemoveChildPodException()
-      : super(
-          'Cannot remove a child that is not added to this Pod.',
-        );
-}
+// final class NoRemoveChildPodException extends PodException {
+//   NoRemoveChildPodException()
+//       : super(
+//           'Cannot remove a child that is not added to this Pod.',
+//         );
+// }

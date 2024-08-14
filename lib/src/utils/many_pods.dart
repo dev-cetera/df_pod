@@ -13,7 +13,7 @@ import '/src/_index.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 class ManyPods<T> {
-  final List<PodMixin<T>?> pods;
+  final List<AnyPod<T>?> pods;
 
   const ManyPods(this.pods);
 

@@ -39,7 +39,7 @@ final class PodReducer7 {
   }
 
   /// Converts the response from the responder function into a list of Pods.
-  static List<PodMixin<dynamic>?> _toList<P1, P2, P3, P4, P5, P6, P7>(
+  static List<AnyPod<dynamic>?> _toList<P1, P2, P3, P4, P5, P6, P7>(
     TResponderFn7<P1, P2, P3, P4, P5, P6, P7> responder,
   ) {
     final response = responder.call();
@@ -75,32 +75,32 @@ final class PodReducer7 {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TResponderFn7<P1, P2, P3, P4, P5, P6, P7> = (
-  PodMixin<P1>? p1,
-  PodMixin<P2>? p2,
-  PodMixin<P3>? p3,
-  PodMixin<P4>? p4,
-  PodMixin<P5>? p5,
-  PodMixin<P6>? p6,
-  PodMixin<P7>? p7,
+  AnyPod<P1>? p1,
+  AnyPod<P2>? p2,
+  AnyPod<P3>? p3,
+  AnyPod<P4>? p4,
+  AnyPod<P5>? p5,
+  AnyPod<P6>? p6,
+  AnyPod<P7>? p7,
 )
     Function();
 
 typedef TNullableReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> = C Function(
-  PodMixin<P1>? p1,
-  PodMixin<P2>? p2,
-  PodMixin<P3>? p3,
-  PodMixin<P4>? p4,
-  PodMixin<P5>? p5,
-  PodMixin<P6>? p6,
-  PodMixin<P7>? p7,
+  AnyPod<P1>? p1,
+  AnyPod<P2>? p2,
+  AnyPod<P3>? p3,
+  AnyPod<P4>? p4,
+  AnyPod<P5>? p5,
+  AnyPod<P6>? p6,
+  AnyPod<P7>? p7,
 );
 
 typedef TReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> = C Function(
-  PodMixin<P1> p1,
-  PodMixin<P2> p2,
-  PodMixin<P3> p3,
-  PodMixin<P4> p4,
-  PodMixin<P5> p5,
-  PodMixin<P6> p6,
-  PodMixin<P7> p7,
+  AnyPod<P1> p1,
+  AnyPod<P2> p2,
+  AnyPod<P3> p3,
+  AnyPod<P4> p4,
+  AnyPod<P5> p5,
+  AnyPod<P6> p6,
+  AnyPod<P7> p7,
 );

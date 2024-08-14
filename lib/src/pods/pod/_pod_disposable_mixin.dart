@@ -94,9 +94,9 @@ mixin PodDisposableMixin<T> implements PodListenable<T>, DisposeMixin {
       }
     } else {
       debugPrint(
-        'Pod already disposed. This is not a problem but indicates that the '
-        'dispose method was called more than once. Ensure that dispose is only '
-        'called when necessary to avoid redundant operations.',
+        '[df_pod] Pod already disposed. This is not a problem but indicates '
+        'that the dispose method was called more than once. Ensure that '
+        'dispose is only called when necessary to avoid redundant operations.',
       );
     }
   }

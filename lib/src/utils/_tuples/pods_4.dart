@@ -14,13 +14,12 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// T4 tuple of 4 [PodMixin] instances.
-final class Pods4<P1, P2, P3, P4> extends Tuple4<P1?, P2?, P3?, P4?>
-    implements ManyPods<dynamic> {
-  final PodMixin<P1>? p1;
-  final PodMixin<P2>? p2;
-  final PodMixin<P3>? p3;
-  final PodMixin<P4>? p4;
+/// T4 tuple of 4 [AnyPod] instances.
+final class Pods4<P1, P2, P3, P4> extends Tuple4<P1?, P2?, P3?, P4?> implements ManyPods<dynamic> {
+  final AnyPod<P1>? p1;
+  final AnyPod<P2>? p2;
+  final AnyPod<P3>? p3;
+  final AnyPod<P4>? p4;
 
   Pods4(this.p1, this.p2, this.p3, this.p4) : super(null, null, null, null);
 
@@ -37,7 +36,7 @@ final class Pods4<P1, P2, P3, P4> extends Tuple4<P1?, P2?, P3?, P4?>
   P4? get item4 => p4?.value;
 
   @override
-  List<PodMixin<dynamic>?> get pods => [
+  List<AnyPod<dynamic>?> get pods => [
         p1,
         p2,
         p3,

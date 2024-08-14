@@ -34,7 +34,6 @@ class _MyAppState extends State<MyApp> {
         body: PageView(
           onPageChanged: (value) {
             setState(() {});
-            debugPrint('Setting state!');
           },
           children: [
             CounterTest(

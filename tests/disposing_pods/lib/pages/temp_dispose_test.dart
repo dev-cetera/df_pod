@@ -3,7 +3,7 @@
 //
 // Test Questions:
 //
-// - Does "disposeIfTemp" dispose "temp" pods and ignore other pods?
+// Does "disposeIfTemp" dispose "temp" pods and ignore other pods?
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -30,6 +30,7 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
   //
 
   final _pNotTempPod = Pod('Not Temp Pod');
+  late final _pAnotherTempPod = _pNotTempPod.mapToTemp((_) => 'Another Temp Pod');
 
   //
   //
@@ -52,6 +53,9 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
           MyLabel(
             pText: _pNotTempPod,
           ),
+          MyLabel(
+            pText: _pAnotherTempPod,
+          ),
         ],
       ),
     );
@@ -63,6 +67,7 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
 
   @override
   void dispose() {
+    _pNotTempPod.dispose();
     super.dispose();
   }
 }
@@ -70,15 +75,8 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 class MyLabel extends StatefulWidget {
-  //
-  //
-  //
+  final AnyPod<String> pText;
 
-  final Pod<String> pText;
-
-  //
-  //
-  //
   const MyLabel({
     super.key,
     required this.pText,

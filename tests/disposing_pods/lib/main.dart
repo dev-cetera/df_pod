@@ -8,10 +8,7 @@
 
 import 'package:flutter/material.dart';
 
-import 'pages/dispose_test.dart';
-import 'pages/global_dispose_test.dart';
-import 'pages/successive_diposes_test.dart';
-import 'pages/temp_dispose_test.dart';
+import 'pages/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -34,7 +31,6 @@ class _MyAppState extends State<MyApp> {
         body: PageView(
           onPageChanged: (value) {
             setState(() {});
-            debugPrint('Setting state!');
           },
           children: [
             DisposeTest(
@@ -47,6 +43,9 @@ class _MyAppState extends State<MyApp> {
               key: UniqueKey(),
             ),
             TempDisposeTest(
+              key: UniqueKey(),
+            ),
+            ChildPodDisposalTest(
               key: UniqueKey(),
             ),
           ],
