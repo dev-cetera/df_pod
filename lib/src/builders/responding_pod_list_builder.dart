@@ -139,14 +139,12 @@ class RespondingPodListBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<RespondingPodListBuilder> createState() =>
-      _RespondingPodListBuilderState();
+  State<RespondingPodListBuilder> createState() => _RespondingPodListBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _RespondingPodListBuilderState<T>
-    extends State<RespondingPodListBuilder<T>> {
+class _RespondingPodListBuilderState<T> extends State<RespondingPodListBuilder<T>> {
   //
   //
   //

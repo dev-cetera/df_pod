@@ -15,8 +15,8 @@ import '/src/_index.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A tuple of 6 [PodMixin] instances.
-final class Pods6<P1, P2, P3, P4, P5, P6>
-    extends Tuple6<P1?, P2?, P3?, P4?, P5?, P6?> implements ManyPods<dynamic> {
+final class Pods6<P1, P2, P3, P4, P5, P6> extends Tuple6<P1?, P2?, P3?, P4?, P5?, P6?>
+    implements ManyPods<dynamic> {
   final PodMixin<P1>? p1;
   final PodMixin<P2>? p2;
   final PodMixin<P3>? p3;

@@ -27,7 +27,6 @@ export 'utils/reducers/pod_reducer_2.dart';
 export 'utils/reducers/pod_reducer_5.dart';
 export 'utils/reducers/pod_reducer_4.dart';
 export 'utils/reducers/many_pods_reducer.dart';
-export 'utils/state_management_helpers/easy_dispose_change_notifier_mixin.dart';
 export 'exceptions/child_already_added_pod_exception.dart';
 export 'exceptions/cannot_cast_pod_exception.dart';
 export 'exceptions/wrong_parent_pod_exception.dart';
@@ -49,7 +48,6 @@ export 'widgets/pod_widget.dart';
 export 'widgets/pod_list_widget.dart';
 
 // --- PRIVATE FILES (EXCLUDED) ---
-// export '_index.g.dart';
 // export 'utils/_tuples/pods_2.dart';
 // export 'utils/_tuples/pods_3.dart';
 // export 'utils/_tuples/pods_4.dart';

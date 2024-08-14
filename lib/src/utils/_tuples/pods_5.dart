@@ -23,8 +23,7 @@ final class Pods5<P1, P2, P3, P4, P5> extends Tuple5<P1?, P2?, P3?, P4?, P5?>
   final PodMixin<P4>? p4;
   final PodMixin<P5>? p5;
 
-  Pods5(this.p1, this.p2, this.p3, this.p4, this.p5)
-      : super(null, null, null, null, null);
+  Pods5(this.p1, this.p2, this.p3, this.p4, this.p5) : super(null, null, null, null, null);
 
   @override
   P1? get item1 => p1?.value;
