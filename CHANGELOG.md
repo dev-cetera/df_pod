@@ -22,6 +22,7 @@
 - test: Add tests
 - chore: Update comments in tests
 - fix: Bugfixes
+- delete: Unused exceptions
 
 ## [0.2.3]
 
