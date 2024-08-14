@@ -3,8 +3,8 @@
 //
 // Test Questions:
 //
-// Does "dispose" work?
-// What happens if we call "set" after disposal?
+// 1. Does "dispose" work?
+// 2. What happens if we call "set" after disposal?
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~

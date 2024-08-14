@@ -3,8 +3,8 @@
 //
 // Test Questions:
 //
-// Will children also dispose if we dispose a parent Pod?
-// And what about the children of children?
+// 1. Will children also dispose if we dispose a parent Pod?
+// 2. And what about the children of children?
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
