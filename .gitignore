@@ -13,3 +13,6 @@
 **/build/
 **/pubspec.lock
 **/.github/.git
+**/.metadata
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
