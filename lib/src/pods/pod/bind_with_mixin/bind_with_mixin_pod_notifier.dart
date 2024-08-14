@@ -8,46 +8,28 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/widgets.dart';
-
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A mixin that provides an auto-disposal method for classes that use
-/// [DisposeMixin].
-mixin BindWithMixin on DisposeMixin {
-  //
-  //
-  //
+/// Use `BindWithMixinPodNotifier<T>` instead of PodNotifier<T> to incorporate
+/// `BindWithMixin`.
+///
+/// Example:
+/// ```dart
+/// class MyPodNotifier<T> extends BindWithMixinPodNotifier<T>> {
+///   late final pStatus = Pod<String>('init')..bindParent(this);;
+/// }
+/// ```
+abstract class BindWithMixinPodNotifier<T> extends _PodNotifierWithDisposable<T>
+    with BindWithMixin {
+  BindWithMixinPodNotifier(super.value);
+  BindWithMixinPodNotifier.temp(super.value) : super.temp();
+  BindWithMixinPodNotifier.global(super.value) : super.global();
+}
 
-  /// A list of [ChangeNotifier]s that are bound to `this` parent. Do not
-  /// modify this list directly.
-  @protected
-  final $children = <ChangeNotifier>[];
-
-  //
-  //
-  //
-
-  /// Binds the ChangeNotifier [child] to `this` parent so that the [child]
-  /// will be disposed when `this` is disposed.
-  T bindChild<T extends ChangeNotifier>(T child) {
-    $children.add(child);
-    return child;
-  }
-
-  //
-  //
-  //
-
-  /// Disposes all children that have been bound to `this` parent, before
-  /// disposing `this`.
-  @override
-  void dispose() {
-    for (final child in $children) {
-      child.dispose();
-    }
-    super.dispose();
-  }
+abstract class _PodNotifierWithDisposable<T> extends PodNotifier<T> implements DisposeMixin {
+  _PodNotifierWithDisposable(super.value);
+  _PodNotifierWithDisposable.temp(super.value) : super.temp();
+  _PodNotifierWithDisposable.global(super.value) : super.global();
 }

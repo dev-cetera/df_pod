@@ -52,7 +52,7 @@ class Lazy<T> {
 
   /// Sets the value of the [Lazy] instance to [newValue].
   set value(T newValue) => this
-    .._pIsInitialized.value = true
+    .._pIsInitialized.set(true)
     .._value = newValue;
 }
 

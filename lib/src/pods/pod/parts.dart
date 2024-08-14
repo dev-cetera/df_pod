@@ -8,29 +8,19 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
+import 'package:df_type/df_type.dart';
+import 'package:flutter/widgets.dart';
+
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// Use `BindWithMixinPodNotifier<T>` instead of PodNotifier<T> to incorporate
-/// `BindWithMixin`.
-///
-/// Example:
-/// ```dart
-/// class MyPodNotifier<T> extends BindWithMixinPodNotifier<T>> {
-///   late final pStatus = Pod<String>('init')..bindParent(this);;
-/// }
-/// ```
-abstract base class BindWithMixinPodNotifier<T>
-    extends _PodNotifierWithDisposable<T> with BindWithMixin {
-  BindWithMixinPodNotifier(super.value);
-  BindWithMixinPodNotifier.temp(super.value) : super.temp();
-  BindWithMixinPodNotifier.global(super.value) : super.global();
-}
-
-abstract base class _PodNotifierWithDisposable<T> extends PodNotifier<T>
-    implements DisposeMixin {
-  _PodNotifierWithDisposable(super.value);
-  _PodNotifierWithDisposable.temp(super.value) : super.temp();
-  _PodNotifierWithDisposable.global(super.value) : super.global();
-}
+part '_pod.dart';
+part '_base_pod_mixin.dart';
+part '_static_constructors.dart';
+part '_temp_static_constructors.dart';
+part '_pod_notifier.dart';
+part '_child_pod.dart';
+part 'bind_with_mixin/_bind_with_mixin.dart';

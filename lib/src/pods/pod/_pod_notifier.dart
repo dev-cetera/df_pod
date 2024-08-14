@@ -8,17 +8,13 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_type/df_type.dart';
-import 'package:flutter/widgets.dart';
-
-import '/src/_index.g.dart';
+part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
 /// lifecycle management capabilities through the [PodDisposableMixin].
-abstract base class PodNotifier<T> extends ValueNotifier<T>
-    with PodDisposableMixin<T> {
+abstract class PodNotifier<T> extends ChangeNotifier with PodDisposableMixin<T> {
   //
   //
   //
@@ -28,6 +24,12 @@ abstract base class PodNotifier<T> extends ValueNotifier<T>
 
   @override
   final bool temp;
+
+  @protected
+  T $value;
+
+  @override
+  T get value => $value;
 
   /// Creates a new [Pod] from the given [value].
   ///
@@ -55,11 +57,10 @@ abstract base class PodNotifier<T> extends ValueNotifier<T>
   /// Non-disposable Pods should not be used in local scopes. They are intended
   /// to be used as global variables that persist throughout the lifetime of
   /// your app.
-  PodNotifier.global(T value)
-      : this._unsafe(value, disposable: false, temp: false);
+  PodNotifier.global(T value) : this._unsafe(value, disposable: false, temp: false);
 
   PodNotifier._unsafe(
-    super.value, {
+    this.$value, {
     required this.disposable,
     required this.temp,
   }) : assert(
