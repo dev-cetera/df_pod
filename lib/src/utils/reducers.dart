@@ -77,12 +77,12 @@ base class ManyPods<T> {
   //
   //
 
-  /// Returns a list of Pod values where the type matches the generic type [T].
-  List<T> valuesWhereType<T>() {
-    final results = <T>[];
+  /// Returns a list of Pod values where the type matches the generic type [A].
+  List<A> valuesWhereType<A>() {
+    final results = <A>[];
     for (var pod in pods) {
-      if (pod?.value is T) {
-        results.add(pod?.value as T);
+      if (pod?.value is A) {
+        results.add(pod?.value as A);
       }
     }
     return results;
@@ -124,10 +124,13 @@ final class Pods2<T1, T2> extends Tuple2<T1?, T2?>
   Pods2([
     this.p1,
     this.p2,
-  ]) : super(
-          p1?.value,
-          p2?.value,
-        );
+  ]) : super(null, null);
+
+  @override
+  T1? get item1 => p1?.value;
+
+  @override
+  T2? get item2 => p2?.value;
 
   @override
   List<Pod<dynamic>?> get pods => [
@@ -178,10 +181,19 @@ final class Pods3<T1, T2, T3> extends Tuple3<T1?, T2?, T3?>
     this.p2,
     this.p3,
   ]) : super(
-          p1?.value,
-          p2?.value,
-          p3?.value,
+          null,
+          null,
+          null,
         );
+
+  @override
+  T1? get item1 => p1?.value;
+
+  @override
+  T2? get item2 => p2?.value;
+
+  @override
+  T3? get item3 => p3?.value;
 
   @override
   List<Pod<dynamic>?> get pods => [
@@ -236,11 +248,23 @@ final class Pods4<T1, T2, T3, T4> extends Tuple4<T1?, T2?, T3?, T4?>
     this.p3,
     this.p4,
   ]) : super(
-          p1?.value,
-          p2?.value,
-          p3?.value,
-          p4?.value,
+          null,
+          null,
+          null,
+          null,
         );
+
+  @override
+  T1? get item1 => p1?.value;
+
+  @override
+  T2? get item2 => p2?.value;
+
+  @override
+  T3? get item3 => p3?.value;
+
+  @override
+  T4? get item4 => p4?.value;
 
   @override
   List<Pod<dynamic>?> get pods => [
@@ -297,12 +321,27 @@ final class Pods5<T1, T2, T3, T4, T5> extends Tuple5<T1?, T2?, T3?, T4?, T5?>
     this.p4,
     this.p5,
   ]) : super(
-          p1?.value,
-          p2?.value,
-          p3?.value,
-          p4?.value,
-          p5?.value,
+          null,
+          null,
+          null,
+          null,
+          null,
         );
+
+  @override
+  T1? get item1 => p1?.value;
+
+  @override
+  T2? get item2 => p2?.value;
+
+  @override
+  T3? get item3 => p3?.value;
+
+  @override
+  T4? get item4 => p4?.value;
+
+  @override
+  T5? get item5 => p5?.value;
 
   @override
   List<Pod<dynamic>?> get pods => [
@@ -363,13 +402,31 @@ final class Pods6<T1, T2, T3, T4, T5, T6>
     this.p5,
     this.p6,
   ]) : super(
-          p1?.value,
-          p2?.value,
-          p3?.value,
-          p4?.value,
-          p5?.value,
-          p6?.value,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
         );
+
+  @override
+  T1? get item1 => p1?.value;
+
+  @override
+  T2? get item2 => p2?.value;
+
+  @override
+  T3? get item3 => p3?.value;
+
+  @override
+  T4? get item4 => p4?.value;
+
+  @override
+  T5? get item5 => p5?.value;
+
+  @override
+  T6? get item6 => p6?.value;
 
   @override
   List<Pod<dynamic>?> get pods => [
@@ -443,14 +500,35 @@ final class Pods7<T1, T2, T3, T4, T5, T6, T7>
     this.p6,
     this.p7,
   ]) : super(
-          p1?.value,
-          p2?.value,
-          p3?.value,
-          p4?.value,
-          p5?.value,
-          p6?.value,
-          p7?.value,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
         );
+
+  @override
+  T1? get item1 => p1?.value;
+
+  @override
+  T2? get item2 => p2?.value;
+
+  @override
+  T3? get item3 => p3?.value;
+
+  @override
+  T4? get item4 => p4?.value;
+
+  @override
+  T5? get item5 => p5?.value;
+
+  @override
+  T6? get item6 => p6?.value;
+
+  @override
+  T7? get item7 => p7?.value;
 
   @override
   List<Pod<dynamic>?> get pods => [
