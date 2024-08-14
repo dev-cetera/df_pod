@@ -15,7 +15,8 @@ import '/src/_index.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// T2 tuple of 2 [AnyPod] instances.
-final class Pods2<P1, P2> extends Tuple2<P1?, P2?> implements ManyPods<dynamic> {
+final class Pods2<P1, P2> extends Tuple2<P1?, P2?>
+    implements ManyPods<dynamic> {
   final AnyPod<P1>? p1;
   final AnyPod<P2>? p2;
 

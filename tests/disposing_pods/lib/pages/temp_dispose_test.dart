@@ -30,7 +30,8 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
   //
 
   final _pNotTempPod = Pod('Not Temp Pod');
-  late final _pAnotherTempPod = _pNotTempPod.mapToTemp((_) => 'Another Temp Pod');
+  late final _pAnotherTempPod =
+      _pNotTempPod.mapToTemp((_) => 'Another Temp Pod');
 
   //
   //

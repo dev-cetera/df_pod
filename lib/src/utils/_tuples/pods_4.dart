@@ -15,7 +15,8 @@ import '/src/_index.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// T4 tuple of 4 [AnyPod] instances.
-final class Pods4<P1, P2, P3, P4> extends Tuple4<P1?, P2?, P3?, P4?> implements ManyPods<dynamic> {
+final class Pods4<P1, P2, P3, P4> extends Tuple4<P1?, P2?, P3?, P4?>
+    implements ManyPods<dynamic> {
   final AnyPod<P1>? p1;
   final AnyPod<P2>? p2;
   final AnyPod<P3>? p3;

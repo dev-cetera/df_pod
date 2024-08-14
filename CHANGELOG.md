@@ -21,6 +21,7 @@
 - test: Write more tests
 - test: Add tests
 - chore: Update comments in tests
+- fix: Bugfixes
 
 ## [0.2.3]
 
