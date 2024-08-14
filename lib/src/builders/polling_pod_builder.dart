@@ -178,7 +178,8 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
       return PodBuilder<T>(
         key: widget.key,
         pod: _currentPod!,
-        builder: (context, value, child) => widget.builder(context, value, child),
+        builder: (context, value, child) =>
+            widget.builder(context, value, child),
         onDispose: widget.onDispose,
         child: _staticChild,
       );

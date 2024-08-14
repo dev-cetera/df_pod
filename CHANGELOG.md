@@ -18,6 +18,7 @@
 - refactor: Move Pod reducers to classes and refactor typedefs
 - fix: Fix file structure
 - fix: Fix various issues
+- test: Write more tests
 
 ## [0.2.3]
 
