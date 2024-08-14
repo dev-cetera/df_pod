@@ -20,6 +20,7 @@
 - fix: Fix various issues
 - test: Write more tests
 - test: Add tests
+- chore: Update comments in tests
 
 ## [0.2.3]
 
