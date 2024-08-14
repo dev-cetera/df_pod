@@ -16,6 +16,7 @@
 - fix: Fix reducer bug
 - refactor: Restructure logic
 - refactor: Move Pod reducers to classes and refactor typedefs
+- fix: Fix file structure
 
 ## [0.2.3]
 
