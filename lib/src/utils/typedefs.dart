@@ -48,6 +48,8 @@ typedef TPodListResponder<T extends Object?> = TPodList<T> Function();
 
 typedef TFutureOrPod<T> = FutureOr<PodListenable<T>>;
 
+// typedef TGlobalPodCompleter<T> = Completer<GlobalPod<T>>;
+
 typedef TReducerFn<T> = AnyPod<T>? Function();
 
 typedef TPodsResponderFn<T> = Iterable<AnyPod<T>?> Function();
