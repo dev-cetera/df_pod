@@ -14,6 +14,7 @@
 - refactor: Update generic type in RespondingBuilder and PodBuilder
 - chore: End of day
 - fix: Fix reducer bug
+- refactor: Restructure logic
 
 ## [0.2.3]
 

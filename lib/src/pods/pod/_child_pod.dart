@@ -12,7 +12,8 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<P, C> extends BindWithMixinPodNotifier<C> with BasePodMixin<C> {
+final class ChildPod<P, C> extends BindWithMixinPodNotifier<C>
+    with BasePodMixin<C> {
   //
   //
   //
