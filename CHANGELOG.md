@@ -15,6 +15,7 @@
 - chore: End of day
 - fix: Fix reducer bug
 - refactor: Restructure logic
+- refactor: Move Pod reducers to classes and refactor typedefs
 
 ## [0.2.3]
 
