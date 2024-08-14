@@ -38,7 +38,8 @@ class ListTest extends StatelessWidget {
             child: const Text('Add with "update"'),
           ),
           OutlinedButton(
-            onPressed: () => _pList.set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
+            onPressed: () => _pList
+                .set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
             child: const Text('Remove with "set"'),
           ),
           OutlinedButton(

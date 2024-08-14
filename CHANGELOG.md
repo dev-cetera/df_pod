@@ -24,6 +24,7 @@
 - fix: Bugfixes
 - delete: Unused exceptions
 - chore: Remove unused exceptions and update comments
+- chore: Update test comments
 
 ## [0.2.3]
 

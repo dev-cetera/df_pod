@@ -66,7 +66,8 @@ class Page1 extends StatelessWidget {
 
 // [B - BUILDER] Create an interpreted builder for your page.
 class Page1InterpretedBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, Page1Interpreter interpreter) builder;
+  final Widget Function(BuildContext context, Page1Interpreter interpreter)
+      builder;
   const Page1InterpretedBuilder({
     super.key,
     required this.builder,
@@ -100,12 +101,14 @@ class Page1Interpreter {
   );
 
   late final pUserId = userService.pUser.map((e) => e!.id);
-  late final pNotificationCount = notificationService.pNotifications.map((e) => e!.length);
-  late final pConnectionCount = connectionService.pConnections.map((e) => e!.length);
+  late final pNotificationCount =
+      notificationService.pNotifications.map((e) => e!.length);
+  late final pConnectionCount =
+      connectionService.pConnections.map((e) => e!.length);
   late final pNotificationRatio =
       pNotificationCount.reduce(pConnectionCount, (a, b) => a.value / b.value);
-  late final pPriorityNotifications =
-      notificationService.pNotifications.map((e) => e!.where((e) => e.startsWith('priority:')));
+  late final pPriorityNotifications = notificationService.pNotifications
+      .map((e) => e!.where((e) => e.startsWith('priority:')));
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
