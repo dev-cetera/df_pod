@@ -19,6 +19,7 @@
 - fix: Fix file structure
 - fix: Fix various issues
 - test: Write more tests
+- test: Add tests
 
 ## [0.2.3]
 
