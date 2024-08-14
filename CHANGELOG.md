@@ -23,6 +23,7 @@
 - chore: Update comments in tests
 - fix: Bugfixes
 - delete: Unused exceptions
+- chore: Remove unused exceptions and update comments
 
 ## [0.2.3]
 
