@@ -28,7 +28,6 @@ export 'utils/reducers/pod_reducer_5.dart';
 export 'utils/reducers/pod_reducer_4.dart';
 export 'utils/reducers/many_pods_reducer.dart';
 export 'exceptions/cannot_cast_pod_exception.dart';
-export 'exceptions/wrong_parent_pod_exception.dart';
 export 'exceptions/pod_exception.dart';
 export 'exceptions/do_not_dispose_pod_exception.dart';
 export 'pods/pod_listenable.dart';
