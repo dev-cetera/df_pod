@@ -1,14 +1,19 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Testing how temp Pods are disposed.
+// Test Questions:
+//
+// - Does "disposeIfTemp" dispose "temp" pods and ignore other pods?
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:flutter/material.dart';
+
 import 'package:df_log/df_log.dart';
 import 'package:df_pod/df_pod.dart';
-import 'package:flutter/material.dart';
+
+final _pAnotherGlobalPod = Pod.global('Another Global Pod');
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -40,6 +45,9 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
         children: [
           MyLabel(
             pText: Pod.temp('Temp Pod'),
+          ),
+          MyLabel(
+            pText: _pAnotherGlobalPod,
           ),
           MyLabel(
             pText: _pNotTempPod,
