@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pList = Pod<List>.global([]);
+final _pList = GlobalPod<List>([]);
 
 class ListTest extends StatelessWidget {
   const ListTest({super.key});

@@ -8,10 +8,19 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'parts.dart';
+import 'package:flutter/foundation.dart' show protected;
+
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class TempPod<T> extends Pod<T> {
-  TempPod(super.value) : super.temp();
+base mixin TempPodMixin<T> on Pod<T> {
+  /// [TempPod] or [Pod._temp] are not meant to be disposed of outside of
+  /// supported widgets. Widgets that support [TempPod] disposal call
+  /// [disposeIfTemp] instead.
+  @protected
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }

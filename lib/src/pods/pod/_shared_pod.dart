@@ -8,10 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../pod/parts.dart';
-import '/src/_index.g.dart';
+part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -37,17 +34,17 @@ base class SharedPod<A, B> extends Pod<A?> {
     required this.toValue,
   }) : super(null);
 
-  SharedPod.temp(
+  SharedPod._temp(
     this.key, {
     required this.fromValue,
     required this.toValue,
-  }) : super.temp(null);
+  }) : super._temp(null);
 
-  SharedPod.global(
+  SharedPod._global(
     this.key, {
     required this.fromValue,
     required this.toValue,
-  }) : super.global(null);
+  }) : super._global(null);
 
   //
   //

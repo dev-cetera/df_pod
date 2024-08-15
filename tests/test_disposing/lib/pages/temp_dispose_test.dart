@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:df_log/df_log.dart';
 import 'package:df_pod/df_pod.dart';
 
-final _pAnotherGlobalPod = Pod.global('Another Global Pod');
+final _pAnotherGlobalPod = GlobalPod('Another Global Pod');
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -46,7 +46,7 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
       child: Column(
         children: [
           MyLabel(
-            pText: Pod.temp('Temp Pod'),
+            pText: TempPod('Temp Pod'),
           ),
           MyLabel(
             pText: _pAnotherGlobalPod,

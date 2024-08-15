@@ -8,13 +8,13 @@ import 'package:get_it/get_it.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-// [V - VIEW] Create your page widget.
-class Page1 extends StatelessWidget {
-  const Page1({super.key});
+// [V - VIEW] Create your view/page/screen widget.
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Page1InterpretedBuilder(
+    return HomeViewInterpretedBuilder(
       builder: (context, interpreter) {
         return Column(
           children: [
@@ -64,11 +64,10 @@ class Page1 extends StatelessWidget {
   }
 }
 
-// [B - BUILDER] Create an interpreted builder for your page.
-class Page1InterpretedBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, Page1Interpreter interpreter)
-      builder;
-  const Page1InterpretedBuilder({
+// [B - BUILDER] Create an interpreted builder for your view.
+class HomeViewInterpretedBuilder extends StatelessWidget {
+  final Widget Function(BuildContext context, Page1Interpreter interpreter) builder;
+  const HomeViewInterpretedBuilder({
     super.key,
     required this.builder,
   });
@@ -86,8 +85,7 @@ class Page1InterpretedBuilder extends StatelessWidget {
   }
 }
 
-// [I - INTERPRETER] A interpreter maps and reduces global states (Pods) into a local states
-// (Pods) for your page. It also specifies which serives are used by the
+// [I - INTERPRETER] A interpreter interprets services, then maps and reduces service Pods into other Pods that your page can use. It also allows the page access to the serives used by the page...
 // current page.
 class Page1Interpreter {
   final UserService userService;

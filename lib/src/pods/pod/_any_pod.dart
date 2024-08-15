@@ -38,11 +38,13 @@ mixin AnyPod<T> on PodNotifier<T> {
   T? _cachedValue;
 
   Future<void> _set(T newValue) async {
-    _cachedValue = newValue;
-    await Future.delayed(Duration.zero, () {
-      _value = _cachedValue ?? newValue;
-      notifyListeners();
-    });
+    if (!isEquatable<T>() || newValue != _value) {
+      _cachedValue = newValue;
+      await Future.delayed(Duration.zero, () {
+        _value = _cachedValue ?? newValue;
+        notifyListeners();
+      });
+    }
   }
 
   /// Reduces the current Pod and [other] into a single [ChildPod].

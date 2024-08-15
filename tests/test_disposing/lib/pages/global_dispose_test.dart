@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:df_log/df_log.dart';
 import 'package:df_pod/df_pod.dart';
 
-final _pGlobal = Pod.global('Global');
+final _pGlobal = GlobalPod('Global');
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -52,6 +52,7 @@ class _GlobalDisposeTestState extends State<GlobalDisposeTest> {
     // Check if this throws an error.
     () async {
       try {
+        // ignore: invalid_use_of_protected_member
         _pGlobal.dispose();
       } catch (e) {
         printLightPurple('[SUCCESS]: $e');

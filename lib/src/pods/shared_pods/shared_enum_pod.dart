@@ -14,11 +14,11 @@ import '/src/_index.g.dart';
 
 final class SharedEnumPodCreator {
   const SharedEnumPodCreator._();
-  static Future<_SharedEnumPod<T>> create<T extends Enum>(
+  static Future<TSharedEnumPod<T>> create<T extends Enum>(
     String key,
     Iterable<T?> options,
   ) async {
-    final instance = _SharedEnumPod<T>(
+    final instance = TSharedEnumPod<T>(
       key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
@@ -32,11 +32,11 @@ final class SharedEnumPodCreator {
     return instance;
   }
 
-  static Future<_SharedEnumPod<T>> temp<T extends Enum>(
+  static Future<TSharedTempEnumPod<T>> temp<T extends Enum>(
     String key,
     Iterable<T?> options,
   ) async {
-    final instance = _SharedEnumPod<T>.temp(
+    final instance = TSharedTempEnumPod<T>(
       key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
@@ -50,11 +50,11 @@ final class SharedEnumPodCreator {
     return instance;
   }
 
-  static Future<_SharedEnumPod<T>> global<T extends Enum>(
+  static Future<TSharedGlobalEnumPod<T>> global<T extends Enum>(
     String key,
     Iterable<T?> options,
   ) async {
-    final instance = _SharedEnumPod<T>.global(
+    final instance = TSharedGlobalEnumPod<T>(
       key,
       fromValue: (rawValue) => rawValue?.name,
       toValue: (value) {
@@ -69,4 +69,8 @@ final class SharedEnumPodCreator {
   }
 }
 
-typedef _SharedEnumPod<T extends Enum> = SharedPod<String, T>;
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+typedef TSharedEnumPod<T extends Enum> = SharedPod<String, T>;
+typedef TSharedTempEnumPod<T extends Enum> = SharedTempPod<String, T>;
+typedef TSharedGlobalEnumPod<T extends Enum> = SharedGlobalPod<String, T>;

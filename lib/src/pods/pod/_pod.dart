@@ -21,9 +21,9 @@ base class Pod<T> extends PodNotifier<T> with AnyPod<T> {
 
   Pod(super.value);
 
-  Pod.temp(super.value) : super.temp();
+  Pod._temp(super.value) : super.temp();
 
-  Pod.global(super.value) : super.global();
+  Pod._global(super.value) : super.global();
 
   static Pod<T> cast<T>(PodListenable<T> other) =>
       other.asPodNotifier().asPod();

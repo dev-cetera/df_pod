@@ -91,7 +91,7 @@ class _PodWidgetState<T> extends State<PodWidget<T>> {
   //
   //
 
-  late final _pod = Pod<T>.temp(widget.initialValue);
+  late final _pod = TempPod<T>(widget.initialValue);
   late final Widget? _staticChild;
 
   //

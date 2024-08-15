@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pCounter1 = Pod<int>.global(1);
+final _pCounter1 = GlobalPod<int>(1);
 
 class CounterTest extends StatelessWidget {
   const CounterTest({super.key});

@@ -8,11 +8,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'parts.dart';
+part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class GlobalPod<T> extends Pod<T> {
-  // TODO: Find a way to remove/hide the dispose method.
-  GlobalPod(super.value) : super.global();
+base class GlobalPod<T> extends Pod<T> with GlobalPodMixin<T> {
+  GlobalPod(super.value) : super._global();
 }

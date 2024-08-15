@@ -8,19 +8,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:df_type/df_type.dart';
-import 'package:flutter/foundation.dart';
+part of 'parts.dart';
 
-import '/src/_index.g.dart';
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-part '_any_pod.dart';
-part '_child_pod.dart';
-part '_global_pod.dart';
-part '_shared_global_pod.dart';
-part '_pod_disposable_mixin.dart';
-part '_pod_notifier.dart';
-part '_pod.dart';
-part '_shared_pod.dart';
-part '_temp_pod.dart';
-part '_shared_temp_pod.dart';
+base class TempPod<T> extends Pod<T> with TempPodMixin<T> {
+  TempPod(super.value) : super._global();
+}

@@ -14,8 +14,8 @@ import '/src/_index.g.dart';
 
 final class SharedDoublePodCreator {
   const SharedDoublePodCreator._();
-  static Future<_SharedDoublePod> local(String key) async {
-    final instance = _SharedDoublePod(
+  static Future<TSharedDoublePod> local(String key) async {
+    final instance = TSharedDoublePod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -24,8 +24,8 @@ final class SharedDoublePodCreator {
     return instance;
   }
 
-  static Future<_SharedDoublePod> temp(String key) async {
-    final instance = _SharedDoublePod.temp(
+  static Future<TSharedTempDoublePod> temp(String key) async {
+    final instance = TSharedTempDoublePod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -34,8 +34,8 @@ final class SharedDoublePodCreator {
     return instance;
   }
 
-  static Future<_SharedDoublePod> global(String key) async {
-    final instance = _SharedDoublePod.global(
+  static Future<TSharedGlobalDoublePod> global(String key) async {
+    final instance = TSharedGlobalDoublePod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
@@ -45,4 +45,8 @@ final class SharedDoublePodCreator {
   }
 }
 
-typedef _SharedDoublePod = SharedPod<double, double>;
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+typedef TSharedDoublePod = SharedPod<double, double>;
+typedef TSharedTempDoublePod = SharedTempPod<double, double>;
+typedef TSharedGlobalDoublePod = SharedGlobalPod<double, double>;

@@ -92,7 +92,7 @@ class _PodListWidgetState<T> extends State<PodListWidget<T>> {
   //
   //
 
-  late final _podList = widget.initialValues.map((e) => Pod<T>.temp(e));
+  late final _podList = widget.initialValues.map((e) => TempPod<T>(e));
   late final Widget? _staticChild;
 
   //
