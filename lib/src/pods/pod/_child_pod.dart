@@ -12,8 +12,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
-    with AnyPod<TChild> {
+final class ChildPod<TParent, TChild> extends PodNotifier<TChild> with AnyPod<TChild> {
   //
   //
   //
@@ -100,7 +99,8 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  /// TODO: Child Pods will automatically get diposed when the parent pad is disposed... Avoid doing it manually......
+  /// [ChildPod] should not be disposed of directy. These Pods are automatically
+  /// disposed of when their parent is disposed.
   @protected
   @override
   void dispose() {
