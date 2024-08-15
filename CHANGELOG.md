@@ -3,28 +3,9 @@
 ## [0.3.0]
 
 - Released @ 8/2024 (UTC)
-- chore: Remove this where unnecessary
-- chore: Restructure source files and improve docs
-- chore: Separate each exception into its own file
-- feat: Add .global and .temp constructors
-- chore: Restructure to not expose unwanted declarations to public
-- fix: Fixed SharedPod
-- refactor: Use switch instead in shared_pod.dart
 - refactor: Address null issues
-- refactor: Update generic type in RespondingBuilder and PodBuilder
-- chore: End of day
-- fix: Fix reducer bug
-- refactor: Restructure logic
 - refactor: Move Pod reducers to classes and refactor typedefs
-- fix: Fix file structure
-- fix: Fix various issues
-- test: Write more tests
-- test: Add tests
-- chore: Update comments in tests
-- fix: Bugfixes
-- delete: Unused exceptions
 - chore: Remove unused exceptions and update comments
-- chore: Update test comments
 - feat: Separate global and temp Pods into their own Pods
 - refactor: Refactor Update dispose method comment
 
