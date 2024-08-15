@@ -7,8 +7,7 @@
 - refactor: Move Pod reducers to classes and refactor typedefs
 - chore: Remove unused exceptions and update comments
 - feat: Separate global and temp Pods into their own Pods
-- refactor: Refactor Update dispose method comment
-- docsL Improve readme and usage example
+- docs: Improve readme and usage example
 
 ## [0.2.3]
 
@@ -18,6 +17,7 @@
 ## [0.2.2]
 
 - Released @ 8/2024 (UTC)
+- feat: Remove FuturePodBuilder and FuturePodListBuilder
 - feat: PodBuilder, PodListBuilder and PollingPodBuilder can now use FutureOr
 
 ## [0.2.1]
@@ -29,6 +29,7 @@
 
 - Released @ 8/2024 (UTC)
 - feat: Add SharedPod
+- refactor: Refactor for clarity
 
 ## [0.1.0]
 
