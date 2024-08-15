@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.4]
+
+- Released @ 8/2024 (UTC)
+- docs: Update library description comment
+
 ## [0.3.3]
 
 - Released @ 8/2024 (UTC)
