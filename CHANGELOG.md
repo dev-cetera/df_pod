@@ -8,6 +8,7 @@
 - chore: Remove unused exceptions and update comments
 - feat: Separate global and temp Pods into their own Pods
 - refactor: Refactor Update dispose method comment
+- docsL Improve readme and usage example
 
 ## [0.2.3]
 
