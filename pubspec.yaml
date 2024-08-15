@@ -26,7 +26,7 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.3.1
   tuple: ^2.0.2
-  df_type: ^0.2.1
+  df_type: ^0.2.2
   equatable: ^2.0.5
   # analyzer: ^6.8.0
   # meta: ^1.15.0
