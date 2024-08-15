@@ -17,11 +17,11 @@ repository: https://github.com/robmllze/df_pod
 funding:
   - https://www.buymeacoffee.com/robmllze
 topics:
+  - bloc
   - dependency-injection
-  - get-it
   - reactive-programming
+  - state
   - state-management
-  - value-notifier
 
 ## -----------------------------------------------------------------------------
 
