@@ -26,6 +26,7 @@
 - chore: Remove unused exceptions and update comments
 - chore: Update test comments
 - feat: Separate global and temp Pods into their own Pods
+- refactor: Refactor Update dispose method comment
 
 ## [0.2.3]
 
