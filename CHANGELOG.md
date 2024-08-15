@@ -25,6 +25,7 @@
 - delete: Unused exceptions
 - chore: Remove unused exceptions and update comments
 - chore: Update test comments
+- feat: Separate global and temp Pods into their own Pods
 
 ## [0.2.3]
 

@@ -66,7 +66,8 @@ class HomeView extends StatelessWidget {
 
 // [B - BUILDER] Create an interpreted builder for your view.
 class HomeViewInterpretedBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, Page1Interpreter interpreter) builder;
+  final Widget Function(BuildContext context, Page1Interpreter interpreter)
+      builder;
   const HomeViewInterpretedBuilder({
     super.key,
     required this.builder,
