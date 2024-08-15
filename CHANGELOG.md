@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - docs: Update library description comment
+- chore: Update topics to pubspec.yaml
 
 ## [0.3.3]
 
