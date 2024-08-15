@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.1]
+
+- Released @ 8/2024 (UTC)
+- chore: Update Flutter SDK version
+
 ## [0.3.0]
 
 - Released @ 8/2024 (UTC)
