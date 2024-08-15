@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.3]
+
+- Released @ 8/2024 (UTC)
+- chore: Rename tests folder to more_tests and address pub warnings
+
 ## [0.3.2]
 
 - Released @ 8/2024 (UTC)
