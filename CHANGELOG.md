@@ -5,6 +5,7 @@
 - Released @ 8/2024 (UTC)
 - chore: Rename tests folder to more_tests and address pub warnings
 - fix: Fix potential issues in pubspec.yaml and update dependencies
+- docs: Update readme and details in pubspec.yaml
 
 ## [0.3.2]
 
