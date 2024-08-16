@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.0]
+
+- Released @ 8/2024 (UTC)
+- refactor: Update builders to pass context again
+
 ## [0.6.0]
 
 - Released @ 8/2024 (UTC)

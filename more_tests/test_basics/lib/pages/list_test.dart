@@ -31,7 +31,8 @@ class ListTest extends StatelessWidget {
           const Text('List Test'),
           PodBuilder(
             pod: _pList,
-            builder: (context, listSnapshot) => Text('List: ${listSnapshot.value}'),
+            builder: (context, listSnapshot) =>
+                Text('List: ${listSnapshot.value}'),
           ),
           OutlinedButton(
             onPressed: () => _pList.update((e) => e..add(e.length)),
