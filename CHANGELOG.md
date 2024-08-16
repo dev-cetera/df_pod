@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - chore: Fix and rename builders and provide usage example of CallbackBuilder and PodListCallbackBuilder
+- refactor: Rename RespondingBuilderSnapshot to CallbackBuilderSnapshot
 
 ## [0.3.4]
 
