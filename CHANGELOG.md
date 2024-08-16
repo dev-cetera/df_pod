@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0]
+
+- Released @ 8/2024 (UTC)
+- chore: Fix and rename builders and provide usage example of CallbackBuilder and PodListCallbackBuilder
+
 ## [0.3.4]
 
 - Released @ 8/2024 (UTC)
