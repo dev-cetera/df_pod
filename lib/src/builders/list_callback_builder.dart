@@ -12,20 +12,18 @@ import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
 
-import '_builder_utils.dart';
-
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A wrapper for the [PodListCallbackBuilder] that provides a simpler
 /// solution.
-class CallbackBuilder<T> extends StatelessWidget {
+class ListCallbackBuilder<T> extends StatelessWidget {
   //
   //
   //
 
-  final TPodListCallbackN<T> callback;
-  final T? Function() getData;
-  final bool Function(T data)? isUsableData;
+  final TPodListCallbackN<T> listCallback;
+  final T? Function() getValue;
+  final bool Function(T data)? isUsableValue;
   final TOnValueBuilder<T?, CallbackBuilderSnapshot<T>> builder;
   final Widget? child;
 
@@ -33,13 +31,13 @@ class CallbackBuilder<T> extends StatelessWidget {
   //
   //
 
-  const CallbackBuilder({
+  const ListCallbackBuilder({
     super.key,
-    required this.callback,
-    required this.getData,
+    required this.listCallback,
+    required this.getValue,
     required this.builder,
     this.child,
-    this.isUsableData,
+    this.isUsableValue,
   });
 
   //
@@ -49,13 +47,12 @@ class CallbackBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PodListCallbackBuilder(
-      callback: callback,
+      listCallback: listCallback,
       builder: (parentSnapshot) {
         parentSnapshot.podList;
-        final data = getData();
+        final data = getValue();
         final hasValue = data is T;
-        final hasUsableValue =
-            hasValue && (this.isUsableData?.call(data) ?? true);
+        final hasUsableValue = hasValue && (this.isUsableValue?.call(data) ?? true);
         final childSnapshot = CallbackBuilderSnapshot<T>(
           podList: parentSnapshot.podList,
           hasValue: hasValue,

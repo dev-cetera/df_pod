@@ -21,18 +21,15 @@ class PodListCallbackBuilderTest extends StatefulWidget {
   const PodListCallbackBuilderTest({super.key});
 
   @override
-  State<PodListCallbackBuilderTest> createState() =>
-      _PodListCallbackBuilderTestState();
+  State<PodListCallbackBuilderTest> createState() => _PodListCallbackBuilderTestState();
 }
 
-class _PodListCallbackBuilderTestState
-    extends State<PodListCallbackBuilderTest> {
+class _PodListCallbackBuilderTestState extends State<PodListCallbackBuilderTest> {
   //
   //
   //
 
-  late final _pAppServices =
-      Pod<AppServices>(AppServices(), onBeforeDispose: (e) => e.dispose());
+  late final _pAppServices = Pod<AppServices>(AppServices(), onBeforeDispose: (e) => e.dispose());
 
   //
   //
@@ -63,8 +60,7 @@ class _PodListCallbackBuilderTestState
 
   // Create a shortcut to the message Pod for convenience. This will be null
   // until HelloWorldService is initialised.
-  Pod<String>? get pMessage =>
-      _pAppServices.value.pHelloWorldService?.value.pMessage;
+  Pod<String>? get pMessage => _pAppServices.value.pHelloWorldService?.value.pMessage;
 
   // Create a message Snapshot. his will be null until HelloWorldService is
   // initialised.
@@ -84,7 +80,7 @@ class _PodListCallbackBuilderTestState
         children: [
           const Text('PodListCallbackBuilder Test'),
           PodListCallbackBuilder(
-            callback: _messageCallback,
+            listCallback: _messageCallback,
             builder: (_) {
               final message = _messageSnapshot();
               if (message == null) {
@@ -95,8 +91,7 @@ class _PodListCallbackBuilderTestState
                   Text(message),
                   OutlinedButton(
                     onPressed: () {
-                      pMessage!
-                          .update((e) => e.substring(0, max(e.length - 1, 0)));
+                      pMessage!.update((e) => e.substring(0, max(e.length - 1, 0)));
                     },
                     child: const Text('Backspace'),
                   ),

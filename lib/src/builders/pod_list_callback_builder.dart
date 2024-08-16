@@ -12,8 +12,6 @@ import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
 
-import '_builder_utils.dart';
-
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 class PodListCallbackBuilder extends StatefulWidget {
@@ -21,7 +19,7 @@ class PodListCallbackBuilder extends StatefulWidget {
   //
   //
 
-  final TPodListCallbackN callback;
+  final TPodListCallbackN listCallback;
 
   //
   //
@@ -47,7 +45,7 @@ class PodListCallbackBuilder extends StatefulWidget {
 
   const PodListCallbackBuilder({
     super.key,
-    required this.callback,
+    required this.listCallback,
     required this.builder,
     this.child,
     this.onDispose,
@@ -89,7 +87,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   @override
   void didUpdateWidget(PodListCallbackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.callback != widget.callback) {
+    if (oldWidget.listCallback != widget.listCallback) {
       _removeListenersFromCurrentPods();
       _refreshCurrentPods();
     }
@@ -112,7 +110,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   //
 
   void _refreshCurrentPods() {
-    _currentPods = widget.callback();
+    _currentPods = widget.listCallback();
     for (final pod in _currentPods) {
       if (pod is PodDisposableMixin) {
         if (pod.temp) {
@@ -173,8 +171,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListCallbackBuilderSnapshot
-    extends OnValueSnapshot<TPodDataListN> {
+final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
   //
   //
   //
