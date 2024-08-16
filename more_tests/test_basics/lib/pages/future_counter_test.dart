@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pFutureCounter = Future.delayed(const Duration(seconds: 3), () => GlobalPod<int>(1));
+final _pFutureCounter =
+    Future.delayed(const Duration(seconds: 3), () => GlobalPod<int>(1));
 
 class FutureCounterTest extends StatelessWidget {
   const FutureCounterTest({super.key});
@@ -34,7 +35,8 @@ class FutureCounterTest extends StatelessWidget {
             },
           ),
           OutlinedButton(
-            onPressed: () => _pFutureCounter.then((e) => e.update((e) => e + 1)),
+            onPressed: () =>
+                _pFutureCounter.then((e) => e.update((e) => e + 1)),
             child: const Text('Increase with "update"'),
           ),
           OutlinedButton(

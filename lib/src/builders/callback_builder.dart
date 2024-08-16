@@ -54,7 +54,8 @@ class CallbackBuilder<T> extends StatelessWidget {
         parentSnapshot.podList;
         final data = getData();
         final hasValue = data is T;
-        final hasUsableValue = hasValue && (this.isUsableData?.call(data) ?? true);
+        final hasUsableValue =
+            hasValue && (this.isUsableData?.call(data) ?? true);
         final childSnapshot = CallbackBuilderSnapshot<T>(
           podList: parentSnapshot.podList,
           hasValue: hasValue,
