@@ -21,7 +21,7 @@ class ListCallbackBuilder<T> extends StatelessWidget {
   //
   //
 
-  final TPodListCallbackN<T> listCallback;
+  final TPodListCallbackN listCallback;
   final T? Function() getValue;
   final bool Function(T data)? isUsableValue;
   final TOnValueBuilder<T?, CallbackBuilderSnapshot<T>> builder;
@@ -52,8 +52,7 @@ class ListCallbackBuilder<T> extends StatelessWidget {
         parentSnapshot.podList;
         final data = getValue();
         final hasValue = data is T;
-        final hasUsableValue =
-            hasValue && (this.isUsableValue?.call(data) ?? true);
+        final hasUsableValue = hasValue && (isUsableValue?.call(data) ?? true);
         final childSnapshot = CallbackBuilderSnapshot<T>(
           podList: parentSnapshot.podList,
           hasValue: hasValue,
@@ -62,7 +61,7 @@ class ListCallbackBuilder<T> extends StatelessWidget {
           value: data,
           child: child,
         );
-        final widget = this.builder(childSnapshot);
+        final widget = builder(childSnapshot);
         return widget;
       },
     );

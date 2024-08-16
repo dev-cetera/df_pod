@@ -40,18 +40,12 @@ abstract class ListCallbackStateBuilder<T> extends StatelessWidget {
   //
   //
 
-  Widget builder(
-    BuildContext context,
-    Widget? child,
-    CallbackBuilderSnapshot<T> snapshot,
-  ) {
+  Widget builder(CallbackBuilderSnapshot<T> snapshot) {
     return _builder<T>(
       onValueBuilder,
       onLoadingBuilder,
       onNoUsableValueBuilder,
-      context,
       snapshot,
-      child,
     );
   }
 }
@@ -62,9 +56,7 @@ Widget _builder<T>(
   TOnValueBuilder<T?, CallbackBuilderSnapshot<T>> onValueBuilder,
   TOnLoadingBuilder? onLoadingBuilder,
   TOnNoValueBuilder? onNoUsableValueBuilder,
-  BuildContext context,
   CallbackBuilderSnapshot<T> snapshot,
-  Widget? child,
 ) {
   Widget? widget;
   if (snapshot.hasValue) {
@@ -73,16 +65,16 @@ Widget _builder<T>(
     } else {
       widget = onNoUsableValueBuilder?.call(
         OnNoValueSnapshot(
-          context: context,
-          child: child,
+          context: snapshot.context,
+          child: snapshot.child,
         ),
       );
     }
   } else {
     widget = onLoadingBuilder?.call(
       OnLoadingSnapshot(
-        context: context,
-        child: child,
+        context: snapshot.context,
+        child: snapshot.child,
       ),
     );
   }
