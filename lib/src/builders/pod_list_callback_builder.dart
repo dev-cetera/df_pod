@@ -171,7 +171,8 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
+final class PodListCallbackBuilderSnapshot
+    extends OnValueSnapshot<TPodDataListN> {
   //
   //
   //

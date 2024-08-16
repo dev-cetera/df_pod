@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.0]
+
+- Released @ 8/2024 (UTC)
+- refactor: Rename CallbackBuilder to ListCallbackBuilder, add ListCallbackStateBuilder, refactor
+
 ## [0.4.0]
 
 - Released @ 8/2024 (UTC)
