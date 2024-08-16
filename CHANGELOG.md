@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.6.0]
+
+- Released @ 8/2024 (UTC)
+- fix: Fix issues with ListCallbackBuilder and ListCallbackStateBuilder and simplify
+
 ## [0.5.0]
 
 - Released @ 8/2024 (UTC)
