@@ -62,7 +62,8 @@ class HomePage extends StatelessWidget {
               pod: interpreter.pNotificationRatio,
               builder: (notificationRatioSnapshot) {
                 return Text(
-                    'Notification ratio: ${notificationRatioSnapshot.value}',);
+                  'Notification ratio: ${notificationRatioSnapshot.value}',
+                );
               },
             ),
             // 6. The above examples show how to bring "Points of Data" (PODS)
