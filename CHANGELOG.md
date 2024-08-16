@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - refactor: Rename CallbackBuilder to ListCallbackBuilder, add ListCallbackStateBuilder, refactor
+- chore: Update dependencies
 
 ## [0.4.0]
 
