@@ -27,7 +27,6 @@ topics:
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
-  flutter: ">=3.24.0 <4.0.0"
 
 ## -----------------------------------------------------------------------------
 
@@ -47,5 +46,5 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  df_log: ^0.2.0
+  df_log: ^0.2.1
   get_it: ^7.7.0
