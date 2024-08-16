@@ -124,13 +124,13 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
         child: _staticChild,
       );
     } else {
-      final params = PodBuilderSnapshot<T>(
+      final snapshot = PodBuilderSnapshot<T>(
         pod: null,
-        context: context,
         value: null,
         child: _staticChild,
       );
-      return widget.builder(params);
+      final result = widget.builder(context, snapshot);
+      return result;
     }
   }
 }

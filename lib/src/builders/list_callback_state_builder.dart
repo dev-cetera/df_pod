@@ -23,28 +23,33 @@ abstract class ListCallbackStateBuilder<T> extends StatelessWidget {
   final TOnLoadingBuilder? onLoadingBuilder;
   final TOnNoValueBuilder? onNoUsableValueBuilder;
   final Widget? child;
+  late final DateTime _created;
 
   //
   //
   //
 
-  const ListCallbackStateBuilder({
+  ListCallbackStateBuilder({
     super.key,
     required this.onValueBuilder,
     this.onLoadingBuilder,
     this.onNoUsableValueBuilder,
     this.child,
-  });
+  }) {
+    _created = DateTime.now();
+  }
 
   //
   //
   //
 
-  Widget builder(CallbackBuilderSnapshot<T> snapshot) {
+  Widget builder(BuildContext context, CallbackBuilderSnapshot<T> snapshot) {
     return _builder<T>(
+      context,
       onValueBuilder,
       onLoadingBuilder,
       onNoUsableValueBuilder,
+      this,
       snapshot,
     );
   }
@@ -53,31 +58,35 @@ abstract class ListCallbackStateBuilder<T> extends StatelessWidget {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 Widget _builder<T>(
+  BuildContext context,
   TOnValueBuilder<T?, CallbackBuilderSnapshot<T>> onValueBuilder,
   TOnLoadingBuilder? onLoadingBuilder,
   TOnNoValueBuilder? onNoUsableValueBuilder,
+  ListCallbackStateBuilder<T> widget,
   CallbackBuilderSnapshot<T> snapshot,
 ) {
-  Widget? widget;
+  Widget? result;
   if (snapshot.hasValue) {
     if (snapshot.hasUsableValue) {
-      widget = onValueBuilder(snapshot);
+      result = onValueBuilder(context, snapshot);
     } else {
-      widget = onNoUsableValueBuilder?.call(
+      result = onNoUsableValueBuilder?.call(
+        context,
         OnNoValueSnapshot(
-          context: snapshot.context,
           child: snapshot.child,
         ),
       );
     }
   } else {
-    widget = onLoadingBuilder?.call(
+    final elapsed = DateTime.now().difference(widget._created);
+    result = onLoadingBuilder?.call(
+      context,
       OnLoadingSnapshot(
-        context: snapshot.context,
         child: snapshot.child,
+        elapsed: elapsed,
       ),
     );
   }
-  widget ??= const SizedBox.shrink();
-  return widget;
+  result ??= const SizedBox.shrink();
+  return result;
 }

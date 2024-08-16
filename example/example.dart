@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
             // ValueListenableBuilder.
             PodBuilder(
               pod: interpreter.pUserId,
-              builder: (userIdSnapshot) {
+              builder: (context, userIdSnapshot) {
                 return Text('UserId: ${userIdSnapshot.value}');
               },
             ),
@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
                 interpreter.pConnectionCount,
                 interpreter.pNotificationCount,
               ],
-              builder: (podListSnapshot) {
+              builder: (context, podListSnapshot) {
                 final [connectionCount!, notificationCount!] =
                     podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
@@ -60,7 +60,7 @@ class HomePage extends StatelessWidget {
             // logic and UI code.
             PodBuilder(
               pod: interpreter.pNotificationRatio,
-              builder: (notificationRatioSnapshot) {
+              builder: (context, notificationRatioSnapshot) {
                 return Text(
                   'Notification ratio: ${notificationRatioSnapshot.value}',
                 );

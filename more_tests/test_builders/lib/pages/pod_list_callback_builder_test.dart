@@ -85,7 +85,7 @@ class _PodListCallbackBuilderTestState
           const Text('PodListCallbackBuilder Test'),
           PodListCallbackBuilder(
             listCallback: _messageCallback,
-            builder: (_) {
+            builder: (context, snapshot) {
               final message = _messageSnapshot();
               if (message == null) {
                 return const CircularProgressIndicator();

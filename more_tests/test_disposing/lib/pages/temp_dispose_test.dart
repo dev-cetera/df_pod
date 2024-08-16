@@ -92,7 +92,7 @@ class _MyLabelState extends State<MyLabel> {
   Widget build(BuildContext context) {
     return PodBuilder(
       pod: widget.pText,
-      builder: (textSnapshot) {
+      builder: (context, textSnapshot) {
         return Text(textSnapshot.value!);
       },
     );

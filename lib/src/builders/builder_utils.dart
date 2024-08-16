@@ -12,16 +12,15 @@ import 'package:flutter/widgets.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TOnValueBuilder<T, P extends OnValueSnapshot<T>> = Widget Function(
-  P params,
+typedef TOnValueBuilder<T, S extends OnValueSnapshot<T>> = Widget Function(
+  BuildContext context,
+  S snapshot,
 );
 
 class BuilderSnapshot<T> {
-  final BuildContext context;
   final Widget? child;
 
   BuilderSnapshot({
-    required this.context,
     required this.child,
   });
 }
@@ -30,30 +29,31 @@ class OnValueSnapshot<T> extends BuilderSnapshot<T> {
   final T value;
 
   OnValueSnapshot({
-    required super.context,
     required this.value,
     required super.child,
   });
 }
 
-typedef TOnLoadingBuilder<P extends OnLoadingSnapshot> = Widget Function(
-  P params,
+typedef TOnLoadingBuilder<S extends OnLoadingSnapshot> = Widget Function(
+  BuildContext context,
+  S snapshot,
 );
 
 class OnLoadingSnapshot extends BuilderSnapshot {
+  final Duration elapsed;
   OnLoadingSnapshot({
-    required super.context,
     required super.child,
+    required this.elapsed,
   });
 }
 
-typedef TOnNoValueBuilder<P extends OnNoValueSnapshot> = Widget Function(
-  P params,
+typedef TOnNoValueBuilder<S extends OnNoValueSnapshot> = Widget Function(
+  BuildContext context,
+  S snapshot,
 );
 
 class OnNoValueSnapshot<T> extends BuilderSnapshot<T> {
   OnNoValueSnapshot({
-    required super.context,
     required super.child,
   });
 }

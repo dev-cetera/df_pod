@@ -30,7 +30,7 @@ class FutureCounterTest extends StatelessWidget {
           const Text('Future Counter Test'),
           PodBuilder(
             pod: _pFutureCounter,
-            builder: (counterSnapshot) {
+            builder: (context, counterSnapshot) {
               return Text('Count: ${counterSnapshot.value}');
             },
           ),

@@ -137,9 +137,9 @@ class PodBuilder<T> extends StatelessWidget {
           );
         } else {
           return builder(
+            context,
             PodBuilderSnapshot<T>(
               pod: null,
-              context: context,
               value: null,
               child: child,
             ),
@@ -254,13 +254,13 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final params = PodBuilderSnapshot(
+    final snapshot = PodBuilderSnapshot(
       pod: widget.pod,
-      context: context,
       value: _value,
       child: _staticChild,
     );
-    return widget.builder(params);
+    final result = widget.builder(context, snapshot);
+    return result;
   }
 
   //
@@ -291,7 +291,6 @@ final class PodBuilderSnapshot<T> extends OnValueSnapshot<T?> {
 
   PodBuilderSnapshot({
     required this.pod,
-    required super.context,
     required super.value,
     required super.child,
   });

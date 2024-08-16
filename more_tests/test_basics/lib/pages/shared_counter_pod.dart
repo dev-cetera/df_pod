@@ -29,7 +29,7 @@ class SharedCounterPodTest extends StatelessWidget {
           const Text('Shared Counter'),
           PodBuilder(
             pod: _pSharedCounter,
-            builder: (sharedCounterSnapshot) =>
+            builder: (context, sharedCounterSnapshot) =>
                 Text('Counter: ${sharedCounterSnapshot.value}'),
           ),
           OutlinedButton(

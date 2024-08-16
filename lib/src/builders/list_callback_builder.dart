@@ -48,22 +48,22 @@ class ListCallbackBuilder<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return PodListCallbackBuilder(
       listCallback: listCallback,
-      builder: (parentSnapshot) {
+      builder: (context, parentSnapshot) {
         parentSnapshot.podList;
-        final data = getValue();
-        final hasValue = data is T;
-        final hasUsableValue = hasValue && (isUsableValue?.call(data) ?? true);
+        final value = getValue();
+        final hasValue = value is T;
+        final hasUsableValue = hasValue && (isUsableValue?.call(value) ?? true);
         final childSnapshot = CallbackBuilderSnapshot<T>(
           podList: parentSnapshot.podList,
           hasValue: hasValue,
           hasUsableValue: hasUsableValue,
-          context: context,
-          value: data,
-          child: child,
+          value: value,
+          child: parentSnapshot.child,
         );
-        final widget = builder(childSnapshot);
-        return widget;
+        final result = builder(context, childSnapshot);
+        return result;
       },
+      child: this.child,
     );
   }
 }
@@ -86,7 +86,6 @@ final class CallbackBuilderSnapshot<T> extends OnValueSnapshot<T?> {
     required this.podList,
     required this.hasValue,
     required this.hasUsableValue,
-    required super.context,
     required super.value,
     required super.child,
   });

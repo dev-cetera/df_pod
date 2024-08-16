@@ -48,7 +48,7 @@ class _ChildPodDisposalTestState extends State<ChildPodDisposalTest> {
           const Text('ChildPod Disposal Test'),
           PodBuilder(
             pod: _pChild3,
-            builder: (child3Snapshot) {
+            builder: (context, child3Snapshot) {
               return Text(child3Snapshot.value.toString());
             },
           ),

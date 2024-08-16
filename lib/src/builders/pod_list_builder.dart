@@ -91,13 +91,13 @@ class PodListBuilder<T> extends StatelessWidget {
             child: child,
           );
         } else {
-          final params = PodListBuilderSnapshot<T>(
+          final snapshot = PodListBuilderSnapshot<T>(
             podList: null,
-            context: context,
             value: List<T?>.filled(temp.length, null),
             child: child,
           );
-          return builder(params);
+          final result = builder(context, snapshot);
+          return result;
         }
       },
     );
@@ -225,13 +225,13 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final params = PodListBuilderSnapshot(
+    final snapshot = PodListBuilderSnapshot(
       podList: widget.podList,
-      context: context,
       value: _values,
       child: _staticChild,
     );
-    return widget.builder(params);
+    final result = widget.builder(context, snapshot);
+    return result;
   }
 
   //
@@ -264,7 +264,6 @@ final class PodListBuilderSnapshot<T> extends OnValueSnapshot<Iterable<T?>> {
 
   PodListBuilderSnapshot({
     required this.podList,
-    required super.context,
     required super.value,
     required super.child,
   });

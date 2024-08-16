@@ -138,13 +138,13 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   @override
   Widget build(BuildContext context) {
     final values = _currentPods.map((pod) => pod?.value);
-    final params = PodListCallbackBuilderSnapshot(
+    final snapshot = PodListCallbackBuilderSnapshot(
       podList: _currentPods,
-      context: context,
       value: values,
       child: _staticChild,
     );
-    return widget.builder(params);
+    final result = widget.builder(context, snapshot);
+    return result;
   }
 
   //
@@ -171,8 +171,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListCallbackBuilderSnapshot
-    extends OnValueSnapshot<TPodDataListN> {
+final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
   //
   //
   //
@@ -185,7 +184,6 @@ final class PodListCallbackBuilderSnapshot
 
   PodListCallbackBuilderSnapshot({
     required this.podList,
-    required super.context,
     required super.value,
     required super.child,
   });
