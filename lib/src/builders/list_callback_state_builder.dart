@@ -23,7 +23,7 @@ abstract class ListCallbackStateBuilder<T> extends StatelessWidget {
   final TOnLoadingBuilder? onLoadingBuilder;
   final TOnNoValueBuilder? onNoUsableValueBuilder;
   final Widget? child;
-  late final DateTime _created;
+  late final createdAt = DateTime.now();
 
   //
   //
@@ -35,9 +35,7 @@ abstract class ListCallbackStateBuilder<T> extends StatelessWidget {
     this.onLoadingBuilder,
     this.onNoUsableValueBuilder,
     this.child,
-  }) {
-    _created = DateTime.now();
-  }
+  });
 
   //
   //
@@ -78,12 +76,11 @@ Widget _builder<T>(
       );
     }
   } else {
-    final elapsed = DateTime.now().difference(widget._created);
     result = onLoadingBuilder?.call(
       context,
       OnLoadingSnapshot(
         child: snapshot.child,
-        elapsed: elapsed,
+        createdAt: widget.createdAt,
       ),
     );
   }

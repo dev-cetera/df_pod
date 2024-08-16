@@ -40,10 +40,10 @@ typedef TOnLoadingBuilder<S extends OnLoadingSnapshot> = Widget Function(
 );
 
 class OnLoadingSnapshot extends BuilderSnapshot {
-  final Duration elapsed;
+  final DateTime createdAt;
   OnLoadingSnapshot({
     required super.child,
-    required this.elapsed,
+    required this.createdAt,
   });
 }
 
