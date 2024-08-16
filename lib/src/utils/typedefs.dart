@@ -44,7 +44,10 @@ typedef TOnNoDataBuilder = Widget Function(
 
 typedef TPodList<T extends Object?> = Iterable<PodListenable<T>>;
 typedef TPodDataList<T extends Object?> = Iterable<T>;
-typedef TPodListResponder<T extends Object?> = TPodList<T> Function();
+
+typedef TPodListN<T extends Object?> = Iterable<PodListenable<T?>?>;
+typedef TPodDataListN<T extends Object?> = Iterable<T?>;
+typedef TPodListCallbackN<T extends Object?> = TPodListN<T> Function();
 
 typedef TFutureOrPod<T> = FutureOr<PodListenable<T>>;
 

@@ -8,39 +8,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '/src/_index.g.dart';
+import 'pod_exception.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A final class to handle reducing operations for many Pods.
-final class ManyPodsReducer {
-  ManyPodsReducer._();
-
-  /// Reduces many Pods into a [ChildPod].
-  static ChildPod<T1, T2> reduce<T1, T2>(
-    List<Pod<T1>> Function() responder,
-    T2 Function(ManyPods<T1> values) reducer,
-  ) {
-    return ChildPod<T1, T2>(
-      responder: responder,
-      reducer: (_) {
-        final response = responder();
-        return reducer(ManyPods(response));
-      },
-    );
-  }
-
-  /// Reduces many Pods into a temporary [ChildPod].
-  static ChildPod<T1, T2> reduceToTemp<T1, T2>(
-    List<Pod<T1>> Function() responder,
-    T2 Function(ManyPods<T1> values) reducer,
-  ) {
-    return ChildPod<T1, T2>.temp(
-      responder: responder,
-      reducer: (_) {
-        final response = responder();
-        return reducer(ManyPods(response));
-      },
-    );
-  }
+/// Message: "Temporary Pods not supported!"
+final class TempNotSupportedPodException extends PodException {
+  TempNotSupportedPodException()
+      : super(
+          'Temporary Pods not supported!',
+        );
 }

@@ -8,7 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '/src/_index.g.dart';
+part of '../parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -21,7 +21,7 @@ final class PodReducer5 {
     TResponderFn5<P1, P2, P3, P4, P5> responder,
     TNullableReducerFn5<C, P1, P2, P3, P4, P5> reducer,
   ) {
-    return ChildPod<dynamic, C>(
+    return ChildPod<dynamic, C>._local(
       responder: () => _toList(responder),
       reducer: (_) => _reduce(responder, reducer),
     );
@@ -32,7 +32,7 @@ final class PodReducer5 {
     TResponderFn5<P1, P2, P3, P4, P5> responder,
     TNullableReducerFn5<C, P1, P2, P3, P4, P5> reducer,
   ) {
-    return ChildPod<dynamic, C>.temp(
+    return ChildPod<dynamic, C>._temp(
       responder: () => _toList(responder),
       reducer: (_) => _reduce(responder, reducer),
     );

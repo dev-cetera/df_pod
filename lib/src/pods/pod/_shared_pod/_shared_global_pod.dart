@@ -8,18 +8,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-part of 'parts.dart';
+part of '../parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class SharedTempPod<A, B> extends SharedPod<A, B> with TempPodMixin {
-  //
-  //
-  //
-
-  SharedTempPod(
+base class SharedGlobalPod<A, B> extends SharedPod<A, B> with GlobalPodMixin {
+  SharedGlobalPod(
     super.key, {
     required super.fromValue,
     required super.toValue,
-  }) : super._temp();
+  }) : super._global();
 }

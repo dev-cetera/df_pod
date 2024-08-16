@@ -12,10 +12,10 @@ import 'pod_exception.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// Message: Cannot cast due to incompatible types.
+/// Message: "Cannot cast due to incompatible types!"
 final class CannotCastPodException extends PodException {
   CannotCastPodException()
       : super(
-          'Cannot cast due to incompatible types.',
+          'Cannot cast due to incompatible types!',
         );
 }

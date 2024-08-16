@@ -12,11 +12,10 @@ import 'pod_exception.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// Message: "dispose" was called on a Pod that was explicitly maked as
-/// non-disposable.
+/// Message: "'dispose' was called on a Pod that was explicitly maked as non-disposable!"
 final class DoNotDisposePodException extends PodException {
   DoNotDisposePodException()
       : super(
-          '"dispose" was called on a Pod that was explicitly maked as non-disposable.',
+          "'dispose' was called on a Pod that was explicitly maked as non-disposable!",
         );
 }

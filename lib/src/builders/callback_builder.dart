@@ -14,14 +14,14 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A wrapper for the [RespondingPodListBuilder] that provides a simpler
+/// A wrapper for the [PodListCallbackBuilder] that provides a simpler
 /// solution.
-class RespondingBuilder<T> extends StatelessWidget {
+class CallbackBuilder<T> extends StatelessWidget {
   //
   //
   //
 
-  final TPodListResponder<T> podListResponder;
+  final TPodListCallbackN<T> responder;
   final T? Function() getData;
   final bool Function(T data)? isUsableData;
   final TOnDataBuilder<RespondingBuilderSnapshot<T>> builder;
@@ -31,9 +31,9 @@ class RespondingBuilder<T> extends StatelessWidget {
   //
   //
 
-  const RespondingBuilder({
+  const CallbackBuilder({
     super.key,
-    required this.podListResponder,
+    required this.responder,
     required this.getData,
     required this.builder,
     this.child,
@@ -46,13 +46,12 @@ class RespondingBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RespondingPodListBuilder(
-      podListResponder: podListResponder,
+    return PodListCallbackBuilder(
+      podListCallback: responder,
       builder: (context, _, staticChild) {
         final data = this.getData();
         final hasData = data is T;
-        final hasUsableData =
-            hasData && (this.isUsableData?.call(data) ?? true);
+        final hasUsableData = hasData && (this.isUsableData?.call(data) ?? true);
         final snapshot = RespondingBuilderSnapshot<T>(
           data: data,
           hasData: hasData,

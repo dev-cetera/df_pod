@@ -8,9 +8,9 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 
+import '../exceptions/temp_not_supported_pod_exception.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -38,15 +38,15 @@ import '/src/_index.g.dart';
 /// final userService = await UserService.create();
 /// pUserService.set(userService);
 ///
-/// TPodList userPlr() => [
+/// TPodList userPlc() => [
 ///   pUserService,
 ///   pUserService.value?.pUser,
 /// ];
 ///
 /// UserModel? userSnapshot() => pUserService.value?.pUser.value;
 ///
-/// ResponsivePodListBuilder(
-///   podListResponder: userPlr,
+/// PodListCallbackBuilder(
+///   podListCallback: userPlc,
 ///   builder: (context, child, values) {
 ///     final user = userSnapshot();
 ///     if (user != null) {
@@ -72,7 +72,7 @@ import '/src/_index.g.dart';
 /// - `child`: An optional child widget that is passed to the `builder`, useful
 ///   for optimization if the child is part of a larger widget that does not
 ///   need to rebuild.
-class RespondingPodListBuilder<T> extends StatefulWidget {
+class PodListCallbackBuilder extends StatefulWidget {
   //
   //
   //
@@ -80,15 +80,15 @@ class RespondingPodListBuilder<T> extends StatefulWidget {
   /// A function that returns a `PodList`. This function is called to obtain
   /// the current list of `Pod` objects to be observed. Changes in the returned
   /// list will trigger the widget to rebuild.
-  final TPodListResponder<T> podListResponder;
+  final TPodListCallbackN podListCallback;
 
   //
   //
   //
 
   /// A function to rebuild the widget based on the data received from
-  /// [podListResponder].
-  final TOnDataBuilder<TPodDataList<T>> builder;
+  /// [podListCallback].
+  final TOnDataBuilder<TPodDataListN> builder;
 
   //
   //
@@ -126,9 +126,9 @@ class RespondingPodListBuilder<T> extends StatefulWidget {
   ///   useful for optimization if the child is part of a larger widget that
   ///   does not need to rebuild.
   /// - `onDispose`: An optional function to call when the widget is disposed.
-  const RespondingPodListBuilder({
+  const PodListCallbackBuilder({
     super.key,
-    required this.podListResponder,
+    required this.podListCallback,
     required this.builder,
     this.child,
     this.onDispose,
@@ -139,20 +139,18 @@ class RespondingPodListBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<RespondingPodListBuilder> createState() =>
-      _RespondingPodListBuilderState();
+  State<PodListCallbackBuilder> createState() => _PodListCallbackBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _RespondingPodListBuilderState<T>
-    extends State<RespondingPodListBuilder<T>> {
+class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   //
   //
   //
 
   late final Widget? _staticChild;
-  TPodList<T> _currentWatchList = {};
+  TPodListN _currentPods = {};
 
   //
   //
@@ -162,8 +160,7 @@ class _RespondingPodListBuilderState<T>
   void initState() {
     super.initState();
     _staticChild = widget.child;
-    _currentWatchList = widget.podListResponder();
-    _addListenerToPods(_currentWatchList);
+    _refreshCurrentPods();
   }
 
   //
@@ -171,32 +168,11 @@ class _RespondingPodListBuilderState<T>
   //
 
   @override
-  void didUpdateWidget(RespondingPodListBuilder<T> oldWidget) {
+  void didUpdateWidget(PodListCallbackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podListResponder != widget.podListResponder) {
-      _removeListenerFromPods(_currentWatchList);
-      _currentWatchList = widget.podListResponder();
-      _addListenerToPods(_currentWatchList);
-    }
-  }
-
-  //
-  //
-  //
-
-  void _addListenerToPods(TPodList<T> pods) {
-    for (final pod in pods) {
-      pod.addListener(_valueChanged);
-    }
-  }
-
-  //
-  //
-  //
-
-  void _removeListenerFromPods(TPodList<T> pods) {
-    for (final pod in pods) {
-      pod.removeListener(_valueChanged);
+    if (oldWidget.podListCallback != widget.podListCallback) {
+      _removeListenersFromCurrentPods();
+      _refreshCurrentPods();
     }
   }
 
@@ -205,10 +181,8 @@ class _RespondingPodListBuilderState<T>
   //
 
   void _valueChanged() {
-    final temp = widget.podListResponder();
-    _removeListenerFromPods(_currentWatchList);
-    _currentWatchList = temp;
-    _addListenerToPods(_currentWatchList);
+    _removeListenersFromCurrentPods();
+    _refreshCurrentPods();
     if (mounted) {
       setState(() {});
     }
@@ -218,9 +192,35 @@ class _RespondingPodListBuilderState<T>
   //
   //
 
+  void _refreshCurrentPods() {
+    _currentPods = widget.podListCallback();
+    for (final pod in _currentPods) {
+      if (pod is PodDisposableMixin) {
+        if (pod.temp) {
+          throw TempNotSupportedPodException();
+        }
+      }
+    }
+    _addListenersToCurrentPods();
+  }
+
+  //
+  //
+  //
+
+  void _addListenersToCurrentPods() {
+    for (final pod in _currentPods) {
+      pod?.addListener(_valueChanged);
+    }
+  }
+
+  //
+  //
+  //
+
   @override
   Widget build(BuildContext context) {
-    final values = _currentWatchList.map((pod) => pod.value);
+    final values = _currentPods.map((pod) => pod?.value);
     return widget.builder(
       context,
       values,
@@ -234,11 +234,18 @@ class _RespondingPodListBuilderState<T>
 
   @override
   void dispose() {
-    for (final pod in _currentWatchList) {
-      pod.removeListener(_valueChanged);
-      letAsOrNull<PodDisposableMixin<T>>(pod)?.disposeIfTemp();
-    }
+    _removeListenersFromCurrentPods();
     widget.onDispose?.call();
     super.dispose();
+  }
+
+  //
+  //
+  //
+
+  void _removeListenersFromCurrentPods() {
+    for (final pod in _currentPods) {
+      pod?.removeListener(_valueChanged);
+    }
   }
 }

@@ -8,7 +8,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-part of 'parts.dart';
+part of '../parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -32,12 +32,14 @@ base class SharedPod<A, B> extends Pod<A?> {
     this.key, {
     required this.fromValue,
     required this.toValue,
+    super.onBeforeDispose,
   }) : super(null);
 
   SharedPod._temp(
     this.key, {
     required this.fromValue,
     required this.toValue,
+    super.onBeforeDispose,
   }) : super._temp(null);
 
   SharedPod._global(

@@ -12,8 +12,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
-    with AnyPod<TChild> {
+final class ChildPod<TParent, TChild> extends PodNotifier<TChild> with AnyPod<TChild> {
   //
   //
   //
@@ -25,25 +24,28 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  factory ChildPod({
+  factory ChildPod._local({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
+    TOnBeforeDispose? onBeforeDispose,
   }) {
     final parents = responder();
     final initialValue = reducer(parents.map((p) => p?.value).toList());
-    final temp = ChildPod._(
+    final temp = ChildPod._local0(
       responder: responder,
       reducer: reducer,
       initialValue: initialValue,
+      onBeforeDispose: onBeforeDispose,
     );
     temp._initializeParents(parents);
     return temp;
   }
 
-  ChildPod._({
+  ChildPod._local0({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
     required TChild initialValue,
+    super.onBeforeDispose,
   })  : _reducer = reducer,
         _responder = responder,
         super(initialValue);
@@ -52,25 +54,28 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  factory ChildPod.temp({
+  factory ChildPod._temp({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
+    TOnBeforeDispose? onBeforeDispose,
   }) {
     final parents = responder();
     final initialValue = reducer(parents.map((p) => p?.value).toList());
-    final temp = ChildPod._temp(
+    final temp = ChildPod._temp0(
       responder: responder,
       reducer: reducer,
       initialValue: initialValue,
+      onBeforeDispose: onBeforeDispose,
     );
     temp._initializeParents(parents);
     return temp;
   }
 
-  ChildPod._temp({
+  ChildPod._temp0({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
     required TChild initialValue,
+    super.onBeforeDispose,
   })  : _reducer = reducer,
         _responder = responder,
         super.temp(initialValue);

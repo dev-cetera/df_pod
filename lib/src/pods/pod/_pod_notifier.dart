@@ -14,8 +14,7 @@ part of 'parts.dart';
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
 /// lifecycle management capabilities through the [PodDisposableMixin].
-abstract class PodNotifier<T> extends ChangeNotifier
-    with PodDisposableMixin<T> {
+abstract class PodNotifier<T> extends ChangeNotifier with PodDisposableMixin<T> {
   //
   //
   //
@@ -31,13 +30,24 @@ abstract class PodNotifier<T> extends ChangeNotifier
   @override
   T get value => _value;
 
-  /// Creates a new [Pod] from the given [value].
+  final TOnBeforeDispose<T>? onBeforeDispose;
+
+  /// Creates a new [Pod] from the given [value]. Calls [onBeforeDispose]
+  /// immediately before disposing.
   ///
   /// This [Pod] is not automatically disposed of, so it is important to
   /// manually [dispose] of it when it is no longer needed to free up resources.
-  PodNotifier(T value) : this._unsafe(value, disposable: true, temp: false);
+  PodNotifier(
+    T value, {
+    TOnBeforeDispose<T>? onBeforeDispose,
+  }) : this._unsafe(
+          value,
+          disposable: true,
+          temp: false,
+        );
 
-  /// Creates a new temporary [PodNotifier] from the given [value].
+  /// Creates a new temporary [PodNotifier] from the given [value]. Calls
+  /// [onBeforeDispose] immediately before disposing.
   ///
   /// Temporary Pods are designed to be used with widgets that support them,
   /// such as [PodBuilder] and other builders in the `df_pod` package.
@@ -47,9 +57,17 @@ abstract class PodNotifier<T> extends ChangeNotifier
   ///
   /// Use temporary Pods when you want a Pod to have a lifecycle tied to
   /// the widget tree, avoiding the need to manage disposal explicitly.
-  PodNotifier.temp(T value) : this._unsafe(value, disposable: true, temp: true);
+  PodNotifier.temp(
+    T value, {
+    TOnBeforeDispose<T>? onBeforeDispose,
+  }) : this._unsafe(
+          value,
+          disposable: true,
+          temp: true,
+        );
 
   /// Creates a new non-disposable/global [PodNotifier] from the given [value].
+  /// Calls [onBeforeDispose] immediately before disposing.
   ///
   /// These Pods cannot be disposed of, and attempting to do so will throw a
   /// [DoNotDisposePodException].
@@ -57,16 +75,26 @@ abstract class PodNotifier<T> extends ChangeNotifier
   /// Non-disposable Pods should not be used in local scopes. They are intended
   /// to be used as global variables that persist throughout the lifetime of
   /// your app.
-  PodNotifier.global(T value)
-      : this._unsafe(value, disposable: false, temp: false);
+  PodNotifier.global(
+    T value,
+  ) : this._unsafe(
+          value,
+          disposable: false,
+          temp: false,
+        );
 
   PodNotifier._unsafe(
     this._value, {
     required this.disposable,
     required this.temp,
-  }) : assert(
+    this.onBeforeDispose,
+  })  : assert(
           temp && disposable == true || !temp,
           'A PodNotifier marked as "temp" must also be marked as "disposable".',
+        ),
+        assert(
+          disposable || onBeforeDispose == null,
+          'A non-disposable PodNotifier cannot have an onBeforeDispose callback.',
         );
 
   /// Adds a [listener] to this [PodNotifier] that will be triggered only once.
@@ -85,15 +113,21 @@ abstract class PodNotifier<T> extends ChangeNotifier
     addListener(tempListener);
   }
 
-  /// Dipsoses this [PodNotifier] if [disposable], then sets [isDisposed] to
-  /// `true`. Successive calls to this method will be ignored.
+  /// Calls [onBeforeDispose] then dipsoses this [PodNotifier] if [disposable],
+  /// then sets [isDisposed] to `true`. Successive calls to this method will be
+  /// ignored.
   @override
   void dispose() {
-    super.maybeDispose(
-      super.dispose,
-    );
+    super.maybeDispose(() {
+      onBeforeDispose?.call(this.value);
+      super.dispose();
+    });
   }
 }
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+typedef TOnBeforeDispose<T> = void Function(T value)?;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 

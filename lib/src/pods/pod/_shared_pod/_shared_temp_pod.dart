@@ -8,13 +8,19 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-part of 'parts.dart';
+part of '../parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class TempPod<T> extends Pod<T> with TempPodMixin<T> {
-  TempPod(
-    super.value, {
+base class SharedTempPod<A, B> extends SharedPod<A, B> with TempPodMixin {
+  //
+  //
+  //
+
+  SharedTempPod(
+    super.key, {
+    required super.fromValue,
+    required super.toValue,
     super.onBeforeDispose,
   }) : super._temp();
 }

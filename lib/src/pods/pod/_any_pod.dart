@@ -71,7 +71,7 @@ mixin AnyPod<T> on PodNotifier<T> {
 
   /// Maps `this` [Pod] to a new [Pod] using the specified [reducer].
   ChildPod<T, B> map<B>(B Function(T? value) reducer) {
-    return ChildPod<T, B>(
+    return ChildPod<T, B>._local(
       responder: () => [this],
       reducer: (e) => reducer(e.firstOrNull),
     );
@@ -79,7 +79,7 @@ mixin AnyPod<T> on PodNotifier<T> {
 
   /// Maps `this` [Pod] to a new [Pod.temp] using the specified [reducer].
   ChildPod<T, B> mapToTemp<B>(B Function(T? value) reducer) {
-    return ChildPod<T, B>.temp(
+    return ChildPod<T, B>._temp(
       responder: () => [this],
       reducer: (e) => reducer(e.firstOrNull),
     );
