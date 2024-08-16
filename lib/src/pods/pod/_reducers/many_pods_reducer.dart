@@ -18,7 +18,7 @@ final class ManyPodsReducer {
 
   /// Reduces many Pods into a [ChildPod].
   static ChildPod<T1, T2> reduce<T1, T2>(
-    List<Pod<T1>> Function() responder,
+    List<AnyPod<T1>> Function() responder,
     T2 Function(ManyPods<T1> values) reducer,
   ) {
     return ChildPod<T1, T2>._local(
@@ -32,7 +32,7 @@ final class ManyPodsReducer {
 
   /// Reduces many Pods into a temporary [ChildPod].
   static ChildPod<T1, T2> reduceToTemp<T1, T2>(
-    List<Pod<T1>> Function() responder,
+    List<AnyPod<T1>> Function() responder,
     T2 Function(ManyPods<T1> values) reducer,
   ) {
     return ChildPod<T1, T2>._temp(

@@ -8,10 +8,58 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:flutter/foundation.dart';
+
+import '/src/_index.g.dart';
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-mixin PodServiceMixin<T> {
-  Future<void> start();
-  Future<void> stop();
-  Future<void> update(T update);
+mixin PodServiceMixin {
+  //
+  //
+  //
+
+  List<AnyPod<PodServiceMixin>?>? _servicePods;
+  List<AnyPod?>? _dataPods;
+
+  //
+  //
+  //
+
+  List<AnyPod> dataPods() => [];
+  List<AnyPod<PodServiceMixin>> servicePods() => [];
+
+  //
+  //
+  //
+
+  void initService() {
+    dispose();
+    _dataPods = dataPods();
+    _servicePods = servicePods();
+    for (final servicePod in _servicePods!) {
+      servicePod!.value.initService();
+    }
+  }
+
+  //
+  //
+  //
+
+  @mustCallSuper
+  void dispose() {
+    if (_dataPods != null) {
+      for (var pod in _dataPods!) {
+        pod?.dispose();
+        pod = null;
+      }
+    }
+    if (_servicePods != null) {
+      for (var servicePod in _servicePods!) {
+        servicePod?.value.dispose();
+        servicePod?.dispose();
+        servicePod = null;
+      }
+    }
+  }
 }

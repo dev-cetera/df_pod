@@ -12,8 +12,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
-    with AnyPod<TChild> {
+final class ChildPod<TParent, TChild> extends PodNotifier<TChild> with AnyPod<TChild> {
   //
   //
   //
@@ -118,3 +117,11 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
     super.dispose();
   }
 }
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+typedef TValuesReducerFn<TChild, TParentList> = TChild Function(
+  List<TParentList?> parentValues,
+);
+
+typedef TPodsResponderFn<T> = Iterable<AnyPod<T>?> Function();

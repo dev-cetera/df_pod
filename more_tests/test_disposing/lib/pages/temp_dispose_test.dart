@@ -30,8 +30,7 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
   //
 
   final _pNotTempPod = Pod('Not Temp Pod');
-  late final _pAnotherTempPod =
-      _pNotTempPod.mapToTemp((_) => 'Another Temp Pod');
+  late final _pAnotherTempPod = _pNotTempPod.mapToTemp((_) => 'Another Temp Pod');
 
   //
   //
@@ -92,8 +91,8 @@ class _MyLabelState extends State<MyLabel> {
   Widget build(BuildContext context) {
     return PodBuilder(
       pod: widget.pText,
-      builder: (context, text, child) {
-        return Text(text!);
+      builder: (textSnapshot) {
+        return Text(textSnapshot.value!);
       },
     );
   }

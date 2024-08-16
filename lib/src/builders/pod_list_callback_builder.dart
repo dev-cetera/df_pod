@@ -10,125 +10,44 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../exceptions/temp_not_supported_pod_exception.dart';
 import '/src/_index.g.dart';
+
+import '_builder_utils.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A widget that rebuilds its child in response to changes in a dynamically
-/// determined list of Pod instances.
-///
-/// This widget monitors a collection of Pod instances, specified by a
-/// responder function, for updates. It intelligently rebuilds its child widget
-/// whenever any observed Pod instance changes. This setup ensures the UI
-/// always reflects the most current data state. The dynamic nature of the
-/// `podListResponder` allows for a responsive design that adapts to changes in
-/// pod dependencies, enabling the observation of pods that may initially be
-/// null but become non-null as application state changes.
-///
-/// The observation starts when the widget enters the tree and halts upon its
-/// removal, optimizing resource consumption by limiting updates to active and
-/// visible periods. This design supports the construction of real-time,
-/// data-driven interfaces that maintain optimal performance and user
-/// experience.
-///
-/// Example Usage:
-/// ```dart
-/// final pUserService = Pod<UserService?>(null);
-/// final userService = await UserService.create();
-/// pUserService.set(userService);
-///
-/// TPodList userPlc() => [
-///   pUserService,
-///   pUserService.value?.pUser,
-/// ];
-///
-/// UserModel? userSnapshot() => pUserService.value?.pUser.value;
-///
-/// PodListCallbackBuilder(
-///   podListCallback: userPlc,
-///   builder: (context, child, values) {
-///     final user = userSnapshot();
-///     if (user != null) {
-///       return Text('User: ${user.email}');
-///     }
-///     return Container(); // Use Container or another fallback for null data.
-///   },
-/// )
-/// ```
-///
-/// ### Parameters:
-/// - `key`: An optional key to use for the widget.
-/// - `podListResponder`: A function returning a list of Pod instances to
-///   observe. It is called each time a pod in the list changes, ensuring
-///   dynamic adaptation to the evolving application state. This mechanism
-///   allows for a chain of dependent pods, where updates to one pod can
-///   activate or deactivate the observation of others, based on their current
-///   state.
-/// - `builder`: A function that rebuilds the widget based on the current
-///   states of the observed Pods. It receives the build context, the optional
-///   `child` widget, and the values from the observed pods returned by
-///   `podListResponder`.
-/// - `child`: An optional child widget that is passed to the `builder`, useful
-///   for optimization if the child is part of a larger widget that does not
-///   need to rebuild.
 class PodListCallbackBuilder extends StatefulWidget {
   //
   //
   //
 
-  /// A function that returns a `PodList`. This function is called to obtain
-  /// the current list of `Pod` objects to be observed. Changes in the returned
-  /// list will trigger the widget to rebuild.
-  final TPodListCallbackN podListCallback;
+  final TPodListCallbackN callback;
 
   //
   //
   //
 
-  /// A function to rebuild the widget based on the data received from
-  /// [podListCallback].
-  final TOnDataBuilder<TPodDataListN> builder;
+  final TOnValueBuilder<Iterable, PodListCallbackBuilderSnapshot> builder;
 
   //
   //
   //
 
-  /// An optional static child widget that is passed to the [builder].
   final Widget? child;
 
   //
   //
   //
 
-  /// An optional function to call when the widget is disposed.
   final void Function()? onDispose;
 
   //
   //
   //
 
-  /// Creates a `RespondingPodListBuilder` widget.
-  ///
-  /// ### Parameters:
-  /// - `key`: An optional key to use for the widget.
-  /// - `podListResponder`: A function returning a list of Pod instances to
-  ///   observe. It is called each time a pod in the list changes, ensuring
-  ///   dynamic adaptation to the evolving application state. This mechanism
-  ///   allows for a chain of dependent pods, where updates to one pod can
-  ///   activate or deactivate the observation of others, based on their current
-  ///   state.
-  /// - `builder`: A function that constructs the widget based on the current
-  ///   states of the observed Pod instances. It receives the build context,
-  ///   an optional child widget, and the values from the observed pods, enabling
-  ///   dynamic and responsive UI updates.
-  /// - `child`: An optional child widget that is passed to the `builder` and,
-  ///   useful for optimization if the child is part of a larger widget that
-  ///   does not need to rebuild.
-  /// - `onDispose`: An optional function to call when the widget is disposed.
   const PodListCallbackBuilder({
     super.key,
-    required this.podListCallback,
+    required this.callback,
     required this.builder,
     this.child,
     this.onDispose,
@@ -170,7 +89,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   @override
   void didUpdateWidget(PodListCallbackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podListCallback != widget.podListCallback) {
+    if (oldWidget.callback != widget.callback) {
       _removeListenersFromCurrentPods();
       _refreshCurrentPods();
     }
@@ -193,7 +112,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   //
 
   void _refreshCurrentPods() {
-    _currentPods = widget.podListCallback();
+    _currentPods = widget.callback();
     for (final pod in _currentPods) {
       if (pod is PodDisposableMixin) {
         if (pod.temp) {
@@ -221,11 +140,13 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   @override
   Widget build(BuildContext context) {
     final values = _currentPods.map((pod) => pod?.value);
-    return widget.builder(
-      context,
-      values,
-      _staticChild,
+    final params = PodListCallbackBuilderSnapshot(
+      podList: _currentPods,
+      context: context,
+      value: values,
+      child: _staticChild,
     );
+    return widget.builder(params);
   }
 
   //
@@ -249,3 +170,30 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
     }
   }
 }
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
+  //
+  //
+  //
+
+  final TPodListN? podList;
+
+  //
+  //
+  //
+
+  PodListCallbackBuilderSnapshot({
+    required this.podList,
+    required super.context,
+    required super.value,
+    required super.child,
+  });
+}
+
+typedef TPodListN<T extends Object?> = Iterable<PodListenable<T?>?>;
+
+typedef TPodDataListN<T extends Object?> = Iterable<T?>;
+
+typedef TPodListCallbackN<T extends Object?> = TPodListN<T> Function();

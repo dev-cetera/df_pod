@@ -8,102 +8,45 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
 
+import '_builder_utils.dart';
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A widget that periodically polls a Pod for changes and rebuilds its
-/// child widget based on the latest data.
-///
-/// This widget uses Flutter's frame rendering callbacks to efficiently check
-/// for updates to a specified Pod instance. It rebuilds its child widget
-/// whenever the polled data changes, ensuring the UI remains up-to-date with
-/// the latest state of the Pod. This approach aligns the polling mechanism
-/// with the device's screen refresh rate, providing a responsive and
-/// resource-efficient way to reflect changes in the UI.
-///
-/// The polling process starts when the widget is inserted into the tree and
-/// stops when it is removed, automatically managing its lifecycle to avoid
-/// unnecessary processing when not visible. This makes `PollingPodBuilder<T>`
-/// an ideal solution for applications that require real-time data updates
-/// without compromising performance.
-///
-/// Generic Type:
-/// - `T`: The type of data the `Pod` holds, determining the type of data this
-///   widget listens for and rebuilds upon changes.
-///
-/// Example Usage:
-/// ```dart
-/// PollingPodBuilder<MyDataType>(
-///   podPoller: () => myPodInstance,
-///   builder: (context, child, data) {
-///     return Text(data?.toString() ?? 'Waiting for data...');
-///   },
-/// )
-/// ```
-///
-/// ### Parameters:
-/// - `key`: An optional key to use for the widget.
-/// - `podPoller`: A function that returns the Pod instance to be polled.
-///   This function is called periodically to check for updates.
-/// - `builder`: A function that rebuilds the widget based on the current
-///   state of the observed Pod. It receives the build context, the optional
-///   `child` widget, and the value from the observed pod returned by
-///   `podPoller`.
-/// - `child`: An optional child widget that is passed to the `builder`, useful
-///   for optimization if the child is
-///   part of a larger widget that does not need to rebuild.
-/// - `onDispose`: An optional function to call when the widget is disposed.
 class PollingPodBuilder<T> extends StatefulWidget {
   //
   //
   //
 
-  /// A function that returns the `Pod<T>?` to be polled.
-  final TFutureOrPod<T>? Function() podPoller;
+  final FutureOr<PodListenable<T>>? Function() podPoller;
 
   //
   //
   //
 
-  /// A function to rebuild the widget based on the data received from
-  /// [podPoller].
-  final TOnDataBuilder<T?> builder;
+  final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
 
   //
   //
   //
 
-  /// An optional static child widget that is passed to the [builder].
   final Widget? child;
 
   //
   //
   //
 
-  /// An optional function to call when the widget is disposed.
   final void Function()? onDispose;
 
   //
   //
   //
 
-  /// Creates a `PollingPodBuilder` widget.
-  ///
-  /// ### Parameters:
-  /// - `key`: An optional key to use for the widget.
-  /// - `podPoller`: A function that returns the Pod instance to be polled.
-  ///   This function is called periodically to check for updates.
-  /// - `builder`: A function that rebuilds the widget based on the current
-  ///   state of the observed Pod. It receives the build context, the optional
-  ///   `child` widget, and the value from the observed pod returned by
-  ///   `podPoller`.
-  /// - `child`: An optional child widget that is passed to the `builder`,
-  ///   useful for optimization if the child is
-  ///   part of a larger widget that does not need to rebuild.
-  /// - `onDispose`: An optional function to call when the widget is disposed.
   const PollingPodBuilder({
     super.key,
     required this.podPoller,
@@ -128,7 +71,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
 
   late final Widget? _staticChild = widget.child;
-  TFutureOrPod<T>? _currentPod;
+  FutureOr<PodListenable<T>>? _currentPod;
 
   //
   //
@@ -178,17 +121,18 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
       return PodBuilder<T>(
         key: widget.key,
         pod: _currentPod!,
-        builder: (context, value, child) =>
-            widget.builder(context, value, child),
+        builder: widget.builder,
         onDispose: widget.onDispose,
         child: _staticChild,
       );
     } else {
-      return widget.builder(
-        context,
-        null,
-        _staticChild,
+      final params = PodBuilderSnapshot<T>(
+        pod: null,
+        context: context,
+        value: null,
+        child: _staticChild,
       );
+      return widget.builder(params);
     }
   }
 }

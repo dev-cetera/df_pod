@@ -8,11 +8,15 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 
 import '/src/_index.g.dart';
+
+import '_builder_utils.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -29,7 +33,7 @@ import '/src/_index.g.dart';
 ///    completes. While awaiting, the builder receives a `null` value. If [pod]
 ///    is not a future or it is `null`, its current value or `null` is passed
 ///    to the [builder].
-/// - `builder`: A [TOnDataBuilder] which builds a widget whenever [pod]
+/// - `builder`: A [TOnValueBuilder] which builds a widget whenever [pod]
 ///    changes or gets refreshed.
 /// - `child`: An optional independent widget, that is directly passed to the
 ///   [builder]. This can be used for optimizations.
@@ -50,15 +54,15 @@ class PodBuilder<T> extends StatelessWidget {
   /// awaited, and the [builder] will be called once the future completes. While
   /// awaiting, the builder receives a `null` value. If [pod] is not a future or
   /// it is `null`, its current value or `null` is passed to the [builder].
-  final TFutureOrPod<T> pod;
+  final FutureOr<PodListenable<T>> pod;
 
   //
   //
   //
 
-  /// A [TOnDataBuilder] which builds a widget whenever [pod] changes or
+  /// A [TOnValueBuilder] which builds a widget whenever [pod] changes or
   /// gets refreshed.
-  final TOnDataBuilder<T?> builder;
+  final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
 
   //
   //
@@ -91,7 +95,7 @@ class PodBuilder<T> extends StatelessWidget {
   ///    completes. While awaiting, the builder receives a `null` value. If [pod]
   ///    is not a future or it is `null`, its current value or `null` is passed
   ///    to the [builder].
-  /// - `builder`: A [TOnDataBuilder] which builds a widget whenever [pod]
+  /// - `builder`: A [TOnValueBuilder] which builds a widget whenever [pod]
   ///    changes or gets refreshed.
   /// - `child`: An optional independent widget, that is directly passed to the
   ///   [builder]. This can be used for optimizations.
@@ -135,9 +139,12 @@ class PodBuilder<T> extends StatelessWidget {
           );
         } else {
           return builder(
-            context,
-            null,
-            child,
+            PodBuilderSnapshot<T>(
+              pod: null,
+              context: context,
+              value: null,
+              child: child,
+            ),
           );
         }
       },
@@ -161,7 +168,7 @@ class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final TOnDataBuilder<T> builder;
+  final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
 
   //
   //
@@ -249,11 +256,13 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(
-      context,
-      _value,
-      _staticChild,
+    final params = PodBuilderSnapshot(
+      pod: widget.pod,
+      context: context,
+      value: _value,
+      child: _staticChild,
     );
+    return widget.builder(params);
   }
 
   //
@@ -267,4 +276,25 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     widget.onDispose?.call();
     super.dispose();
   }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+final class PodBuilderSnapshot<T> extends OnValueSnapshot<T?> {
+  //
+  //
+  //
+
+  final PodListenable<T>? pod;
+
+  //
+  //
+  //
+
+  PodBuilderSnapshot({
+    required this.pod,
+    required super.context,
+    required super.value,
+    required super.child,
+  });
 }

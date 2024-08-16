@@ -32,8 +32,8 @@ class CounterTest extends StatelessWidget {
           const Text('Counter Test'),
           PodBuilder(
             pod: _pCounter1,
-            builder: (context, value, child) {
-              return Text('Count: $value');
+            builder: (counterSnapshot) {
+              return Text('Count: ${counterSnapshot.value}');
             },
           ),
           OutlinedButton(

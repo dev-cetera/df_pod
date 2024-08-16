@@ -12,6 +12,8 @@ import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
 
+import '_builder_utils.dart';
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A wrapper for the [PodListCallbackBuilder] that provides a simpler
@@ -21,10 +23,10 @@ class CallbackBuilder<T> extends StatelessWidget {
   //
   //
 
-  final TPodListCallbackN<T> responder;
+  final TPodListCallbackN<T> callback;
   final T? Function() getData;
   final bool Function(T data)? isUsableData;
-  final TOnDataBuilder<CallbackBuilderSnapshot<T>> builder;
+  final TOnValueBuilder<T?, CallbackBuilderSnapshot<T>> builder;
   final Widget? child;
 
   //
@@ -33,7 +35,7 @@ class CallbackBuilder<T> extends StatelessWidget {
 
   const CallbackBuilder({
     super.key,
-    required this.responder,
+    required this.callback,
     required this.getData,
     required this.builder,
     this.child,
@@ -47,47 +49,47 @@ class CallbackBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PodListCallbackBuilder(
-      podListCallback: responder,
-      builder: (context, _, staticChild) {
-        final data = this.getData();
-        final hasData = data is T;
-        final hasUsableData =
-            hasData && (this.isUsableData?.call(data) ?? true);
-        final snapshot = CallbackBuilderSnapshot<T>(
-          data: data,
-          hasData: hasData,
-          hasUsableData: hasUsableData,
+      callback: callback,
+      builder: (parentSnapshot) {
+        parentSnapshot.podList;
+        final data = getData();
+        final hasValue = data is T;
+        final hasUsableValue = hasValue && (this.isUsableData?.call(data) ?? true);
+        final childSnapshot = CallbackBuilderSnapshot<T>(
+          podList: parentSnapshot.podList,
+          hasValue: hasValue,
+          hasUsableValue: hasUsableValue,
+          context: context,
+          value: data,
+          child: child,
         );
-        final widget = this.builder(
-          context,
-          snapshot,
-          staticChild,
-        );
+        final widget = this.builder(childSnapshot);
         return widget;
       },
-      child: this.child,
     );
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class CallbackBuilderSnapshot<T> {
+final class CallbackBuilderSnapshot<T> extends OnValueSnapshot<T?> {
   //
   //
   //
-
-  final T? data;
-  final bool hasData;
-  final bool hasUsableData;
+  final TPodListN? podList;
+  final bool hasValue;
+  final bool hasUsableValue;
 
   //
   //
   //
 
   CallbackBuilderSnapshot({
-    required this.data,
-    required this.hasData,
-    required this.hasUsableData,
+    required this.podList,
+    required this.hasValue,
+    required this.hasUsableValue,
+    required super.context,
+    required super.value,
+    required super.child,
   });
 }

@@ -15,69 +15,39 @@ import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
 
+import '_builder_utils.dart';
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A widget that listens to a list of [Pod] instances and rebuilds whenever
-/// any of their values/states change.
-///
-/// ### Parameters:
-///
-/// - `key`: An optional key to use for the widget.
-/// - `podList`: The list of `Pod` objects that this builder listens to.
-/// - `builder`: A function that rebuilds the widget based on the current
-///   states of the observed Pods. It receives the build context, the optional
-///   `child` widget, and the valued from the observed `podList`.
-/// - `child`: An optional child widget that is passed to the `builder` and,
-///   useful for optimization if the child is
-///   part of a larger widget that does not need to rebuild.
-/// - `onDispose`: An optional function to call when the widget is disposed.
 class PodListBuilder<T> extends StatelessWidget {
   //
   //
   //
 
-  /// The list of `Pod` objects that this builder listens to.
-  final Iterable<TFutureOrPod<T>> podList;
+  final Iterable<FutureOr<PodListenable<T>>> podList;
 
   //
   //
   //
 
-  /// An optional child widget that can be used within the [builder] function.
-  final TOnDataBuilder<TPodDataList<T?>> builder;
+  final TOnValueBuilder<Iterable<T?>, PodListBuilderSnapshot<T>> builder;
 
   //
   //
   //
 
-  /// A function to rebuild the widget based on the data received from
-  /// [podList].
   final Widget? child;
 
   //
   //
   //
 
-  /// An optional function to call when the widget is disposed.
   final void Function()? onDispose;
 
   //
   //
   //
 
-  /// Creates a `PodListBuilder` widget.
-  ///
-  /// ### Parameters:
-  ///
-  /// - `key`: An optional key to use for the widget.
-  /// - `podList`: The list of `Pod` objects that this builder listens to.
-  /// - `builder`: A function that rebuilds the widget based on the current
-  ///   states of the observed Pods. It receives the build context, the optional
-  ///   `child` widget, and the valued from the observed `podList`.
-  /// - `child`: An optional child widget that is passed to the `builder`,
-  ///   useful for optimization if the child is
-  ///   part of a larger widget that does not need to rebuild.
-  /// - `onDispose`: An optional function to call when the widget is disposed.
   const PodListBuilder({
     super.key,
     required this.podList,
@@ -123,11 +93,13 @@ class PodListBuilder<T> extends StatelessWidget {
             child: child,
           );
         } else {
-          return builder(
-            context,
-            List<T?>.filled(temp.length, null),
-            child,
+          final params = PodListBuilderSnapshot<T>(
+            podList: null,
+            context: context,
+            value: List<T?>.filled(temp.length, null),
+            child: child,
           );
+          return builder(params);
         }
       },
     );
@@ -153,7 +125,7 @@ class _PodListBuilder<T> extends StatefulWidget {
   //
   //
 
-  final TOnDataBuilder<TPodDataList<T>> builder;
+  final TOnValueBuilder<Iterable<T?>, PodListBuilderSnapshot<T>> builder;
 
   //
   //
@@ -255,11 +227,13 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(
-      context,
-      _values,
-      _staticChild,
+    final params = PodListBuilderSnapshot(
+      podList: widget.podList,
+      context: context,
+      value: _values,
+      child: _staticChild,
     );
+    return widget.builder(params);
   }
 
   //
@@ -276,3 +250,28 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
     super.dispose();
   }
 }
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+final class PodListBuilderSnapshot<T> extends OnValueSnapshot<Iterable<T?>> {
+  //
+  //
+  //
+
+  final Iterable<FutureOr<PodListenable<T>>>? podList;
+
+  //
+  //
+  //
+
+  PodListBuilderSnapshot({
+    required this.podList,
+    required super.context,
+    required super.value,
+    required super.child,
+  });
+}
+
+typedef TPodList<T extends Object?> = Iterable<PodListenable<T>>;
+
+typedef TPodDataList<T extends Object?> = Iterable<T>;

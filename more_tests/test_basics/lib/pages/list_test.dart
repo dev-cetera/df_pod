@@ -31,15 +31,14 @@ class ListTest extends StatelessWidget {
           const Text('List Test'),
           PodBuilder(
             pod: _pList,
-            builder: (context, value, child) => Text('List: $value'),
+            builder: (listSnapshot) => Text('List: ${listSnapshot.value}'),
           ),
           OutlinedButton(
             onPressed: () => _pList.update((e) => e..add(e.length)),
             child: const Text('Add with "update"'),
           ),
           OutlinedButton(
-            onPressed: () => _pList
-                .set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
+            onPressed: () => _pList.set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
             child: const Text('Remove with "set"'),
           ),
           OutlinedButton(
