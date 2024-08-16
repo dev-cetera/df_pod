@@ -24,7 +24,7 @@ class CallbackBuilder<T> extends StatelessWidget {
   final TPodListCallbackN<T> responder;
   final T? Function() getData;
   final bool Function(T data)? isUsableData;
-  final TOnDataBuilder<RespondingBuilderSnapshot<T>> builder;
+  final TOnDataBuilder<CallbackBuilderSnapshot<T>> builder;
   final Widget? child;
 
   //
@@ -51,9 +51,8 @@ class CallbackBuilder<T> extends StatelessWidget {
       builder: (context, _, staticChild) {
         final data = this.getData();
         final hasData = data is T;
-        final hasUsableData =
-            hasData && (this.isUsableData?.call(data) ?? true);
-        final snapshot = RespondingBuilderSnapshot<T>(
+        final hasUsableData = hasData && (this.isUsableData?.call(data) ?? true);
+        final snapshot = CallbackBuilderSnapshot<T>(
           data: data,
           hasData: hasData,
           hasUsableData: hasUsableData,
@@ -72,7 +71,7 @@ class CallbackBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class RespondingBuilderSnapshot<T> {
+class CallbackBuilderSnapshot<T> {
   //
   //
   //
@@ -85,7 +84,7 @@ class RespondingBuilderSnapshot<T> {
   //
   //
 
-  RespondingBuilderSnapshot({
+  CallbackBuilderSnapshot({
     required this.data,
     required this.hasData,
     required this.hasUsableData,
