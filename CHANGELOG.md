@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.1]
+
+- Released @ 8/2024 (UTC)
+- refactor: Update OnLoadingSnapshot to use createdAt instead of elapsed
+
 ## [0.7.0]
 
 - Released @ 8/2024 (UTC)
