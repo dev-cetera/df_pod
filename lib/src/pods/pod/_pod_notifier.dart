@@ -14,7 +14,8 @@ part of 'parts.dart';
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
 /// lifecycle management capabilities through the [PodDisposableMixin].
-abstract class PodNotifier<T> extends ChangeNotifier with PodDisposableMixin<T> {
+abstract class PodNotifier<T> extends ChangeNotifier
+    with PodDisposableMixin<T> {
   //
   //
   //
