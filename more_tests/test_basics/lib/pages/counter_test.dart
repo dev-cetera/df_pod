@@ -16,10 +16,10 @@ import 'package:flutter/material.dart';
 
 final _pCounter1 = GlobalPod<int>(1);
 
-final pNumbers = Pod([1, 2, 3, 4, 5]);
-
 class CounterTest extends StatelessWidget {
-  const CounterTest({super.key});
+  CounterTest({super.key});
+
+  final pNumbers = Pod([1, 2, 3, 4, 5]);
 
   @override
   Widget build(BuildContext context) {

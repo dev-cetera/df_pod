@@ -8,16 +8,23 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart' show protected;
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base mixin GlobalPodMixin<T> on Pod<T> {
-  /// [GlobalPod] or [Pod._global] cannot be disposed of. These Pods are meant
-  /// to persist throught the lifetime of your app. Calling this method will
-  /// throw [DoNotDisposePodException].
+base mixin InternalPodMixin<T> on PodNotifier<T> {
+  /// Do not add listeners to this Pod directly.
+  @protected
+  @override
+  void addListener(VoidCallback listener) {
+    super.addListener(listener);
+  }
+
+  /// Do not dispose this Pod directly.
   @protected
   @override
   void dispose() {

@@ -19,7 +19,7 @@ mixin AnyPod<T> on PodNotifier<T> {
   //
   //
 
-  final _children = <AnyPod>{};
+  final _children = <ChildPod>{};
 
   void _addChild(ChildPod child) {
     if (!_children.contains(child)) {
@@ -88,11 +88,17 @@ mixin AnyPod<T> on PodNotifier<T> {
   /// Disposes all children before disposing `this`.
   @override
   void dispose() {
+    this.disposeChildren();
+    super.dispose();
+  }
+
+  /// Disposes and removes all children.
+  void disposeChildren() {
     // Copy the set to prevent concurrent modification issues during iteration.
     final copy = Set.of(_children);
     for (final child in copy) {
       child.dispose();
+      _removeChild(child);
     }
-    super.dispose();
   }
 }

@@ -12,7 +12,7 @@ part of '../parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class SharedGlobalPod<A, B> extends SharedPod<A, B> with GlobalPodMixin {
+base class SharedGlobalPod<A, B> extends SharedPod<A, B> with InternalPodMixin {
   SharedGlobalPod(
     super.key, {
     required super.fromValue,

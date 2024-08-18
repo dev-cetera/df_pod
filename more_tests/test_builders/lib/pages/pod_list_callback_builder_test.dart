@@ -21,18 +21,15 @@ class PodListCallbackBuilderTest extends StatefulWidget {
   const PodListCallbackBuilderTest({super.key});
 
   @override
-  State<PodListCallbackBuilderTest> createState() =>
-      _PodListCallbackBuilderTestState();
+  State<PodListCallbackBuilderTest> createState() => _PodListCallbackBuilderTestState();
 }
 
-class _PodListCallbackBuilderTestState
-    extends State<PodListCallbackBuilderTest> {
+class _PodListCallbackBuilderTestState extends State<PodListCallbackBuilderTest> {
   //
   //
   //
 
-  late final _pAppServices =
-      Pod<AppServices>(AppServices(), onBeforeDispose: (e) => e.dispose());
+  late final _pAppServices = Pod<AppServices>(AppServices(), onBeforeDispose: (e) => e.dispose());
 
   //
   //
@@ -57,14 +54,13 @@ class _PodListCallbackBuilderTestState
     return [
       _pAppServices,
       _pAppServices.value.pHelloWorldService,
-      _pAppServices.value.pHelloWorldService?.value.pMessage,
+      _pAppServices.value.pHelloWorldService.value.pMessage,
     ];
   }
 
   // Create a shortcut to the message Pod for convenience. This will be null
   // until HelloWorldService is initialised.
-  Pod<String>? get pMessage =>
-      _pAppServices.value.pHelloWorldService?.value.pMessage;
+  Pod<String>? get pMessage => _pAppServices.value.pHelloWorldService.value.pMessage;
 
   // Create a message Snapshot. his will be null until HelloWorldService is
   // initialised.
@@ -95,8 +91,7 @@ class _PodListCallbackBuilderTestState
                   Text(message),
                   OutlinedButton(
                     onPressed: () {
-                      pMessage!
-                          .update((e) => e.substring(0, max(e.length - 1, 0)));
+                      pMessage!.update((e) => e.substring(0, max(e.length - 1, 0)));
                     },
                     child: const Text('Backspace'),
                   ),
@@ -122,42 +117,40 @@ class _PodListCallbackBuilderTestState
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class AppServices with PodServiceMixin {
-  Pod<HelloWorldService>? pHelloWorldService;
+class AppServices extends PodService {
+  late Pod<HelloWorldService> pHelloWorldService;
   @override
-  servicePods() {
-    return [
+  provideDataPods() {
+    return {
       pHelloWorldService = Pod(HelloWorldService()),
-    ];
+    };
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class HelloWorldService with PodServiceMixin {
+class HelloWorldService extends PodService {
   Timer? _timer;
-  Pod<String>? pMessage;
+  late Pod<String> pMessage;
 
   @override
-  void initService() {
-    super.initService();
+  void onInitService() {
     _timer = Timer.periodic(const Duration(seconds: 2), _updateMessage);
   }
 
   void _updateMessage(Timer timer) {
-    pMessage?.update((e) => '$e, ${timer.tick}');
+    pMessage.update((e) => '$e, ${timer.tick}');
   }
 
   @override
-  dataPods() {
-    return [
+  provideDataPods() {
+    return {
       pMessage = Pod<String>('Hello World!'),
-    ];
+    };
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void onDispose() {
     _timer?.cancel();
     _timer = null;
   }

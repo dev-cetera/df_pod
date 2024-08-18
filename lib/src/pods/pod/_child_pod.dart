@@ -13,7 +13,7 @@ part of 'parts.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
-    with AnyPod<TChild> {
+    with InternalPodMixin<TChild>, AnyPod<TChild> {
   //
   //
   //
@@ -106,8 +106,14 @@ final class ChildPod<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  /// [ChildPod] should not be disposed of directy. These Pods are automatically
-  /// disposed of when their parent is disposed.
+  /// Do not add listeners to this Pod directly.
+  @protected
+  @override
+  void addListener(VoidCallback listener) {
+    super.addListener(listener);
+  }
+
+  /// Do not add listeners to this Pod directly.
   @protected
   @override
   void dispose() {

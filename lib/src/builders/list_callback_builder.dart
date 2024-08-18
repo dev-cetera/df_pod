@@ -49,7 +49,6 @@ class ListCallbackBuilder<T> extends StatelessWidget {
     return PodListCallbackBuilder(
       listCallback: listCallback,
       builder: (context, parentSnapshot) {
-        parentSnapshot.podList;
         final value = getValue();
         final hasValue = value is T;
         final hasUsableValue = hasValue && (isUsableValue?.call(value) ?? true);

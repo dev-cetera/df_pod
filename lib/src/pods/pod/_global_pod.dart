@@ -12,6 +12,6 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class GlobalPod<T> extends Pod<T> with GlobalPodMixin<T> {
+base class GlobalPod<T> extends Pod<T> with InternalPodMixin<T> {
   GlobalPod(super.value) : super._global();
 }

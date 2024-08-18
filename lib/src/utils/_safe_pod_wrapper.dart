@@ -8,19 +8,21 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/foundation.dart' show protected;
+import 'package:flutter/foundation.dart';
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base mixin TempPodMixin<T> on Pod<T> {
-  /// [TempPod] or [Pod._temp] are not meant to be disposed of outside of
-  /// supported widgets. Widgets that support [TempPod] disposal call
-  /// [disposeIfTemp] instead.
-  @protected
-  @override
-  void dispose() {
-    super.dispose();
+@visibleForTesting
+class SafePodWrapper<T> {
+  final WeakReference<PodNotifier<T>> _pod;
+
+  static final Finalizer<PodNotifier?> _finalizer = Finalizer((pod) {
+    pod?.dispose();
+  });
+
+  SafePodWrapper(PodNotifier<T> pod) : _pod = WeakReference(pod) {
+    _finalizer.attach(this, _pod.target);
   }
 }

@@ -12,11 +12,7 @@ part of '../parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class SharedTempPod<A, B> extends SharedPod<A, B> with TempPodMixin {
-  //
-  //
-  //
-
+base class SharedTempPod<A, B> extends SharedPod<A, B> with InternalPodMixin {
   SharedTempPod(
     super.key, {
     required super.fromValue,

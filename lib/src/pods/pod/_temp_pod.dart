@@ -12,7 +12,7 @@ part of 'parts.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class TempPod<T> extends Pod<T> with TempPodMixin<T> {
+base class TempPod<T> extends Pod<T> with InternalPodMixin<T> {
   TempPod(
     super.value, {
     super.onBeforeDispose,

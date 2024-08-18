@@ -49,8 +49,7 @@ class HomePage extends StatelessWidget {
                 interpreter.pNotificationCount,
               ],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },
@@ -107,13 +106,14 @@ class HomePageInterpretedBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final getIt = GetIt.instance;
     return builder(
       context,
       HomePageInterpreter(
         OtherInterpreter(),
-        GetIt.I<AuthService>(),
-        GetIt.I<ConnectionService>(),
-        GetIt.I<NotificationService>(),
+        getIt<AuthService>(),
+        getIt<ConnectionService>(),
+        getIt<NotificationService>(),
       ),
     );
   }
@@ -142,14 +142,12 @@ class HomePageInterpreter {
   // 10. Simplify Pods from Services so the relevant Page can use them
   // without needing to simplify them in the widget code.
   late final pUserId = authService.pUser.map((e) => e!.id);
-  late final pNotificationCount =
-      notificationService.pNotifications.map((e) => e!.length);
-  late final pConnectionCount =
-      connectionService.pConnections.map((e) => e!.length);
+  late final pNotificationCount = notificationService.pNotifications.map((e) => e!.length);
+  late final pConnectionCount = connectionService.pConnections.map((e) => e!.length);
   late final pNotificationRatio =
       pNotificationCount.reduce(pConnectionCount, (a, b) => a.value / b.value);
-  late final pPriorityNotifications = notificationService.pNotifications
-      .map((e) => e!.where((e) => e.startsWith('priority:')));
+  late final pPriorityNotifications =
+      notificationService.pNotifications.map((e) => e!.where((e) => e.startsWith('priority:')));
 
   // 11. Avoid putting anything but Pods such as methods in the Interpreter. The
   // Interpreter is not a Controller. Its sole purpose is to interpret Services
@@ -172,11 +170,16 @@ class OtherInterpreter {}
 // services into simplified Pods that are easy for your pages to use.
 
 // 13. Create a Service for handling authentication.
-class AuthService {
-  final pUser = Pod<User?>(null);
+class AuthService extends PodService {
+  late Pod<User?> pUser;
+  late ChildPod<User?, bool> pIsLoggedIn;
 
-  // Create a simpler Pod from pUser that indicates whether the user is logged in.
-  late final pIsLoggedIn = pUser.map((e) => e != null);
+  @override
+  provideDataPods() => {
+        pUser = Pod<User?>(null),
+        // Create a simpler Pod from pUser that indicates whether the user is logged in.
+        pIsLoggedIn = pUser.map((e) => e != null),
+      };
 
   Future<void> login() async {
     // Simulate logging in.
@@ -187,7 +190,7 @@ class AuthService {
 
         // Register the connection service when a user logs in.
         GetIt.I.registerLazySingleton<ConnectionService>(
-          () => ConnectionService(GetIt.I<AuthService>()),
+          () => ConnectionService(this),
           dispose: (e) => e.dispose(),
         );
       },
@@ -201,29 +204,23 @@ class AuthService {
       () => pUser.set(null),
     );
     // Unregister the connection service when a user logs out.
-    GetIt.I.unregister<ConnectionService>();
-  }
-
-  // Dispose all Pods to free up resources.
-  void dispose() {
-    pUser.dispose();
-    // It's not necessary to dispose ChildPods. They will be disposed when
-    // their parent Pod is disposed.
-    //pIsLoggedIn.dispose();
+    GetIt.instance.unregister<ConnectionService>();
   }
 }
 
 // 13. Imagine this is some kind of social app, we have a service for managing
 // the current user's connections.
-class ConnectionService {
+class ConnectionService extends PodService {
   final AuthService authService;
-  final pConnections = Pod(<User>[]);
+
+  late Pod<List<User>> pConnections;
 
   ConnectionService(this.authService);
 
-  void dispose() {
-    pConnections.dispose();
-  }
+  @override
+  provideDataPods() => {
+        pConnections = Pod<List<User>>([]),
+      };
 }
 
 // Define your data models somewhere in your app, e.g., lib/src/models
@@ -234,23 +231,33 @@ class User {
 
 // 14. Imagine this app receives notifications from some API, we have a service
 // for managing notifications.
-class NotificationService {
+class NotificationService extends PodService {
   StreamSubscription<String>? _streamSubscription;
 
-  final pNotifications = Pod(Queue<String>.from([]));
+  late Pod<Queue<String>> pNotifications;
 
-  NotificationService() {
+  @override
+  provideDataPods() => {
+        pNotifications = Pod<Queue<String>>(Queue.from([])),
+      };
+
+  NotificationService();
+
+  @override
+  void onInitService() {
     _startSteam();
   }
 
   void _startSteam() {
     _stopStream();
     _streamSubscription = Stream.periodic(const Duration(seconds: 5), (count) {
-      return [
+      final messages = [
         'priority: I love Pods',
         'GetIt is nice',
-        'I like Streams.',
-      ][count % 3];
+        'I like Streams',
+      ];
+      final output = messages[count % messages.length];
+      return output;
     }).listen(_pushMessage);
   }
 
@@ -264,21 +271,21 @@ class NotificationService {
     });
   }
 
+  @override
+  void onDispose() {
+    _stopStream();
+  }
+
   void _stopStream() {
     _streamSubscription?.cancel();
     _streamSubscription = null;
-  }
-
-  void dispose() {
-    _stopStream();
-    pNotifications.dispose();
   }
 }
 
 // 15. Register services that should persist throughout the duration of the app.
 // This can be called in main.dart.
 void onAppStart() {
-  GetIt.I
+  GetIt.instance
     ..registerLazySingleton<AuthService>(
       () => AuthService(),
       dispose: (e) => e.dispose(),
