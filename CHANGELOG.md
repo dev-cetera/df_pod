@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.2]
+
+- Released @ 8/2024 (UTC)
+- refactor: Simplify temp and global Pods
+
 ## [0.7.1]
 
 - Released @ 8/2024 (UTC)
