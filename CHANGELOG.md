@@ -4,7 +4,6 @@
 
 - Released @ 8/2024 (UTC)
 - refactor: Update OnLoadingSnapshot to use createdAt instead of elapsed
-- refactor: Update TempPod and GlobalPod to use InternalPodMixin
 
 ## [0.7.0]
 

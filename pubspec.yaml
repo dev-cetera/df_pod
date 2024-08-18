@@ -10,7 +10,7 @@
 
 name: df_pod
 description: A package offering tools to manage app state using ValueNotifier-like objects called Pods.
-version: 0.7.1
+version: 0.7.2
 repository: https://github.com/robmllze/df_pod
 # homepage: TODO
 # documentation: TODO

@@ -14,7 +14,8 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class PodService<TKey, TData> {
+// TODO: Add a child class PodDataService designed to Stream data from backend and write data to backend
+abstract class PodService<TKey> {
   //
   //
   //
@@ -49,8 +50,6 @@ abstract class PodService<TKey, TData> {
   Set<AnyPod<PodService>> provideServicePods() => {};
 
   Map<dynamic, AnyPod<PodService>> provideServicePodsAsMap() => {};
-
-  Future<void> update(TData data) async {}
 
   //
   //
