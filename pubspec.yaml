@@ -36,7 +36,7 @@ dependencies:
   shared_preferences: ^2.3.2
   tuple: ^2.0.2
   df_type: ^0.2.3
-  df_will_dispose: ^0.1.0
+  df_will_dispose: ^0.1.0+1
   equatable: ^2.0.5
   meta: ^1.15.0
   # analyzer: ^6.8.0
