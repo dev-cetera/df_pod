@@ -33,8 +33,12 @@ class _PodListCallbackBuilderTestState
   //
 
   // late final Pod test;
-  late final _pAppServices = willDispose(Pod<AppServices>(AppServices(),
-      onBeforeDispose: (e) => e.closeService(),),);
+  late final _pAppServices = willDispose(
+    Pod<AppServices>(
+      AppServices(),
+      onBeforeDispose: (e) => e.closeService(),
+    ),
+  );
 
   //
   //
