@@ -3,23 +3,28 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
-import 'dispose_mixin.dart';
+import 'package:df_will_dispose/df_will_dispose.dart';
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A mixin that provides disposal management for Pods.
-@internal
-mixin PodListenableDisposeMixin<T> implements PodListenable<T>, DisposeMixin {
+abstract class PodDisposable<T> extends ChangeNotifier
+    with DisposeMixin, WillDisposeMixin
+    implements PodListenable<T> {
+  /// To be called called immediately before [dispose] if defined.
+  final TOnBeforeDispose<T>? onBeforeDispose;
+
+  PodDisposable({this.onBeforeDispose});
+
   /// A flag indicating whether the Pod has been disposed.
   bool _isDisposed = false;
 
@@ -27,34 +32,35 @@ mixin PodListenableDisposeMixin<T> implements PodListenable<T>, DisposeMixin {
   @nonVirtual
   bool get isDisposed => this._isDisposed;
 
-  /// This method is used internally and is meant to be called by the `dispose`
-  /// method of the class that implements this [PodListenableDisposeMixin]. Do not call
-  /// this method directly.
-  ///
-  /// ### Example:
-  ///
-  /// ```
-  /// class PodNotifier<T> extends ValueNotifier<T> with PodDisposableMixin<T> {
-  ///   @override
-  ///   void dispose() {
-  ///     super.maybeDispose(
-  ///       super.dispose,
-  ///     );
-  ///   );
-  /// }
-  /// ```
-  @nonVirtual
-  @protected
-  void maybeDispose(VoidCallback dispose) {
+  @override
+  void addListener(VoidCallback listener) {
     if (!_isDisposed) {
-      dispose();
+      super.addListener(listener);
+    } else {
+      // todo: Log warning!
+    }
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    if (!_isDisposed) {
+      super.removeListener(listener);
+    } else {
+      // todo: Log warning!
+    }
+  }
+
+  /// Calls [onBeforeDispose] then dipsoses this [PodListenable] and sets
+  /// [isDisposed] to `true`. Successive calls to this method will be ignored.
+  @override
+  @mustCallSuper
+  void dispose() {
+    if (!_isDisposed) {
+      onBeforeDispose?.call(value);
+      super.dispose();
       this._isDisposed = true;
     } else {
-      debugPrint(
-        '[df_pod] Pod already disposed. This is not a problem but indicates '
-        'that the dispose method was called more than once. Ensure that '
-        'dispose is only called when necessary to avoid redundant operations.',
-      );
+      // todo: Log warning!
     }
   }
 }

@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/_index.g.dart';
+import 'pages/value_listenable_builder.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -31,6 +32,9 @@ class _MyAppState extends State<MyApp> {
             setState(() {});
           },
           children: [
+            ValueListenableBuilderTest(
+              key: UniqueKey(),
+            ),
             PodListCallbackBuilderTest(
               key: UniqueKey(),
             ),

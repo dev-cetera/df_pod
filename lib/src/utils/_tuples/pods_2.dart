@@ -3,21 +3,20 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
 import 'package:tuple/tuple.dart';
 
-import '/src/_mixins/pod_values_where_mixin.dart';
+import '../../_mixins/pod_values_where_mixin.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// T2 tuple of 2 [GenericPod] instances.
-final class Pods2<P1, P2> extends Tuple2<P1?, P2?>
-    implements PodValuesWhereMixin<dynamic> {
+final class Pods2<P1, P2> extends Tuple2<P1?, P2?> implements PodValuesWhereMixin<dynamic> {
   final GenericPod<P1>? p1;
   final GenericPod<P2>? p2;
 

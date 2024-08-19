@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -49,6 +49,7 @@ abstract class PodService {
 
   /// Creates an instance of [PodService] without calling [initService],
   /// allowing for deferred initialization.
+  @visibleForTesting
   PodService.defer();
 
   /// If [key] is not provided, retrieves the first Pod of type [P] from

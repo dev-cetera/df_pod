@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -20,7 +20,7 @@ typedef GenericPod<T> = GenericPodMixin<T>;
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A mixin for managing [RootPod] and [ChildPod].
-mixin GenericPodMixin<T> on PodNotifier<T> {
+mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
   //
   //
   //

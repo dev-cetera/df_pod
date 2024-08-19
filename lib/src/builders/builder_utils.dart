@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -47,8 +47,7 @@ class OnLoadingSnapshot extends BuilderSnapshot {
   });
 }
 
-typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget
-    Function(
+typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget Function(
   BuildContext context,
   S snapshot,
 );

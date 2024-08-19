@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -13,9 +13,8 @@ part of 'core.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
-/// lifecycle management capabilities through the [PodListenableDisposeMixin].
-abstract class PodNotifier<T> extends ChangeNotifier
-    with PodListenableDisposeMixin<T> {
+/// lifecycle management capabilities through the [PodDisposable].
+abstract class PodNotifier<T> extends PodDisposable<T> {
   //
   //
   //
@@ -25,13 +24,11 @@ abstract class PodNotifier<T> extends ChangeNotifier
   @override
   T get value => _value;
 
-  final TOnBeforeDispose<T>? onBeforeDispose;
-
   /// Creates a new [Pod] from the given [value]. Calls [onBeforeDispose]
   /// immediately before disposing.
   PodNotifier(
     this._value, {
-    this.onBeforeDispose,
+    super.onBeforeDispose,
   });
 
   /// Adds a [listener] to this [PodNotifier] that will be triggered only once.
@@ -48,16 +45,6 @@ abstract class PodNotifier<T> extends ChangeNotifier
       removeListener(tempListener);
     };
     addListener(tempListener);
-  }
-
-  /// Calls [onBeforeDispose] then dipsoses this [PodNotifier] if and sets
-  /// [isDisposed] to `true`. Successive calls to this method will be ignored.
-  @override
-  void dispose() {
-    super.maybeDispose(() {
-      onBeforeDispose?.call(this.value);
-      super.dispose();
-    });
   }
 }
 

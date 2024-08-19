@@ -3,14 +3,14 @@
 ##
 ## Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 ## source code is governed by an MIT-style license that can be found in the
-## LICENSE file.
+## LICENSE file located in this project's root directory.
 ##
 ## ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ##.title~
 
 name: df_pod
 description: A package offering tools to manage app state using ValueNotifier-like objects called Pods.
-version: 0.8.0+1
+version: 0.9.0
 repository: https://github.com/robmllze/df_pod
 # homepage: TODO
 # documentation: TODO
@@ -19,7 +19,7 @@ funding:
 topics:
   - bloc
   - dependency-injection
-  - reactive-programming
+  - reactive
   - state
   - state-management
 
@@ -36,6 +36,7 @@ dependencies:
   shared_preferences: ^2.3.2
   tuple: ^2.0.2
   df_type: ^0.2.3
+  df_will_dispose: ^0.1.0
   equatable: ^2.0.5
   meta: ^1.15.0
   # analyzer: ^6.8.0

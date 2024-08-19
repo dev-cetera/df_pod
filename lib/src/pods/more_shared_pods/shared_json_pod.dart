@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -20,8 +20,7 @@ final class SharedJsonPodCreator {
     final instance = TSharedJsonPod(
       key,
       fromValue: (rawValue) => jsonEncode(rawValue),
-      toValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      toValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
     );
     await instance.refresh();
     return instance;
@@ -31,8 +30,7 @@ final class SharedJsonPodCreator {
     final instance = TSharedTempJsonPod(
       key,
       fromValue: (rawValue) => jsonEncode(rawValue),
-      toValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      toValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
     );
     await instance.refresh();
     return instance;
@@ -42,8 +40,7 @@ final class SharedJsonPodCreator {
     final instance = TSharedGlobalJsonPod(
       key,
       fromValue: (rawValue) => jsonEncode(rawValue),
-      toValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      toValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
     );
     await instance.refresh();
     return instance;

@@ -15,14 +15,14 @@ This package provides tools for managing app state using ValueNotifier-like obje
 
 ## Quickstart
 
-### Defining a Pod:
+### ℹ️ Defining a Pod:
 
 ```dart
 // Define a Pod, similar to how you would define a ValueNotifier.
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 ```
 
-### Using a PodBuilder in the UI:
+### ℹ️ Using a PodBuilder in the UI:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
@@ -35,9 +35,17 @@ PodBuilder(
     return Text('Count: ${numbers.length}');
   },
 );
+
+// You can also use a regular old ValueListenableBuilder.
+ValueListenableBuilder(
+  valueListenable: _pCounter1,
+  builder: (context, value, child) {
+    return Text('Count: $value');
+  },
+);
 ```
 
-### Using PodBuilder with Futures:
+### ℹ️ Using PodBuilder with Futures:
 
 ```dart
 // PodBuilders can also take Futures.
@@ -57,7 +65,7 @@ PodBuilder(
 );
 ```
 
-### Setting and Updating a Pod:
+### ℹ️ Setting and Updating a Pod:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
@@ -69,7 +77,7 @@ pNumbers.set([1, 2, 4]);
 pNumbers.update((e) => e..add(5));
 ```
 
-### Disposing of Pods:
+### ℹ️ Disposing of Pods:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
@@ -78,7 +86,7 @@ final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 pNumbers.dispose();
 ```
 
-### PodBuilder Optimization:
+### ℹ️ PodBuilder Optimization:
 
 ```dart
 // If the Pod<T> type T is a primitive type or implements Equatable*,
@@ -91,7 +99,7 @@ pHelloWorld.set('Hello World');
 
 _\* Find the Equatable package here: https://pub.dev/packages/equatable_
 
-### Transforming a Pod into a ChildPod:
+### ℹ️ Transforming a Pod into a ChildPod:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
@@ -111,7 +119,7 @@ PodBuilder(
 );
 ```
 
-### Further Mapping a ChildPod:
+### ℹ️ Further Mapping a ChildPod:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
@@ -121,7 +129,7 @@ final pLength = pNumbers.map((e) => e!.length);
 final pInverseLength = pLength.map((e) => 1 / e!);
 ```
 
-### Reducing Multiple Pods into a ChildPod:
+### ℹ️ Reducing Multiple Pods into a ChildPod:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
@@ -132,19 +140,19 @@ final pInverseLength = pLength.map((e) => 1 / e!);
 final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
 ```
 
-### Restrictions on ChildPods:
+### ℹ️ Restrictions on ChildPods:
 
 ```dart
 
 final Pod<String> pParent = Pod('I am a Parent');
 
-pParent.update((e) => e.replaceAll('Parent', 'Father')); // OK!
+pParent.update((e) => e.replaceAll('Parent', 'Father')); // ✔️ OK!
 
 final ChildPod<String, String> pChild = pParent.map((e) => e.replaceAll('Father', 'Son'));
 
 // A ChildPod cannot be set or updated directly. When its parent changes,
 // its value is immediately updated from its mapping function.
-pChild.update((e) => e.replaceAll('Son', 'Daughter')); // Syntax error!
+pChild.update((e) => e.replaceAll('Son', 'Daughter')); // ❌ Syntax error!
 
 // Attempting to add listeners or dispose of a ChildPod will result in a syntax
 // error if you've set the `protected_member` rule in your
@@ -153,14 +161,14 @@ pChild.update((e) => e.replaceAll('Son', 'Daughter')); // Syntax error!
 
 // These will trigger syntax errors if you've correctly set up your
 // analysis_options.yaml:
-pChild.addListener(() {}); // ChildPods do not take listeners!
-pChild.dispose(); // ChildPods do not need to be disposed of!
+pChild.addListener(() {}); // ❌ ChildPods do not take listeners!
+pChild.dispose(); // ❌ ChildPods do not need to be disposed of!
 
-pParent.addListener(() => print('Parent changed!')); // OK!
-pParent.dispose(); // OK! Disposes pChild as well, its children, their children, and so on.
+pParent.addListener(() => print('Parent changed!')); // ✔️ OK!
+pParent.dispose(); // ✔️ OK! Disposes pChild as well, its children, their children, and so on.
 ```
 
-### Using Multiple Pods with PodListBuilder:
+### ℹ️ Using Multiple Pods with PodListBuilder:
 
 ```dart
 // You can use multiple Pods with a PodListBuilder.
@@ -173,7 +181,7 @@ PodListBuilder(
 );
 ```
 
-### Using PollingPodBuilder for Nullable Pods:
+### ℹ️ Using PollingPodBuilder for Nullable Pods:
 
 ```dart
 // Use a PollingPodBuilder when your Pod is initially nullable and will soon be updated to a non-null value.
@@ -193,7 +201,7 @@ PollingPodBuilder(
 pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 ```
 
-### Using PodListCallbackBuilder:
+### ℹ️ Using PodListCallbackBuilder:
 
 The `PodListCallbackBuilder` widget allows you to build UI elements based on a dynamically generated list of Pods, reacting to changes in the Pods and the list itself. Unlike `PodListBuilder`, which listens to a static list of Pods, `PodListCallbackBuilder` can handle a chain of Pod dependencies, where changes in one Pod trigger the inclusion of additional Pods in the list. This makes it ideal for scenarios where Pods depend on the state of other Pods, allowing the list of Pods to evolve at runtime.
 
@@ -228,7 +236,7 @@ bool? isLoggedInSnapshot() {
 }
 ```
 
-## Installation & Setup
+## ⚠️ Installation & Setup
 
 1. Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_pod/install)).
 

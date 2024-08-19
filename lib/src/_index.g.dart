@@ -25,6 +25,7 @@ export 'pods/global_pod.dart';
 export 'pods/shared_temp_pod.dart';
 export 'pods/temp_pod.dart';
 export 'pods/shared_global_pod.dart';
+export 'pods/pod_disposable.dart';
 export 'pods/core/core.dart';
 export 'pods/more_shared_pods/shared_bool_pod.dart';
 export 'pods/more_shared_pods/shared_json_pod.dart';
@@ -57,11 +58,8 @@ export 'lint_rules/must_dispose_pods_rule.dart';
 // export 'pods/core/_reducers/pod_reducer_2.dart';
 // export 'pods/core/_reducers/pod_reducer_5.dart';
 // export 'pods/core/_reducers/pod_reducer_4.dart';
-// export '_mixins/pod_listenable_dispose_mixin.dart';
-// export '_mixins/dispose_mixin.dart';
 // export '_mixins/pod_values_where_mixin.dart';
 // export '_mixins/protected_pod_mixin.dart';
-// export '_mixins/_index.g.dart';
 
 // --- GENERATED FILES (EXCLUDED) ---
 // None found.

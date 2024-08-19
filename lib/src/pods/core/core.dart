@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -11,7 +11,8 @@
 import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
 
-import '/src/_mixins/_index.g.dart';
+import '/src/_mixins/protected_pod_mixin.dart';
+import '/src/_index.g.dart';
 
 part '_generic_pod_mixin.dart';
 part '_child_pod_base.dart';

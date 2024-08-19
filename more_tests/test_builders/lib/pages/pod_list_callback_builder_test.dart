@@ -12,6 +12,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:df_pod/df_pod.dart';
+import 'package:df_will_dispose/df_will_dispose.dart';
 
 import 'package:flutter/material.dart';
 
@@ -21,31 +22,17 @@ class PodListCallbackBuilderTest extends StatefulWidget {
   const PodListCallbackBuilderTest({super.key});
 
   @override
-  State<PodListCallbackBuilderTest> createState() =>
-      _PodListCallbackBuilderTestState();
+  State<PodListCallbackBuilderTest> createState() => _PodListCallbackBuilderTestState();
 }
 
-class _PodListCallbackBuilderTestState
-    extends State<PodListCallbackBuilderTest> {
+class _PodListCallbackBuilderTestState extends WillDisposeState<PodListCallbackBuilderTest> {
   //
   //
   //
 
+  // late final Pod test;
   late final _pAppServices =
-      Pod<AppServices>(AppServices(), onBeforeDispose: (e) => e.closeService());
-
-  //
-  //
-  //
-
-  @override
-  void initState() {
-    // Simulate a login or intitialisation delay.
-    Future.delayed(const Duration(seconds: 2), () {
-      _pAppServices.update((e) => e..initService());
-    });
-    super.initState();
-  }
+      willDispose(Pod<AppServices>(AppServices(), onBeforeDispose: (e) => e.closeService()));
 
   //
   //
@@ -63,8 +50,7 @@ class _PodListCallbackBuilderTestState
 
   // Create a shortcut to the message Pod for convenience. This will be null
   // until HelloWorldService is initialised.
-  Pod<String>? get pMessage =>
-      _pAppServices.value.pHelloWorldService.value.pMessage;
+  Pod<String>? get pMessage => _pAppServices.value.pHelloWorldService.value.pMessage;
 
   // Create a message Snapshot. his will be null until HelloWorldService is
   // initialised.
@@ -95,8 +81,7 @@ class _PodListCallbackBuilderTestState
                   Text(message),
                   OutlinedButton(
                     onPressed: () {
-                      pMessage!
-                          .update((e) => e.substring(0, max(e.length - 1, 0)));
+                      pMessage!.update((e) => e.substring(0, max(e.length - 1, 0)));
                     },
                     child: const Text('Backspace'),
                   ),
@@ -124,6 +109,7 @@ class _PodListCallbackBuilderTestState
 
 class AppServices extends PodService {
   late Pod<HelloWorldService> pHelloWorldService;
+
   @override
   provideDataPods() {
     return {

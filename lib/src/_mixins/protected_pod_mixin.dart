@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -18,7 +18,7 @@ import '/src/_index.g.dart';
 
 /// A mixin for Pods that protects [addListener] and [dispose].
 @internal
-base mixin ProtectedPodMixin<T> on PodNotifier<T> {
+base mixin ProtectedPodMixin<T> on PodDisposable<T> {
   /// Do not add listeners to this Pod directly.
   @protected
   @override

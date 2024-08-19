@@ -3,7 +3,7 @@
 //
 // Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
 // source code is governed by an MIT-style license that can be found in the
-// LICENSE file.
+// LICENSE file located in this project's root directory.
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
@@ -25,8 +25,7 @@ class PodListCallbackBuilder extends StatefulWidget {
   //
   //
 
-  final TOnValueBuilder<Iterable<dynamic>, PodListCallbackBuilderSnapshot>
-      builder;
+  final TOnValueBuilder<Iterable<dynamic>, PodListCallbackBuilderSnapshot> builder;
 
   //
   //
@@ -165,8 +164,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListCallbackBuilderSnapshot
-    extends OnValueSnapshot<TPodDataListN> {
+final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
   //
   //
   //
