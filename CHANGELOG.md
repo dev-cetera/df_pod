@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.0]
+
+- Released @ 8/2024 (UTC)
+- breaking: Refactor code to address minor complexity and stability issues
+
 ## [0.7.2]
 
 - Released @ 8/2024 (UTC)
