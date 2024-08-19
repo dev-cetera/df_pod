@@ -10,7 +10,6 @@
 
 import 'dart:async';
 
-import 'package:df_type/df_type.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 
@@ -270,7 +269,6 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   @override
   void dispose() {
     widget.pod.removeListener(_valueChanged);
-    letAsOrNull<PodDisposableMixin>(widget.pod)?.disposeIfTemp();
     widget.onDispose?.call();
     super.dispose();
   }

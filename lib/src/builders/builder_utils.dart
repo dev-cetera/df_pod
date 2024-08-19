@@ -17,7 +17,7 @@ typedef TOnValueBuilder<T, S extends OnValueSnapshot<T>> = Widget Function(
   S snapshot,
 );
 
-class BuilderSnapshot<T> {
+class BuilderSnapshot {
   final Widget? child;
 
   BuilderSnapshot({
@@ -25,7 +25,7 @@ class BuilderSnapshot<T> {
   });
 }
 
-class OnValueSnapshot<T> extends BuilderSnapshot<T> {
+class OnValueSnapshot<T> extends BuilderSnapshot {
   final T value;
 
   OnValueSnapshot({
@@ -47,12 +47,12 @@ class OnLoadingSnapshot extends BuilderSnapshot {
   });
 }
 
-typedef TOnNoValueBuilder<S extends OnNoValueSnapshot> = Widget Function(
+typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget Function(
   BuildContext context,
   S snapshot,
 );
 
-class OnNoValueSnapshot<T> extends BuilderSnapshot<T> {
+class OnNoValueSnapshot<T> extends BuilderSnapshot {
   OnNoValueSnapshot({
     required super.child,
   });

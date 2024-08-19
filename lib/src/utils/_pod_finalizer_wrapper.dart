@@ -8,32 +8,21 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:tuple/tuple.dart';
+import 'package:flutter/foundation.dart';
 
-import '/src/_mixins/pod_values_where_mixin.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// T2 tuple of 2 [GenericPod] instances.
-final class Pods2<P1, P2> extends Tuple2<P1?, P2?> implements PodValuesWhereMixin<dynamic> {
-  final GenericPod<P1>? p1;
-  final GenericPod<P2>? p2;
+@visibleForTesting
+final class PodFinalizerWrapper<T> {
+  final WeakReference<PodNotifier<T>> _pod;
 
-  Pods2(this.p1, this.p2) : super(null, null);
+  static final Finalizer<PodNotifier<dynamic>?> _finalizer = Finalizer((pod) {
+    pod?.dispose();
+  });
 
-  @override
-  P1? get item1 => p1?.value;
-
-  @override
-  P2? get item2 => p2?.value;
-
-  @override
-  List<GenericPod<dynamic>?> get pods => [
-        p1,
-        p2,
-      ];
-
-  @override
-  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
+  PodFinalizerWrapper(PodNotifier<T> pod) : _pod = WeakReference(pod) {
+    _finalizer.attach(this, _pod.target);
+  }
 }

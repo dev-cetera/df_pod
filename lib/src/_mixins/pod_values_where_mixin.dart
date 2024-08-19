@@ -8,32 +8,21 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:tuple/tuple.dart';
+import 'package:meta/meta.dart';
 
-import '/src/_mixins/pod_values_where_mixin.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// T2 tuple of 2 [GenericPod] instances.
-final class Pods2<P1, P2> extends Tuple2<P1?, P2?> implements PodValuesWhereMixin<dynamic> {
-  final GenericPod<P1>? p1;
-  final GenericPod<P2>? p2;
+/// A mixin that allows retrieval of Pod values by type using [valuesWhereType].
+@internal
+mixin PodValuesWhereMixin<T> {
+  /// Override this to define the Pods that [valuesWhereType] can search.
+  List<GenericPod<T>?> get pods;
 
-  Pods2(this.p1, this.p2) : super(null, null);
-
-  @override
-  P1? get item1 => p1?.value;
-
-  @override
-  P2? get item2 => p2?.value;
-
-  @override
-  List<GenericPod<dynamic>?> get pods => [
-        p1,
-        p2,
-      ];
-
-  @override
-  List<T> valuesWhereType<T>() => toList().whereType<T>().toList();
+  /// Returns a list of Pod values where the type matches the specified generic
+  /// type [A].
+  Iterable<A> valuesWhereType<A>() {
+    return pods.map((e) => e?.value).whereType<A>();
+  }
 }

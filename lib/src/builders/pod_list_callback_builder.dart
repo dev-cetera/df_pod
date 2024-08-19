@@ -25,7 +25,7 @@ class PodListCallbackBuilder extends StatefulWidget {
   //
   //
 
-  final TOnValueBuilder<Iterable, PodListCallbackBuilderSnapshot> builder;
+  final TOnValueBuilder<Iterable<dynamic>, PodListCallbackBuilderSnapshot> builder;
 
   //
   //
@@ -111,13 +111,6 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
   void _refreshCurrentPods() {
     _currentPods = widget.listCallback();
-    for (final pod in _currentPods) {
-      if (pod is PodDisposableMixin) {
-        if (pod.temp) {
-          throw TempNotSupportedPodException();
-        }
-      }
-    }
     _addListenersToCurrentPods();
   }
 
@@ -171,8 +164,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListCallbackBuilderSnapshot
-    extends OnValueSnapshot<TPodDataListN> {
+final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
   //
   //
   //

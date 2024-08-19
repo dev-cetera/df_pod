@@ -8,23 +8,18 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:flutter/widgets.dart';
-
-import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A shorthand alias for [PodListenable].
+/// An alias for [PodListenable].
 typedef P<T> = PodListenable<T>;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// An extension of [ValueListenable], providing a foundational layer for the
-/// [Pod].
+/// An extension of [ValueListenable], providing a foundational layer for Pods.
 ///
-/// The [PodListenable] class serves as a simplified interface to [Pod],
+/// The [PodListenable] class serves as a simplified interface to Pods,
 /// designed specifically for passing to [PodBuilder] or other supported
 /// builders.
 ///
@@ -47,43 +42,10 @@ typedef P<T> = PodListenable<T>;
 ///
 /// In this example, `pNumber` is limited to the interface provided by
 /// [PodListenable], ensuring that it can only be used for listening to changes,
-/// while retaining the ability to cast back to [Pod] if advanced operations
+/// while retaining the ability to cast back to any Pod if advanced operations
 /// are needed, e.g.:
 ///
 /// ```dart
-/// Pod.cast(pNumber).set(2);
+/// (pNumber as Pod).set(2);
 /// ```
 abstract class PodListenable<T> extends ValueListenable<T> {}
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-/// An extension on [PodListenable] that provides utility methods for
-/// down-casting to [PodNotifier] instances.
-extension AsPodNotifierOnPodListenableX<T> on PodListenable<T> {
-  /// Attempts to cast this [PodListenable] to a [PodNotifier] instance.
-  /// Returns `null` if the cast is unsuccessful.
-  ///
-  /// Prefer using [asPodNotifier] unless there is a specific need for
-  /// [asPodNotifierOrNull].
-  ///
-  /// Note: This method is marked as [visibleForTesting] to remind developers
-  /// to structure their code in a way that avoids frequent casting,
-  /// ensuring clearer and more maintainable code.
-  @visibleForTesting
-  PodNotifier<T>? asPodNotifierOrNull() => letAsOrNull<PodNotifier<T>>(this);
-
-  /// Attempts to cast this [PodListenable] to a [PodNotifier] instance.
-  /// Throws a [CannotCastPodException] an if the cast is unsuccessful.
-  ///
-  /// Note: This method is marked as [visibleForTesting] to remind developers
-  /// to structure their code in a way that avoids frequent casting,
-  /// ensuring clearer and more maintainable code.
-  @visibleForTesting
-  PodNotifier<T> asPodNotifier() {
-    try {
-      return this as PodNotifier<T>;
-    } catch (_) {
-      throw CannotCastPodException();
-    }
-  }
-}

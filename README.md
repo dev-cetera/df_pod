@@ -19,7 +19,7 @@ This package provides tools for managing app state using ValueNotifier-like obje
 // Define a Pod, similar to how you would define a ValueNotifier.
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 
-// Use the Pod in your UI, similar to a ValueListenableBuilder.
+// Use the PodBuilder in your UI, similar to a ValueListenableBuilder.
 PodBuilder(
   pod: pNumbers,
   builder: (context, numbers, child) {
@@ -30,15 +30,17 @@ PodBuilder(
 // Set a Pod with the set function. This will trigger PodBuilder to rebuild.
 pNumbers.set([1, 2, 4]);
 
-// Update a pod with the update function. This will also trigger PodBuilder to rebuild.
+// Update a pod with the update function. This will also trigger PodBuilder to
+// rebuild.
 pNumbers.update((e) => e..add(5));
 
 // Dispose of Pods when they are no longer needed.
 pNumbers.dispose();
 
-// If the Pod<T> type T is a primitive type or implements an Equatable, the PodBuilder will only rebuild if the Pod's value actually changed.
+// If the Pod<T> type T is a primitive type or implements an Equatable, the
+// PodBuilder will only rebuild if the Pod's value actually changed.
 final pHelloWorld = Pod('Hello World');
-pHelloWorld.set('Hello World'); // this will not trigger a rebuild, as String is a primitive, pass-by-value type.
+pHelloWorld.set('Hello World'); // This will NOT trigger a rebuild, as String is a primitive, pass-by-value type.
 
 // A Pod can be transformed into a ChildPod using the map function.
 final pLength = pNumbers.map((e) => e!.length);
@@ -47,8 +49,15 @@ final ChildPod<List<int>, int> pSum = pNumbers.map((e) => e!.reduce((a, b) => a 
 // A ChildPod can be further mapped into another ChildPod.
 final pInverseLength = pLength.map((e) => 1 / e!);
 
-// ChildPods don't need to be manually disposed; they are disposed automatically when their parent is disposed.
-pInverseLength.dispose(); // This will print a warning!
+// Attempting to add listeners or dispose of a ChildPod will result in a syntax
+// error if you've set the `protected_member` rule in your `analysis_options.yaml`
+// file as per the installation instructions below. This design eliminates the
+// need for manual disposal of a ChildPod via the dispose() method. Instead,
+// listeners should be added to the parent Pod, which automatically handles
+// disposal of all its children.
+
+pInverseLength.addListener(() {}); // This will trigger a syntax error!
+pInverseLength.dispose(); // This will trigger a syntax error!
 
 // You can use multiple Pods with a PodListBuilder.
 PodListBuilder(
@@ -60,12 +69,27 @@ PodListBuilder(
 );
 
 // Pods can also be reduced into a single, ChildPod:
-final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value); // pZero will be disposed if either pLength or pInverseLength is disposed.
+final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
 ```
 
-## Installation
+## Installation & Setup
 
-Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_pod/install)).
+1. Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_pod/install)).
+
+2. Update your `analysis_options.yaml` file to enforce syntax errors when attempting to access protected members or override non-virtual members. This is highly recommended because:
+
+- `invalid_use_of_protected_member: error`: Certain methods in this package are protected to ensure they are only used within controlled contexts, preserving the integrity and consistency of the state management pattern. Enforcing this rule helps prevent misuse that could lead to unexpected behavior or security issues.
+
+- `invalid_override_of_non_virtual_member`: error: Non-virtual members are not designed to be overridden, as doing so could compromise the internal logic and functionality of the service. Enforcing this rule ensures that the core behavior of the package remains stable and predictable, preventing accidental or unauthorized changes.
+
+```yaml
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    invalid_use_of_protected_member: error
+    invalid_override_of_non_virtual_member: error
+```
 
 ---
 

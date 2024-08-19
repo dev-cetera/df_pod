@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pList = GlobalPod<List>([]);
+final _pList = GlobalPod<List<dynamic>>([]);
 
 class ListTest extends StatelessWidget {
   const ListTest({super.key});
@@ -31,16 +31,14 @@ class ListTest extends StatelessWidget {
           const Text('List Test'),
           PodBuilder(
             pod: _pList,
-            builder: (context, listSnapshot) =>
-                Text('List: ${listSnapshot.value}'),
+            builder: (context, listSnapshot) => Text('List: ${listSnapshot.value}'),
           ),
           OutlinedButton(
             onPressed: () => _pList.update((e) => e..add(e.length)),
             child: const Text('Add with "update"'),
           ),
           OutlinedButton(
-            onPressed: () => _pList
-                .set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
+            onPressed: () => _pList.set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
             child: const Text('Remove with "set"'),
           ),
           OutlinedButton(

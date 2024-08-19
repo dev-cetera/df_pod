@@ -10,19 +10,20 @@
 
 import 'package:tuple/tuple.dart';
 
+import '/src/_mixins/pod_values_where_mixin.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A tuple of 6 [AnyPod] instances.
-final class Pods6<P1, P2, P3, P4, P5, P6>
-    extends Tuple6<P1?, P2?, P3?, P4?, P5?, P6?> implements ManyPods<dynamic> {
-  final AnyPod<P1>? p1;
-  final AnyPod<P2>? p2;
-  final AnyPod<P3>? p3;
-  final AnyPod<P4>? p4;
-  final AnyPod<P5>? p5;
-  final AnyPod<P6>? p6;
+/// A tuple of 6 [GenericPod] instances.
+final class Pods6<P1, P2, P3, P4, P5, P6> extends Tuple6<P1?, P2?, P3?, P4?, P5?, P6?>
+    implements PodValuesWhereMixin<dynamic> {
+  final GenericPod<P1>? p1;
+  final GenericPod<P2>? p2;
+  final GenericPod<P3>? p3;
+  final GenericPod<P4>? p4;
+  final GenericPod<P5>? p5;
+  final GenericPod<P6>? p6;
 
   Pods6(this.p1, this.p2, this.p3, this.p4, this.p5, this.p6)
       : super(null, null, null, null, null, null);
@@ -46,7 +47,7 @@ final class Pods6<P1, P2, P3, P4, P5, P6>
   P6? get item6 => p6?.value;
 
   @override
-  List<AnyPod<dynamic>?> get pods => [
+  List<GenericPod<dynamic>?> get pods => [
         p1,
         p2,
         p3,
