@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - breaking: Refactor code to address minor complexity and stability issues
+- docs: Update readme
 
 ## [0.7.2]
 
