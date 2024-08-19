@@ -15,61 +15,203 @@ This package provides tools for managing app state using ValueNotifier-like obje
 
 ## Quickstart
 
+### Defining a Pod:
+
 ```dart
 // Define a Pod, similar to how you would define a ValueNotifier.
+final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+```
+
+### Using a PodBuilder in the UI:
+
+```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 
 // Use the PodBuilder in your UI, similar to a ValueListenableBuilder.
 PodBuilder(
   pod: pNumbers,
-  builder: (context, numbers, child) {
+  builder: (context, snapshot) {
+    final numbers = snapshot.value;
+    return Text('Count: ${numbers.length}');
+  },
+);
+```
+
+### Using PodBuilder with Futures:
+
+```dart
+// PodBuilders can also take Futures.
+final pNumbers = Future.delayed(const Duration(seconds: 3), () => Pod<int>(1));
+
+PodBuilder(
+  pod: pNumbers,
+  builder: (context, snapshot) {
+    final numbers = snapshot.value;
+    final completed = numbers != null;
+    if (completed) {
+      return Text('Count: ${numbers.length}');
+    } else {
+      return Text('Loading...');
+    }
+  },
+);
+```
+
+### Setting and Updating a Pod:
+
+```dart
+final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+
+// Set a Pod with the set function. This will trigger all associated PodBuilders to rebuild.
+pNumbers.set([1, 2, 4]);
+
+// Update a Pod with the update function. This will also trigger all associated PodBuilders to rebuild.
+pNumbers.update((e) => e..add(5));
+```
+
+### Disposing of Pods:
+
+```dart
+final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+
+// Dispose of Pods when they are no longer needed.
+pNumbers.dispose();
+```
+
+### PodBuilder Optimization:
+
+```dart
+// If the Pod<T> type T is a primitive type or implements Equatable*,
+// the PodBuilder will only rebuild if the Pod's value actually changed.
+final pHelloWorld = Pod('Hello World');
+
+// This will NOT trigger a rebuild, as String is a primitive, pass-by-value type.
+pHelloWorld.set('Hello World');
+```
+
+_\* Find the Equatable package here: https://pub.dev/packages/equatable_
+
+### Transforming a Pod into a ChildPod:
+
+```dart
+final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+
+// A Pod can be transformed into a ChildPod using the map function.
+final pLength = pNumbers.map((e) => e!.length);
+
+final ChildPod<List<int>, int> pSum = pNumbers.map((e) => e!.reduce((a, b) => a + b));
+```
+
+### Further Mapping a ChildPod:
+
+```dart
+final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+
+final pLength = pNumbers.map((e) => e!.length);
+
+// A ChildPod can be further mapped into another ChildPod.
+final pInverseLength = pLength.map((e) => 1 / e!);
+```
+
+### Reducing Multiple Pods into a ChildPod:
+
+```dart
+final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+
+final pLength = pNumbers.map((e) => e!.length);
+
+// Pods can also be reduced into a single ChildPod:
+final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
+```
+
+### Restrictions on ChildPods:
+
+```dart
+
+final Pod<String> pParent = Pod('I am a Parent');
+
+// Attempting to add listeners or dispose of a ChildPod will result in a syntax
+// error if you've set the `protected_member` rule in your
+// `analysis_options.yaml` file. This design eliminates the need for direct
+// disposal of a ChildPod via the dispose() method.
+
+final ChildPod<String, String> pChild = pParent.map((e) => e.replaceAll('Parent', 'Child'));
+
+// These will trigger syntax errors if you've correctly set up your
+// analysis_options.yaml:
+pChild.addListener(() {}); // ChildPods do not take listeners!
+pChild.dispose(); // ChildPods do not need to be disposed of!
+
+pParent.addListener(() => print('Parent changed!')); // OK!
+pParent.dispose(); // OK! Disposes pChild as well, its children, their children, and so on.
+```
+
+### Using Multiple Pods with PodListBuilder:
+
+```dart
+// You can use multiple Pods with a PodListBuilder.
+PodListBuilder(
+  podList: [pLength, pSum],
+  builder: (context, snapshot) {
+    final [length, sum] = snapshot.value.toList();
+    return Text('Length is $length and sum is $sum');
+  },
+);
+```
+
+### Using PollingPodBuilder for Nullable Pods:
+
+```dart
+// Use a PollingPodBuilder when your Pod is initially nullable and will soon be updated to a non-null value.
+// This approach is useful for prototyping and quick demonstrations but is not recommended for production code.
+// The [podPoller] function is called periodically until it returns a non-null value.
+
+Pod<List<int>>? pNumbers;
+
+PollingPodBuilder(
+  podPoller: () => pNumbers,
+  builder: (context, snapshot) {
+    final numbers = snapshot.value;
     return Text('Count: ${numbers.length}');
   },
 );
 
-// Set a Pod with the set function. This will trigger PodBuilder to rebuild.
-pNumbers.set([1, 2, 4]);
+pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+```
 
-// Update a pod with the update function. This will also trigger PodBuilder to
-// rebuild.
-pNumbers.update((e) => e..add(5));
+### Using PodListCallbackBuilder:
 
-// Dispose of Pods when they are no longer needed.
-pNumbers.dispose();
+The `PodListCallbackBuilder` widget allows you to build UI elements based on a dynamically generated list of Pods, reacting to changes in the Pods and the list itself. Unlike `PodListBuilder`, which listens to a static list of Pods, `PodListCallbackBuilder` can handle a chain of Pod dependencies, where changes in one Pod trigger the inclusion of additional Pods in the list. This makes it ideal for scenarios where Pods depend on the state of other Pods, allowing the list of Pods to evolve at runtime.
 
-// If the Pod<T> type T is a primitive type or implements an Equatable, the
-// PodBuilder will only rebuild if the Pod's value actually changed.
-final pHelloWorld = Pod('Hello World');
-pHelloWorld.set('Hello World'); // This will NOT trigger a rebuild, as String is a primitive, pass-by-value type.
+```dart
+final pAppServices = Pod<AppServices?>(null);
 
-// A Pod can be transformed into a ChildPod using the map function.
-final pLength = pNumbers.map((e) => e!.length);
-final ChildPod<List<int>, int> pSum = pNumbers.map((e) => e!.reduce((a, b) => a + b));
-
-// A ChildPod can be further mapped into another ChildPod.
-final pInverseLength = pLength.map((e) => 1 / e!);
-
-// Attempting to add listeners or dispose of a ChildPod will result in a syntax
-// error if you've set the `protected_member` rule in your `analysis_options.yaml`
-// file as per the installation instructions below. This design eliminates the
-// need for manual disposal of a ChildPod via the dispose() method. Instead,
-// listeners should be added to the parent Pod, which automatically handles
-// disposal of all its children.
-
-pInverseLength.addListener(() {}); // This will trigger a syntax error!
-pInverseLength.dispose(); // This will trigger a syntax error!
-
-// You can use multiple Pods with a PodListBuilder.
-PodListBuilder(
-  podList: [pLength, pSum],
-  builder: (context, values, child) {
-    final [length, sum] = values.toList();
-    return Text('Length is $length and sum is $sum');
+PodListCallbackBuilder(
+  listCallback: isLoggedInChain(),
+  builder: (context, snapshot) {
+    final isLoggedIn = isLoggedInSnapshot();
+    return isLoggedIn == null
+        ? CircularProgressIndicator()
+        : Text('Logged In?: $isLoggedIn');
   },
 );
 
-// Pods can also be reduced into a single, ChildPod:
-final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
+// Define the listCallback function that returns the chain of Pods to listen to.
+List<GenericPod?> isLoggedInChain() {
+  return [
+    // The root Pod: when pAppServices becomes non-null, it will provide access to pLoginService.
+    pAppServices,
+    // When pLoginService becomes non-null, it will provide access to pIsLoggedIn.
+    pAppServices.value?.pLoginService,
+    // pIsLoggedIn is only available when pLoginService is initialized and non-null.
+    pAppServices.value?.pLoginService?.value.pIsLoggedIn,
+  ];
+}
+
+// A utility function to easily get the current value of isLoggedIn.
+bool? isLoggedInSnapshot() {
+  return pAppServices.value?.pLoginService?.value.pIsLoggedIn?.value;
+}
 ```
 
 ## Installation & Setup

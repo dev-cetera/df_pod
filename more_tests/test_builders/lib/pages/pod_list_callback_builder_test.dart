@@ -53,7 +53,7 @@ class _PodListCallbackBuilderTestState
 
   // Create Callback to pass to a PodListCallbackBuilder so that we can
   // detect changes to the last Pod in the chain, pMessage;
-  TPodListN _messageCallback() {
+  TPodListN _messageChain() {
     return [
       _pAppServices,
       _pAppServices.value.pHelloWorldService,
@@ -84,7 +84,7 @@ class _PodListCallbackBuilderTestState
         children: [
           const Text('PodListCallbackBuilder Test'),
           PodListCallbackBuilder(
-            listCallback: _messageCallback,
+            listCallback: _messageChain,
             builder: (context, snapshot) {
               final message = _messageSnapshot();
               if (message == null) {
