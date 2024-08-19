@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.0+1]
+
+- Released @ 8/2024 (UTC)
+- docs: Improve readme
+
 ## [0.8.0]
 
 - Released @ 8/2024 (UTC)
