@@ -31,7 +31,7 @@ final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 PodBuilder(
   pod: pNumbers,
   builder: (context, snapshot) {
-    final numbers = snapshot.value;
+    final numbers = snapshot.value!;
     return Text('Count: ${numbers.length}');
   },
 );
@@ -100,13 +100,21 @@ final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 final pLength = pNumbers.map((e) => e!.length);
 
 final ChildPod<List<int>, int> pSum = pNumbers.map((e) => e!.reduce((a, b) => a + b));
+
+PodBuilder(
+  pod: pSum,
+  // Changing pNumbers will trigger a rebuild.
+  builder: (context, snapshot) {
+    final sum = snapshot.value!;
+    return Text('Sum: ${sum}');
+  },
+);
 ```
 
 ### Further Mapping a ChildPod:
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-
 final pLength = pNumbers.map((e) => e!.length);
 
 // A ChildPod can be further mapped into another ChildPod.
@@ -117,8 +125,8 @@ final pInverseLength = pLength.map((e) => 1 / e!);
 
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-
 final pLength = pNumbers.map((e) => e!.length);
+final pInverseLength = pLength.map((e) => 1 / e!);
 
 // Pods can also be reduced into a single ChildPod:
 final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
@@ -130,12 +138,18 @@ final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
 
 final Pod<String> pParent = Pod('I am a Parent');
 
+pParent.update((e) => e.replaceAll('Parent', 'Father')); // OK!
+
+final ChildPod<String, String> pChild = pParent.map((e) => e.replaceAll('Father', 'Son'));
+
+// A ChildPod cannot be set or updated directly. When its parent changes,
+// its value is immediately updated from its mapping function.
+pChild.update((e) => e.replaceAll('Son', 'Daughter')); // Syntax error!
+
 // Attempting to add listeners or dispose of a ChildPod will result in a syntax
 // error if you've set the `protected_member` rule in your
 // `analysis_options.yaml` file. This design eliminates the need for direct
 // disposal of a ChildPod via the dispose() method.
-
-final ChildPod<String, String> pChild = pParent.map((e) => e.replaceAll('Parent', 'Child'));
 
 // These will trigger syntax errors if you've correctly set up your
 // analysis_options.yaml:
@@ -153,7 +167,7 @@ pParent.dispose(); // OK! Disposes pChild as well, its children, their children,
 PodListBuilder(
   podList: [pLength, pSum],
   builder: (context, snapshot) {
-    final [length, sum] = snapshot.value.toList();
+    final [length, sum] = snapshot.value!.toList();
     return Text('Length is $length and sum is $sum');
   },
 );
@@ -171,7 +185,7 @@ Pod<List<int>>? pNumbers;
 PollingPodBuilder(
   podPoller: () => pNumbers,
   builder: (context, snapshot) {
-    final numbers = snapshot.value;
+    final numbers = snapshot.value!;
     return Text('Count: ${numbers.length}');
   },
 );
