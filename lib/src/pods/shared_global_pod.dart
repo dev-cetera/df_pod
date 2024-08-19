@@ -14,7 +14,8 @@ import 'shared_pod.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class SharedGlobalPod<A, B> extends SharedPod<A, B> with ProtectedPodMixin {
+base class SharedGlobalPod<A, B> extends SharedPod<A, B>
+    with ProtectedPodMixin {
   SharedGlobalPod(
     super.key, {
     required super.fromValue,
