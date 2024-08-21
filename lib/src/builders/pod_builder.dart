@@ -292,4 +292,10 @@ final class PodBuilderSnapshot<T> extends OnValueSnapshot<T?> {
     required super.value,
     required super.child,
   });
+
+  //
+  //
+  //
+
+  bool get hasValue => pod != null;
 }
