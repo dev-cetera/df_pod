@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.2]
+
+- Released @ 8/2024 (UTC)
+- chore: Update df_will_dispose dependency
+
 ## [0.9.1]
 
 - Released @ 8/2024 (UTC)
