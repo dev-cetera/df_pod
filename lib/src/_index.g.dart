@@ -8,7 +8,6 @@
 //.title~
 
 // --- PUBLIC FILES ---
-export 'lint_rules_plugin.dart';
 export 'builders/list_callback_state_builder.dart';
 export 'builders/pod_list_builder.dart';
 export 'builders/pod_list_callback_builder.dart';
@@ -34,7 +33,6 @@ export 'pods/more_shared_pods/shared_double_pod.dart';
 export 'pods/more_shared_pods/shared_enum_pod.dart';
 export 'pods/more_shared_pods/shared_string_pod.dart';
 export 'pods/more_shared_pods/shared_string_list_pod.dart';
-export 'lint_rules/must_dispose_pods_rule.dart';
 
 // --- PRIVATE FILES (EXCLUDED) ---
 // export '_index.g.dart';

@@ -12,50 +12,69 @@
 
 import 'package:flutter/widgets.dart';
 
+import 'package:df_will_dispose/df_will_dispose.dart';
+
+import 'package:meta/meta.dart';
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TOnValueBuilder<T, S extends OnValueSnapshot<T>> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+/// A very basic Pod that requires no disposal and works with an ordinary
+/// [Builder]. Needs performance testing!
+@experimental
+class EasyPod<T> {
+  //
+  //
+  //
 
-class BuilderSnapshot {
-  final Widget? child;
+  final _elements = <Element>{};
 
-  BuilderSnapshot({
-    required this.child,
-  });
-}
+  //
+  //
+  //
 
-class OnValueSnapshot<T> extends BuilderSnapshot {
-  final T value;
+  T _value;
 
-  OnValueSnapshot({
-    required this.value,
-    required super.child,
-  });
-}
+  //
+  //
+  //
 
-typedef TOnLoadingBuilder<S extends OnLoadingSnapshot> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+  EasyPod(this._value);
 
-class OnLoadingSnapshot extends BuilderSnapshot {
-  final DateTime createdAt;
-  OnLoadingSnapshot({
-    required super.child,
-    required this.createdAt,
-  });
-}
+  //
+  //
+  //
 
-typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+  T get([BuildContext? context]) {
+    if (context is Element) {
+      _elements.add(context);
+      ContextStore.of(context).attach(
+        this,
+        key: hashCode,
+        onDetach: (data) {
+          debugPrint('[SillyPod] Detaching SillyPod<${_value.runtimeType}>');
+          _elements.remove(context);
+        },
+      );
+    }
+    return _value;
+  }
 
-class OnNoValueSnapshot<T> extends BuilderSnapshot {
-  OnNoValueSnapshot({
-    required super.child,
-  });
+  //
+  //
+  //
+
+  void update(T Function(T oldValue) updater) {
+    _value = updater(_value);
+    this._markNeedsBuild();
+  }
+
+  //
+  //
+  //
+
+  void _markNeedsBuild() {
+    for (final e in _elements) {
+      e.markNeedsBuild();
+    }
+  }
 }

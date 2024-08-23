@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/_index.g.dart';
+import 'pages/easy_pod_test.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -36,6 +37,9 @@ class _MyAppState extends State<MyApp> {
             setState(() {});
           },
           children: [
+            EasyPodTest(
+              key: UniqueKey(),
+            ),
             CounterTest(
               key: UniqueKey(),
             ),
