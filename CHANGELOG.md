@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.3]
+
+- Released @ 8/2024 (UTC)
+- chore: Update dependencies, add experimental EasyPod
+
 ## [0.9.2]
 
 - Released @ 8/2024 (UTC)

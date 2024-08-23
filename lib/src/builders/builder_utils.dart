@@ -49,7 +49,8 @@ class OnLoadingSnapshot extends BuilderSnapshot {
   });
 }
 
-typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget Function(
+typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget
+    Function(
   BuildContext context,
   S snapshot,
 );

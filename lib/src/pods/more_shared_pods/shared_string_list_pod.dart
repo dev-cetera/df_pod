@@ -51,4 +51,5 @@ final class SharedStringListPodCreator {
 
 typedef TSharedStringListPod = SharedPod<List<String>, List<String>>;
 typedef TSharedTempStringListPod = SharedTempPod<List<String>, List<String>>;
-typedef TSharedGlobalStringListPod = SharedGlobalPod<List<String>, List<String>>;
+typedef TSharedGlobalStringListPod
+    = SharedGlobalPod<List<String>, List<String>>;
