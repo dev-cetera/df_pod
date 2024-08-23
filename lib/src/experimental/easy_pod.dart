@@ -50,8 +50,7 @@ class EasyPod<T> {
       ContextStore.of(context).attach(
         this,
         key: hashCode,
-        onDetach: (data) {
-          debugPrint('[SillyPod] Detaching SillyPod<${_value.runtimeType}>');
+        onDetach: (_) {
           _elements.remove(context);
         },
       );
