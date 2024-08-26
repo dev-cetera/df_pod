@@ -10,12 +10,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../_mixins/protected_pod_mixin.dart';
-
-import 'core/core.dart';
+import 'protected_pod.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class GlobalPod<T> extends RootPod<T> with ProtectedPodMixin<T> {
+base class GlobalPod<T> extends ProtectedPod<T> {
   GlobalPod(super.value);
 }

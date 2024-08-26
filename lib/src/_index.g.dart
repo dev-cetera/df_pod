@@ -8,6 +8,7 @@
 //.title~
 
 // --- PUBLIC FILES ---
+export 'experimental/easy_pod.dart';
 export 'builders/list_callback_state_builder.dart';
 export 'builders/pod_list_builder.dart';
 export 'builders/pod_list_callback_builder.dart';
@@ -24,6 +25,7 @@ export 'pods/global_pod.dart';
 export 'pods/shared_temp_pod.dart';
 export 'pods/temp_pod.dart';
 export 'pods/shared_global_pod.dart';
+export 'pods/protected_pod.dart';
 export 'pods/pod_disposable.dart';
 export 'pods/core/core.dart';
 export 'pods/more_shared_pods/shared_bool_pod.dart';

@@ -10,12 +10,14 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'protected_pod.dart';
+import '../_mixins/protected_pod_mixin.dart';
+
+import 'core/core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class TempPod<T> extends ProtectedPod<T> {
-  TempPod(
+base class ProtectedPod<T> extends RootPod<T> with ProtectedPodMixin<T> {
+  ProtectedPod(
     super.value, {
     super.onBeforeDispose,
   });
