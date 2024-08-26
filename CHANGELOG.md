@@ -4,6 +4,7 @@
 
 - Released @ 8/2024 (UTC)
 - chore: TempPod and GlobalPod now extends ProtectedPod
+- chore: Add more casting methods to the extension CastPodListenableX
 
 ## [0.9.4]
 
