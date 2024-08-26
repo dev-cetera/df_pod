@@ -53,3 +53,27 @@ typedef P<T> = PodListenable<T>;
 /// (pNumber as Pod).set(2);
 /// ```
 abstract class PodListenable<T> extends ValueListenable<T> {}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+extension CastPodListenableX<T> on PodListenable<T> {
+  RootPod<T> asRootPod() {
+    return this as RootPod<T>;
+  }
+
+  ChildPod<TParent, T> asChildPod<TParent>() {
+    return this as ChildPod<TParent, T>;
+  }
+
+  SharedPod<T, TRawValue> asSharedPod<TRawValue>() {
+    return this as SharedPod<T, TRawValue>;
+  }
+
+  GenericPod<T> asGenericPod() {
+    return this as GenericPod<T>;
+  }
+
+  PodDisposable<T> asPodDisposable() {
+    return this as PodDisposable<T>;
+  }
+}
