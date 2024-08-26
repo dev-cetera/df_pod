@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.5]
+
+- Released @ 8/2024 (UTC)
+- chore: TempPod and GlobalPod now extends ProtectedPod
+
 ## [0.9.4]
 
 - Released @ 8/2024 (UTC)
