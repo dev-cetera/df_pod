@@ -5,7 +5,6 @@
 - Released @ 8/2024 (UTC)
 - chore: Update dependencies, add experimental EasyPod
 - docs: Update comments
-- chore: Add casting methods for PodListenable types
 
 ## [0.9.2]
 
