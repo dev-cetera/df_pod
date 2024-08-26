@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.4]
+
+- Released @ 8/2024 (UTC)
+- chore: Add casting methods for PodListenable types
+
 ## [0.9.3]
 
 - Released @ 8/2024 (UTC)
