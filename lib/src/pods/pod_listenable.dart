@@ -57,23 +57,56 @@ abstract class PodListenable<T> extends ValueListenable<T> {}
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 extension CastPodListenableX<T> on PodListenable<T> {
+  /// Returns the Pod as a [PodListenable].
+  PodListenable<T> asPodListenable() {
+    return this;
+  }
+
+  /// Casts the [PodListenable] to a [PodDisposable]. Throws a [TypeError] if the
+  /// cast cannot be performed.
+  PodDisposable<T> asPodDisposable() {
+    return this as PodDisposable<T>;
+  }
+
+  /// Casts the [PodListenable] to a [RootPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
   RootPod<T> asRootPod() {
     return this as RootPod<T>;
   }
 
+  /// Casts the [PodListenable] to a [ChildPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
   ChildPod<TParent, T> asChildPod<TParent>() {
     return this as ChildPod<TParent, T>;
   }
 
+  /// Casts the [PodListenable] to a [SharedPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
   SharedPod<T, TRawValue> asSharedPod<TRawValue>() {
     return this as SharedPod<T, TRawValue>;
   }
 
+  /// Casts the [PodListenable] to a [GenericPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
   GenericPod<T> asGenericPod() {
     return this as GenericPod<T>;
   }
 
-  PodDisposable<T> asPodDisposable() {
-    return this as PodDisposable<T>;
+  /// Casts the [PodListenable] to a [ProtectedPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
+  ProtectedPod<T> asProtectedPod() {
+    return this as ProtectedPod<T>;
+  }
+
+  /// Casts the [PodListenable] to a [TempPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
+  TempPod<T> asTempPod() {
+    return this as TempPod<T>;
+  }
+
+  /// Casts the [PodListenable] to a [GlobalPod]. Throws a [TypeError] if the
+  /// cast cannot be performed.
+  GlobalPod<T> asGlobalPod() {
+    return this as GlobalPod<T>;
   }
 }
