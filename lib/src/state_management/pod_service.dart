@@ -43,16 +43,40 @@ abstract class PodService {
 
   bool _isInitialised = false;
 
+  /// Called immediately after [onInitService] to perform any additional
+  /// initialisation.
+  @nonVirtual
+  final VoidCallback? onInitServiceCallback;
+
+  /// Called immediately after [onCloseService] to perform any additional
+  /// cleanup.
+  @nonVirtual
+  final VoidCallback? onCloseServiceCallback;
+
   /// Creates an instance of [PodService] and immediately calls [initService]
   /// to initialize all necessary pods and sub-services.
-  PodService() {
+  ///
+  /// Optionally [onInitServiceCallback] and [onCloseServiceCallback] to be
+  /// called immediately after [onInitService] and [onCloseService]
+  /// respectively.
+  PodService({
+    this.onInitServiceCallback,
+    this.onCloseServiceCallback,
+  }) {
     initService();
   }
 
   /// Creates an instance of [PodService] without calling [initService],
   /// allowing for deferred initialization.
+  ///
+  /// Optionally [onInitServiceCallback] and [onCloseServiceCallback] to be
+  /// called immediately after [onInitService] and [onCloseService]
+  /// respectively.
   @visibleForTesting
-  PodService.defer();
+  PodService.defer({
+    this.onInitServiceCallback,
+    this.onCloseServiceCallback,
+  });
 
   /// If [key] is not provided, retrieves the first Pod of type [TPod] from
   /// [providePods] and [providePodsAsMap]. If [key] is provided, it
@@ -162,6 +186,7 @@ abstract class PodService {
     }
     _isInitialised = true;
     onInitService();
+    onInitServiceCallback?.call();
   }
 
   /// Override to specify what should happen immediately after this service
@@ -198,6 +223,7 @@ abstract class PodService {
     }
     _isInitialised = false;
     onCloseService();
+    onCloseServiceCallback?.call();
   }
 
   /// Override to specify what should happen immediately after this service
