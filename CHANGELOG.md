@@ -1,10 +1,5 @@
 # Changelog
 
-## [0.10.0]
-
-- Released @ 8/2024 (UTC)
-- breaking: Simplify PodService and add the DI class to manage dependency injection
-
 ## [0.9.5]
 
 - Released @ 8/2024 (UTC)
@@ -133,6 +128,16 @@
 - Released @ 8/2024 (UTC)
 - feat: Add SharedPod
 - refactor: Refactor for clarity
+
+## [0.10.1]
+
+- Released @ 8/2024 (UTC)
+- feat: Add additional callbacks for PodService
+
+## [0.10.0]
+
+- Released @ 8/2024 (UTC)
+- breaking: Simplify PodService and add the DI class to manage dependency injection
 
 ## [0.1.0]
 
