@@ -10,16 +10,26 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:flutter/foundation.dart' show ValueKey;
+/// An exception only thrown by the `df_pod` package.
+abstract base class DFPodPackageException implements Exception {
+  //
+  //
+  //
 
-import 'di.dart';
+  final String message;
 
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+  //
+  //
+  //
 
-/// A [ValueKey] to identify dependencies within [DI].
-class DIKey extends ValueKey<String> {
-  /// Default key to use when no specific key is provided.
-  static const defaultKey = DIKey('default');
+  DFPodPackageException(this.message);
 
-  const DIKey(super.value);
+  //
+  //
+  //
+
+  @override
+  String toString() {
+    return '[$runtimeType] $message';
+  }
 }

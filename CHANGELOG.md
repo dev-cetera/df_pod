@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.1]
+
+- Released @ 8/2024 (UTC)
+- feat: Add additional callbacks for PodService
+
+## [0.10.0]
+
+- Released @ 8/2024 (UTC)
+- breaking: Simplify PodService and add the DI class to manage dependency injection
+
 ## [0.9.5]
 
 - Released @ 8/2024 (UTC)
@@ -20,7 +30,7 @@
 ## [0.9.2]
 
 - Released @ 8/2024 (UTC)
-- chore: Update df_will_dispose dependency
+- chore: Update df_cleanup dependency
 
 ## [0.9.1]
 
@@ -30,7 +40,7 @@
 ## [0.9.0]
 
 - Released @ 8/2024 (UTC)
-- breaking: Update structure, examples and implement df_will_dispose package
+- breaking: Update structure, examples and implement df_cleanup package
 
 ## [0.8.0+1]
 
@@ -128,16 +138,6 @@
 - Released @ 8/2024 (UTC)
 - feat: Add SharedPod
 - refactor: Refactor for clarity
-
-## [0.10.1]
-
-- Released @ 8/2024 (UTC)
-- feat: Add additional callbacks for PodService
-
-## [0.10.0]
-
-- Released @ 8/2024 (UTC)
-- breaking: Simplify PodService and add the DI class to manage dependency injection
 
 ## [0.1.0]
 

@@ -12,7 +12,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'package:df_will_dispose/df_will_dispose.dart';
+import 'package:df_cleanup/df_cleanup.dart';
 
 import '/src/_index.g.dart';
 

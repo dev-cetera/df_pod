@@ -12,7 +12,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import 'package:df_will_dispose/df_will_dispose.dart';
+import 'package:df_cleanup/df_cleanup.dart';
 
 import 'package:meta/meta.dart';
 

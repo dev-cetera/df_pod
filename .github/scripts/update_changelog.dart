@@ -41,7 +41,7 @@ void main(List<String> args) {
     );
   }
   contents = '# Changelog\n\n${(sections.toList()..sort((a, b) {
-      return b.version.compareTo(a.version);
+      return compareVersions(b.version, a.version);
     })).map((e) => e.toString()).join('\n')}';
 
   file.writeAsStringSync(contents);
@@ -128,4 +128,36 @@ class _VersionSection {
     final updatesString = updates.map((update) => '- $update').join('\n');
     return '## [$version]\n\n- Released @ ${releasedAt.month}/${releasedAt.year} (UTC)\n$updatesString\n';
   }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+int compareVersions(String version1, String version2) {
+  List<int> parseVersion(String version) {
+    // Split by the '+' first to handle the build number
+    final parts = version.split('+');
+    final versionParts = parts[0].split('.').map(int.tryParse).map((e) => e ?? 0).toList();
+
+    // Add the build number as the last part (if it exists)
+    if (parts.length > 1) {
+      versionParts.add(int.tryParse(parts[1]) ?? 0);
+    }
+
+    return versionParts;
+  }
+
+  final v1 = parseVersion(version1);
+  final v2 = parseVersion(version2);
+
+  final maxLength = v1.length > v2.length ? v1.length : v2.length;
+
+  for (var i = 0; i < maxLength; i++) {
+    final part1 = i < v1.length ? v1[i] : 0;
+    final part2 = i < v2.length ? v2[i] : 0;
+
+    if (part1 > part2) return 1;
+    if (part1 < part2) return -1;
+  }
+
+  return 0;
 }
