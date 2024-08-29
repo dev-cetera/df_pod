@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.0]
+
+- Released @ 8/2024 (UTC)
+- breaking: Replace df_will_dispose with df_cleanup dependency, remove state management utils
+
 ## [0.10.1]
 
 - Released @ 8/2024 (UTC)
