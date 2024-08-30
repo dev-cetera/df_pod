@@ -1,25 +1,9 @@
-##.title
-## ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-##
-## Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
-## source code is governed by an MIT-style license described in the LICENSE
-## file located in this project's root directory.
-##
-## See: https://opensource.org/license/mit
-##
-## ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-##.title~
-
 name: Prepare version
-
-## -----------------------------------------------------------------------------
 
 on:
   push:
     branches:
       - main
-
-## -----------------------------------------------------------------------------
 
 jobs:
   prepare:
@@ -34,55 +18,55 @@ jobs:
         id: get_commits
         run: |
           COMMIT_MESSAGES=$(git log --format=%B -n 1 HEAD)
-          echo "COMMIT_MESSAGES=$COMMIT_MESSAGES" >> $GITHUB_ENV
+          echo "COMMIT_MESSAGES=${COMMIT_MESSAGES}" >> $GITHUB_ENV
 
       # Step to check if the commit message starts with '+'
       - name: Check commit message
         id: check_message
         run: |
-          if [[ "${COMMIT_MESSAGES}" == +* ]]; then
-            echo "proceed=true" >> $GITHUB_ENV
+          if echo "$COMMIT_MESSAGES" | grep -q "^+"; then
+            echo "PROCEED=true" >> $GITHUB_ENV
           else
-            echo "proceed=false" >> $GITHUB_ENV
+            echo "PROCEED=false" >> $GITHUB_ENV
           fi
 
       # Step to set up Dart if the commit message check passed
       - name: Set up Dart
-        if: env.proceed == 'true'
+        if: github.env.PROCEED == 'true'
         uses: dart-lang/setup-dart@v1.2
 
       # Step to format Dart code if the commit message check passed
       - name: Format Dart code
-        if: env.proceed == 'true'
+        if: github.env.PROCEED == 'true'
         run: dart format .
 
       # Step to apply Dart fixes if the commit message check passed
       - name: Apply Dart fixes
-        if: env.proceed == 'true'
+        if: github.env.PROCEED == 'true'
         run: dart fix --apply
 
       # Step to extract the version from pubspec.yaml if the commit message check passed
       - name: Extract version from pubspec.yaml
-        if: env.proceed == 'true'
+        if: github.env.PROCEED == 'true'
         id: get_version
         run: |
           VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //')
           echo "Extracted version: $VERSION"
-          echo "extracted_version=$VERSION" >> $GITHUB_ENV
-      
+          echo "extracted_version=${VERSION}" >> $GITHUB_ENV
+
       # Step to update CHANGELOG.md if the commit message check passed
       - name: Update CHANGELOG.md
-        if: env.proceed == 'true'
+        if: github.env.PROCEED == 'true'
         run: |
-          RELEASE_NOTES="${COMMIT_MESSAGES}"
-          dart run .github/scripts/update_changelog.dart "${{ env.extracted_version }}" "$RELEASE_NOTES"
+          RELEASE_NOTES="$COMMIT_MESSAGES"
+          dart run .github/scripts/update_changelog.dart "$COMMIT_MESSAGES" "$RELEASE_NOTES"
 
       # Step to commit and push changes if the commit message check passed
       - name: Commit and push changes
-        if: env.proceed == 'true'
+        if: github.env.PROCEED == 'true'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "Prepare version ${{ env.extracted_version }}"
+          git commit -m "Prepare version $COMMIT_MESSAGES"
           git push
