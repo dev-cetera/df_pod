@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.1]
+
+- Released @ 8/2024 (UTC)
+- test: Test prepare.yml
+
 ## [0.11.0]
 
 - Released @ 8/2024 (UTC)
