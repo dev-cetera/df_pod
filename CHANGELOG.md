@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.2]
+
+- Released @ 8/2024 (UTC)
+- refactor: Update GenericPodMixin to improve performance
+
 ## [0.11.1]
 
 - Released @ 8/2024 (UTC)
