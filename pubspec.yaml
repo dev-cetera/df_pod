@@ -18,7 +18,7 @@ topics:
   - bloc
   - dependency-injection
   - reactive
-  - state
+  - riverpod
   - state-management
 
 ## -----------------------------------------------------------------------------
