@@ -34,14 +34,12 @@ jobs:
           COMMIT_MESSAGES=$(git log --format=%B -n 1 HEAD)
           echo "::set-output name=messages::${COMMIT_MESSAGES}"
 
-      # Only commit messages starting with `+` will be added to the changelog.
-      - name: Exit early with success if the commit message does not start with '+'
+      # Exit early and successfully if the commit message does not start with '+'
+      - name: Exit early if the commit message does not start with '+'
         id: check_message
         run: |
-          if [[ "${{ steps.get_commits.outputs.messages }}" == +* ]]; then
-            echo "Proceeding with changelog update."
-          else
-            echo "Commit message does not start with '+'. Exiting."
+          if [[ "${{ steps.get_commits.outputs.messages }}" != +* ]]; then
+            echo "Commit message does not start with '+'. Exiting successfully."
             exit 0
           fi
 
