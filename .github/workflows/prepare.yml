@@ -35,14 +35,14 @@ jobs:
           echo "::set-output name=messages::${COMMIT_MESSAGES}"
 
       # Only commit messages starting with `+` will be added to the changelog.
-      - name: Exit if the commit message does not start with '+'
+      - name: Exit early with success if the commit message does not start with '+'
         id: check_message
         run: |
           if [[ "${{ steps.get_commits.outputs.messages }}" == +* ]]; then
             echo "Proceeding with changelog update."
           else
             echo "Commit message does not start with '+'. Exiting."
-            exit 1
+            exit 0
           fi
 
       - name: Set up Dart
