@@ -34,25 +34,30 @@ jobs:
           COMMIT_MESSAGES=$(git log --format=%B -n 1 HEAD)
           echo "::set-output name=messages::${COMMIT_MESSAGES}"
 
-      # Exit early and successfully if the commit message does not start with '+'
-      - name: Exit early if the commit message does not start with '+'
+      # Proceed if the commit message starts with '+'
+      - name: Check commit message
         id: check_message
         run: |
-          if [[ "${{ steps.get_commits.outputs.messages }}" != +* ]]; then
-            echo "Commit message does not start with '+'. Exiting successfully."
-            exit 0
+          if [[ "${{ steps.get_commits.outputs.messages }}" == +* ]]; then
+            echo "::set-output name=proceed::true"
+          else
+            echo "::set-output name=proceed::false"
           fi
 
       - name: Set up Dart
+        if: steps.check_message.outputs.proceed == 'true'
         uses: dart-lang/setup-dart@v1.2
 
       - name: Format Dart code
+        if: steps.check_message.outputs.proceed == 'true'
         run: dart format .
 
       - name: Apply Dart fixes
+        if: steps.check_message.outputs.proceed == 'true'
         run: dart fix --apply
 
       - name: Extract version from pubspec.yaml
+        if: steps.check_message.outputs.proceed == 'true'
         id: get_version
         run: |
           VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //')
@@ -60,6 +65,7 @@ jobs:
           echo "::set-output name=extracted_version::$VERSION"
 
       - name: Commit and push changes
+        if: steps.check_message.outputs.proceed == 'true'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
