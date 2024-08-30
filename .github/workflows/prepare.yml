@@ -25,50 +25,64 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
+      # Step to checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step to get the latest commit message
       - name: Get commit messages
         id: get_commits
         run: |
           COMMIT_MESSAGES=$(git log --format=%B -n 1 HEAD)
-          echo "::set-output name=messages::${COMMIT_MESSAGES}"
+          echo "COMMIT_MESSAGES=$COMMIT_MESSAGES" >> $GITHUB_ENV
 
-      # Proceed if the commit message starts with '+'
+      # Step to check if the commit message starts with '+'
       - name: Check commit message
         id: check_message
         run: |
-          if [[ "${{ steps.get_commits.outputs.messages }}" == +* ]]; then
-            echo "::set-output name=proceed::true"
+          if [[ "${COMMIT_MESSAGES}" == +* ]]; then
+            echo "proceed=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=proceed::false"
+            echo "proceed=false" >> $GITHUB_ENV
           fi
 
+      # Step to set up Dart if the commit message check passed
       - name: Set up Dart
-        if: steps.check_message.outputs.proceed == 'true'
+        if: env.proceed == 'true'
         uses: dart-lang/setup-dart@v1.2
 
+      # Step to format Dart code if the commit message check passed
       - name: Format Dart code
-        if: steps.check_message.outputs.proceed == 'true'
+        if: env.proceed == 'true'
         run: dart format .
 
+      # Step to apply Dart fixes if the commit message check passed
       - name: Apply Dart fixes
-        if: steps.check_message.outputs.proceed == 'true'
+        if: env.proceed == 'true'
         run: dart fix --apply
 
+      # Step to extract the version from pubspec.yaml if the commit message check passed
       - name: Extract version from pubspec.yaml
-        if: steps.check_message.outputs.proceed == 'true'
+        if: env.proceed == 'true'
         id: get_version
         run: |
           VERSION=$(grep "version:" pubspec.yaml | sed 's/version: //')
           echo "Extracted version: $VERSION"
-          echo "::set-output name=extracted_version::$VERSION"
+          echo "extracted_version=$VERSION" >> $GITHUB_ENV
+      
+      # Step to update CHANGELOG.md if the commit message check passed
+      - name: Update CHANGELOG.md
+        if: env.proceed == 'true'
+        run: |
+          RELEASE_NOTES="${COMMIT_MESSAGES}"
+          dart run .github/scripts/update_changelog.dart "${{ env.extracted_version }}" "$RELEASE_NOTES"
 
+      # Step to commit and push changes if the commit message check passed
       - name: Commit and push changes
-        if: steps.check_message.outputs.proceed == 'true'
+        if: env.proceed == 'true'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "Prepare version ${{ steps.get_version.outputs.extracted_version }}"
+          git commit -m "Prepare version ${{ env.extracted_version }}"
           git push
