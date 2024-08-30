@@ -3,6 +3,7 @@
 ## [0.11.1]
 
 - Released @ 8/2024 (UTC)
+- tidy: Tidy code and update workflow scripts
 
 ## [0.11.0]
 
