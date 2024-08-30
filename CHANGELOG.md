@@ -5,7 +5,7 @@
 - Released @ 8/2024 (UTC)
 - test: Test prepare.yml*
 - test: Test 2 prepare.yml*
-- test: Test 5 prepare.yml
+- test: Test 5 prepare.yml*
 
 ## [0.11.0]
 
