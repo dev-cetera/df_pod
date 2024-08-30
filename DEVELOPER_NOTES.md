@@ -1,6 +1,6 @@
 # Developer Notes
 
-## Commmit Tag Descriptions
+## Some Commin Commmit Tags
 
 - `feat`: New feature or enhancement
 - `fix`: Bug fix or issue resolution
@@ -19,6 +19,10 @@
 ## Enabling GitHub Workflow
 
 https://github.com/robmllze/YOUR_PROJECT_NAME/settings/actions
+
+## Changelog
+
+If your commit message starts with `+`, the `prepare.yml` workflow will automatically format and apply fixes to the code, and add the provided commit message to `CHANGELOG.md` under the current version specified in `pubspec.yaml`.
 
 ## Public Repo Setup
 
@@ -62,15 +66,6 @@ find . -name '.DS_Store' -type f -delete
 ```
 
 ## Windows
-
-### Fetching Generators
-
-```bash
-rmdir /s /q ___generators/
-git clone https://github.com/robmllze/___generators.git
-dart pub get -C ___generators
-rmdir /s /q ___generators/.git
-```
 
 ### Adding the Workflow
 

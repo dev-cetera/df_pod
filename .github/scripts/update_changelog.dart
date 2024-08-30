@@ -16,7 +16,7 @@ import 'dart:io';
 
 void main(List<String> args) {
   final version = args.isNotEmpty ? args[0] : '0.1.0';
-  final newReleaseNotes = args.length > 1 ? args[1] : 'Initial commit';
+  final comitMesssage = args.length > 1 ? args[1].replaceFirst('+', '') : '';
   final changelogPath = 'CHANGELOG.md';
   final file = File(changelogPath);
   if (!file.existsSync()) {
@@ -29,14 +29,14 @@ void main(List<String> args) {
   final versionExist = sections.where((e) => e.version == version).isNotEmpty;
   if (versionExist) {
     sections.where((e) => e.version == version).forEach((e) {
-      e.addUpdate(newReleaseNotes);
+      e.addUpdate(comitMesssage);
     });
   } else {
     sections.add(
       _VersionSection(
         version: version,
         releasedAt: DateTime.now().toUtc(),
-        updates: {newReleaseNotes},
+        updates: {comitMesssage},
       ),
     );
   }

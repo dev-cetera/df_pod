@@ -12,14 +12,13 @@
 
 import 'package:tuple/tuple.dart';
 
-import '../../_mixins/pod_values_where_mixin.dart';
+import '/src/_mixins/pod_values_where_mixin.dart';
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A tuple of 7 [GenericPod] instances.
-final class Pods7<P1, P2, P3, P4, P5, P6, P7>
-    extends Tuple7<P1?, P2?, P3?, P4?, P5?, P6?, P7?>
+final class Pods7<P1, P2, P3, P4, P5, P6, P7> extends Tuple7<P1?, P2?, P3?, P4?, P5?, P6?, P7?>
     implements PodValuesWhereMixin<dynamic> {
   final GenericPod<P1>? p1;
   final GenericPod<P2>? p2;
