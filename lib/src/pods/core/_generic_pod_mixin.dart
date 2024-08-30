@@ -43,6 +43,9 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
     }
   }
 
+  @override
+  T get value => _cachedValue ?? super.value;
+
   T? _cachedValue;
 
   Future<void> _set(T newValue) async {
