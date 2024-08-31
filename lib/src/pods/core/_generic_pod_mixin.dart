@@ -59,7 +59,9 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
       // See description of [notifyListeners].
       await Future.delayed(Duration.zero, () {
         _value = _cachedValue ?? newValue;
-        notifyListeners();
+        if (!isDisposed) {
+          notifyListeners();
+        }
       });
     }
   }
