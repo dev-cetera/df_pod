@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.6]
+
+- Released @ 8/2024 (UTC)
+- chore: Minor issue fix, update dependencies
+
 ## [0.11.4]
 
 - Released @ 8/2024 (UTC)
