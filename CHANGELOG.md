@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.4]
+
+- Released @ 8/2024 (UTC)
+- chore: Improve comments, readme and update dependencies
+
 ## [0.11.2]
 
 - Released @ 8/2024 (UTC)
