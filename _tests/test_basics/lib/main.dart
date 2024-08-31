@@ -37,10 +37,10 @@ class _MyAppState extends State<MyApp> {
             setState(() {});
           },
           children: [
-            EasyPodTest(
+            CounterTest(
               key: UniqueKey(),
             ),
-            CounterTest(
+            EasyPodTest(
               key: UniqueKey(),
             ),
             FutureCounterTest(
