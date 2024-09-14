@@ -54,6 +54,7 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
   Future<void> _set(T newValue) async {
     if (!isEquatable<T>() || newValue != _value) {
       _cachedValue = newValue;
+
       // Delay notifyListeners to the next loop to ensure that listeners
       // added or removed during this loop, will be notified in the next loop.
       // See description of [notifyListeners].

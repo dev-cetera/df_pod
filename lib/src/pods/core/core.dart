@@ -10,6 +10,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
 
@@ -21,6 +23,7 @@ part '_child_pod_base.dart';
 part '_child_pod.dart';
 part '_pod_notifier.dart';
 part '_root_pod.dart';
+part '_reducer_pod.dart';
 
 part '_reducers/multiple_pod_reducer.dart';
 part '_reducers/pod_reducer_1.dart';

@@ -19,7 +19,10 @@ final _pCounter1 = GlobalPod<int>(1);
 class CounterTest extends StatelessWidget {
   CounterTest({super.key});
 
-  final pNumbers = Pod([1, 2, 3, 4, 5]);
+  late final pTotal = ReducerPod<int>(
+    responder: () => [_pCounter1],
+    reducer: (values) => (values.first as int) + 1,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +33,12 @@ class CounterTest extends StatelessWidget {
       child: Column(
         children: [
           const Text('Counter Test'),
+          PodBuilder(
+            pod: pTotal,
+            builder: (context, totalSnapshot) {
+              return Text('Total: ${totalSnapshot.value}');
+            },
+          ),
           PodBuilder(
             pod: _pCounter1,
             builder: (context, counterSnapshot) {
