@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.9]
+
+- Released @ 9/2024 (UTC)
+- chore: Add new ReducerPod
+
 ## [0.11.8]
 
 - Released @ 9/2024 (UTC)
