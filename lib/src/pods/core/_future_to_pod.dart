@@ -24,3 +24,10 @@ base class FutureToPod<T> extends PodNotifier<T?> with GenericPod<T?> {
     future.then((value) => _set(value));
   }
 }
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+extension FutureToPodExtension<T> on Future<T> {
+  /// Converts a [Future] to a [FutureToPod].
+  FutureToPod<T> toPod() => FutureToPod(this);
+}
