@@ -18,6 +18,7 @@ import '/src/_index.g.dart';
 
 /// A wrapper for the [PodListCallbackBuilder] that provides a simpler
 /// solution.
+@Deprecated('Use ReducerPod instead.')
 class ListCallbackBuilder<T> extends StatelessWidget {
   //
   //

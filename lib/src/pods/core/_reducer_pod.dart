@@ -10,8 +10,6 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-// ignore_for_file: invalid_use_of_visible_for_testing_member
-
 part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -34,14 +32,14 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
 
   /// Produces a list of Pods to listen to. This gets called recursively each
   /// time any of the Pods in the returned list change.
-  final List<PodListenable<dynamic>?> Function() responder;
+  final Iterable<FutureOr<dynamic>> Function() responder;
 
   /// Reduces the values of the current Pods returned by [responder] to a
   /// single value of type [T], to update this Pod's [value].
   final T Function(List<dynamic> values) reducer;
 
   /// The currently active Pods being listened to.
-  final List<PodListenable<dynamic>?> _current = [];
+  var _current = <dynamic>[];
 
   //
   //
@@ -51,17 +49,18 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
     required this.responder,
     required this.reducer,
   }) : super(null) {
-    _cachedValue = _getValue();
-    _value = _cachedValue;
+    final value = _getValue();
+    _cachedValue = value;
   }
 
   //
   //
   //
 
-  void _refresh() {
+  Future<void> _refresh() async {
     final value = _getValue();
-    /*await*/ _set(value);
+    _cachedValue = value;
+    await _set(value);
   }
 
   //
@@ -69,26 +68,42 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
 
   T _getValue() {
-    // Remove all listeners from _current Pods and clear.
-    {
-      for (final pod in _current) {
-        pod?.removeListener(_refresh);
+    final values = responder();
+
+    if (_current.isEmpty) {
+      _current = List.filled(values.length, null);
+    }
+
+    for (var n = 0; n < values.length; n++) {
+      final value = values.elementAt(n);
+
+      if (_current[n] == null) {
+        if (value is PodListenable) {
+          value.addListener(_refresh);
+          _current[n] = value;
+        } else if (value is Future) {
+          _current[n] = const _Placeholder();
+          value.then((value1) {
+            if (value1 is PodListenable) {
+              value1.addListener(_refresh);
+              _current[n] = value1;
+            } else {
+              _current[n] = value1;
+            }
+            _refresh();
+          });
+        } else {
+          _current[n] = value;
+        }
       }
-      _current.clear();
     }
-    // Add new Pods from responder to _current and dd listeners.
-    {
-      final pods = responder();
-      for (var pod in pods) {
-        _current.add(pod);
-        pod?.addListener(_refresh);
-      }
-    }
-    // Reduce all Pod values to a single value and return.
-    {
-      final values = _current.map((e) => e?.value).toList();
-      final value = reducer(values);
-      return value;
-    }
+    final valuesToReduce = _current.map((e) => e is PodListenable ? e.value : e).toList();
+    return reducer(valuesToReduce);
   }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class _Placeholder {
+  const _Placeholder();
 }

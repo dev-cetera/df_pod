@@ -9,6 +9,7 @@
 //.title~
 
 import 'package:df_pod/df_pod.dart';
+import 'package:df_type/df_type.dart';
 
 import 'package:flutter/material.dart';
 
@@ -19,9 +20,12 @@ final _pCounter1 = GlobalPod<int>(1);
 class CounterTest extends StatelessWidget {
   CounterTest({super.key});
 
-  late final pTotal = ReducerPod<int>(
-    responder: () => [_pCounter1],
-    reducer: (values) => (values.first as int) + 1,
+  late final pTotal = ReducerPod(
+    responder: () => {
+      Future.value(_pCounter1),
+      _pCounter1,
+    },
+    reducer: (values) => (letIntOrNull(values.first) ?? 0) + 1,
   );
 
   @override
