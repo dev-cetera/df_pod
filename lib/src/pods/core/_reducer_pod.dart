@@ -97,7 +97,8 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
         }
       }
     }
-    final valuesToReduce = _current.map((e) => e is PodListenable ? e.value : e).toList();
+    final valuesToReduce =
+        _current.map((e) => e is PodListenable ? e.value : e).toList();
     return reducer(valuesToReduce);
   }
 }

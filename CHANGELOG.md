@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.13]
+
+- Released @ 9/2024 (UTC)
+- feat: Improve responder of ReducerPod to take Futures
+
 ## [0.11.12]
 
 - Released @ 9/2024 (UTC)

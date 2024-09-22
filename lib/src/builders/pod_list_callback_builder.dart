@@ -28,7 +28,8 @@ class PodListCallbackBuilder extends StatefulWidget {
   //
   //
 
-  final TOnValueBuilder<Iterable<dynamic>, PodListCallbackBuilderSnapshot> builder;
+  final TOnValueBuilder<Iterable<dynamic>, PodListCallbackBuilderSnapshot>
+      builder;
 
   //
   //
@@ -168,7 +169,8 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListCallbackBuilderSnapshot extends OnValueSnapshot<TPodDataListN> {
+final class PodListCallbackBuilderSnapshot
+    extends OnValueSnapshot<TPodDataListN> {
   //
   //
   //
