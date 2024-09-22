@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.10]
+
+- Released @ 9/2024 (UTC)
+- feat: Add FutureToPod
+
 ## [0.11.9]
 
 - Released @ 9/2024 (UTC)
