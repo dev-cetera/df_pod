@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.11]
+
+- Released @ 9/2024 (UTC)
+- refactor: FutureToPod now use FutureOr<T>
+
 ## [0.11.10]
 
 - Released @ 9/2024 (UTC)
