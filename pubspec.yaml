@@ -10,7 +10,7 @@
 
 name: df_pod
 description: A package offering tools to manage app state using ValueNotifier-like objects called Pods.
-version: 0.11.11
+version: 0.11.12
 repository: https://github.com/robmllze/df_pod
 funding:
   - https://www.buymeacoffee.com/robmllze
@@ -32,7 +32,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  df_type: ^0.5.1
+  df_type: ^0.5.13
   df_cleanup: ^0.2.2
 
   shared_preferences: ^2.3.2
