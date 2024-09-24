@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.23]
+
+- Released @ 9/2024 (UTC)
+- fix: Change static constructor to factory constructor in ReducerPod
+
 ## [0.11.22]
 
 - Released @ 9/2024 (UTC)
