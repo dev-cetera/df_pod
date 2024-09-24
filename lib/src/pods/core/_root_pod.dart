@@ -38,8 +38,8 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
 
   /// Sets the value of the Pod to [newValue] and calls [notifyListeners] if
   /// the value is different from the current value.
-  Future<void> set(T newValue) async {
-    await super._set(newValue);
+  void set(T newValue) {
+    _set(newValue);
   }
 
   /// Updates the current value of the Pod via [updateValue] and calls
@@ -47,7 +47,7 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
   /// value.
   Future<void> update(T Function(T oldValue) updateValue) async {
     final newValue = updateValue(value);
-    await set(newValue);
+    _set(newValue);
   }
 
   /// Triggers [notifyListeners] after a zero-duration delay.

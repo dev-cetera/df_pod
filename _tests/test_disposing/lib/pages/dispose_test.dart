@@ -58,7 +58,7 @@ class _DisposeTestState extends State<DisposeTest> {
     // Check if setting the Pod after it's been dispose throws an error.
     () async {
       try {
-        await _pTest.set('');
+        _pTest.set('');
       } catch (e) {
         printLightPurple('[SUCCESS]: $e');
       }

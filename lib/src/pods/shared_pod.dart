@@ -69,7 +69,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
         await _sharedPreferences!.remove(key);
         return;
     }
-    await super.set(newValue);
+    super.set(newValue);
   }
 
   //
@@ -82,7 +82,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
     final v = _sharedPreferences!.get(key) as B?;
     if (v != null) {
       final newValue = fromValue(v);
-      await super.set(newValue);
+      super.set(newValue);
     }
   }
 }

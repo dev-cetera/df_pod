@@ -50,11 +50,11 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  Future<void> _refresh() async {
+  void _refresh() {
     final parents = _responder();
     _initializeParents(parents);
     final newValue = _reducer(parents.map((p) => p?.value).toList());
-    await _set(newValue);
+    _set(newValue);
   }
 
   //

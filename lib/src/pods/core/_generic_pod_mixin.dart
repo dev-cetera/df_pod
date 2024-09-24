@@ -41,23 +41,17 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
     }
   }
 
-  @override
-  T get value => _cachedValue ?? super.value;
-
-  T? _cachedValue;
-
   /// Set the current value to [newValue] if either [T] is not equatable as
   /// deemed by [isEquatable] of if [newValue] is different from the current
   /// value, then schedules [notifyListeners] for the next loop.
-  Future<void> _set(T newValue) async {
+  void _set(T newValue) {
     if (!isEquatable<T>() || newValue != _value) {
-      _cachedValue = newValue;
+      _value = newValue;
 
       // Delay notifyListeners to the next loop to ensure that listeners
       // added or removed during this loop, will be notified in the next loop.
       // See description of [notifyListeners].
-      await Future.delayed(Duration.zero, () {
-        _value = _cachedValue ?? newValue;
+      Future.delayed(Duration.zero, () {
         if (!isDisposed) {
           notifyListeners();
         }
