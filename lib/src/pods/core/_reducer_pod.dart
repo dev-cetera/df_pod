@@ -38,8 +38,8 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   /// single value of type [T], to update this Pod's [value].
   final T Function(List<dynamic> values) reducer;
 
-  /// The currently active Pods being listened to.
-  var _current = <dynamic>[];
+  /// Tracks the current PodListenable instances being listened to.
+  final _listenables = <PodListenable<dynamic>>[];
 
   //
   //
@@ -49,26 +49,15 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
     required this.responder,
     required this.reducer,
   }) : super(null) {
-    final value = _getValue();
-    _cachedValue = value;
+    _refresh();
   }
 
   //
   //
   //
 
-  Future<void> reset() async {
-    _current = [];
-    await _refresh();
-  }
-
-  //
-  //
-  //
-
-  Future<void> _refresh() async {
-    final value = _getValue();
-    _cachedValue = value;
+  void _refresh() async {
+    final value = await _getValue();
     await _set(value);
   }
 
@@ -76,44 +65,39 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  T _getValue() {
+  FutureOr<T> _getValue() {
+    final seqential = Sequential();
+
     final values = responder();
 
-    if (_current.isEmpty) {
-      _current = List.filled(values.length, null);
+    for (final listenable in _listenables) {
+      listenable.removeListener(_refresh);
     }
+
+    final resolvedValues = <dynamic>[];
 
     for (var n = 0; n < values.length; n++) {
-      final value = values.elementAt(n);
-
-      if (_current[n] == null) {
-        if (value is PodListenable) {
-          value.addListener(_refresh);
-          _current[n] = value;
-        } else if (value is Future) {
-          _current[n] = const _Placeholder();
-          value.then((value1) {
-            if (value1 is PodListenable) {
-              value1.addListener(_refresh);
-              _current[n] = value1;
+      seqential.add(
+        (_) => mapSyncOrAsync(
+          values.elementAt(n),
+          (value) {
+            if (value is PodListenable) {
+              _listenables.add(value);
+              resolvedValues.add(value.value);
             } else {
-              _current[n] = value1;
+              resolvedValues.add(value);
             }
-            _refresh();
-          });
-        } else {
-          _current[n] = value;
-        }
-      }
+          },
+        ),
+      );
     }
-    final valuesToReduce =
-        _current.map((e) => e is PodListenable ? e.value : e).toList();
-    return reducer(valuesToReduce);
+
+    return mapSyncOrAsync(seqential.last, (_) {
+      for (final listenable in _listenables) {
+        listenable.addListener(_refresh);
+      }
+      final valuesToReduce = resolvedValues.map((e) => e is PodListenable ? e.value : e).toList();
+      return reducer(valuesToReduce);
+    });
   }
-}
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-class _Placeholder {
-  const _Placeholder();
 }
