@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.20]
+
+- Released @ 9/2024 (UTC)
+- chore: Change set method of Pods to be sync and not async
+
 ## [0.11.19]
 
 - Released @ 9/2024 (UTC)
