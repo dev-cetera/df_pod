@@ -13,12 +13,13 @@
 import 'dart:async';
 
 import 'core/core.dart';
+import 'pod_listenable.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 base class ResponsivePod<T> extends ReducerPod<T> {
   ResponsivePod(
-    FutureOr<dynamic> Function() responder,
+    FutureOr<PodListenable<T>> Function() responder,
   ) : super(
           responder: () => [responder()],
           reducer: (values) => values.first as T,
