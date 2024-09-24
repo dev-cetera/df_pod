@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.15]
+
+- Released @ 9/2024 (UTC)
+- feat: Add reset method to ReducerPod
+
 ## [0.11.14]
 
 - Released @ 9/2024 (UTC)
