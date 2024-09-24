@@ -25,7 +25,6 @@ export 'pods/temp_pod.dart';
 export 'pods/shared_global_pod.dart';
 export 'pods/protected_pod.dart';
 export 'pods/pod_disposable.dart';
-export 'pods/responsive_pod.dart';
 export 'pods/core/core.dart';
 export 'pods/more_shared_pods/shared_bool_pod.dart';
 export 'pods/more_shared_pods/shared_json_pod.dart';

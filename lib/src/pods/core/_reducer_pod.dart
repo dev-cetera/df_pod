@@ -45,20 +45,44 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  ReducerPod({
-    required this.responder,
-    required this.reducer,
-  }) : super(null) {
-    _refresh();
+  static FutureOr<ReducerPod<T>> create<T>({
+    required FutureOr<Iterable<FutureOr<dynamic>>> Function() responder,
+    required T Function(List<dynamic> values) reducer,
+  }) {
+    final instance = ReducerPod<T>._(
+      responder: responder,
+      reducer: reducer,
+    );
+    return mapSyncOrAsync(
+      instance._refresh,
+      (_) => instance,
+    );
+  }
+
+  static FutureOr<ReducerPod<T>> single<T>({
+    required FutureOr<PodListenable<T>> Function() responder,
+  }) {
+    return ReducerPod.create(
+      responder: () => [responder()],
+      reducer: (values) => values.first as T,
+    );
   }
 
   //
   //
   //
 
-  void _refresh() async {
-    final value = await _getValue();
-    _set(value);
+  ReducerPod._({
+    required this.responder,
+    required this.reducer,
+  }) : super(null);
+
+  //
+  //
+  //
+
+  FutureOr<void> _refresh() async {
+    return mapSyncOrAsync(_getValue(), (value) => _set(value));
   }
 
   //
@@ -95,9 +119,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
         for (final listenable in _listenables) {
           listenable.addListener(_refresh);
         }
-        final valuesToReduce = resolvedValues
-            .map((e) => e is PodListenable ? e.value : e)
-            .toList();
+        final valuesToReduce = resolvedValues.map((e) => e is PodListenable ? e.value : e).toList();
         return reducer(valuesToReduce);
       });
     });
