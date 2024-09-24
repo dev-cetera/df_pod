@@ -41,7 +41,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final void Function()? onDispose;
+  final void Function(PodListenable<T>? pod)? onDispose;
 
   //
   //
@@ -81,16 +81,6 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUpdate());
-  }
-
-  //
-  //
-  //
-
-  @override
-  void dispose() {
-    widget.onDispose?.call();
-    super.dispose();
   }
 
   //

@@ -41,7 +41,7 @@ class PodListCallbackBuilder extends StatefulWidget {
   //
   //
 
-  final void Function()? onDispose;
+  final void Function(Iterable<PodListenable<Object?>?> podList)? onDispose;
 
   //
   //
@@ -152,7 +152,7 @@ class _PodListCallbackBuilderState extends State<PodListCallbackBuilder> {
   @override
   void dispose() {
     _removeListenersFromCurrentPods();
-    widget.onDispose?.call();
+    widget.onDispose?.call(_currentPods);
     super.dispose();
   }
 

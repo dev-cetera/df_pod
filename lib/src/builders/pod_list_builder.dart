@@ -41,7 +41,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
   //
 
-  final void Function()? onDispose;
+  final void Function(Iterable<PodListenable<T>> podList)? onDispose;
 
   //
   //
@@ -130,7 +130,7 @@ class _PodListBuilder<T> extends StatefulWidget {
   //
   //
 
-  final void Function()? onDispose;
+  final void Function(Iterable<PodListenable<T>> podList)? onDispose;
 
   //
   //
@@ -244,7 +244,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
     for (final pod in widget.podList) {
       pod.removeListener(_valueChanged);
     }
-    widget.onDispose?.call();
+    widget.onDispose?.call(widget.podList);
     super.dispose();
   }
 }

@@ -76,7 +76,7 @@ class PodBuilder<T> extends StatelessWidget {
   //
 
   /// An optional function that is invoked when this [PodBuilder] gets disposed.
-  final void Function()? onDispose;
+  final void Function(PodListenable<T> pod)? onDispose;
 
   //
   //
@@ -179,7 +179,7 @@ class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final void Function()? onDispose;
+  final void Function(PodListenable<T> pod)? onDispose;
 
   //
   //
@@ -271,7 +271,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   @override
   void dispose() {
     widget.pod.removeListener(_valueChanged);
-    widget.onDispose?.call();
+    widget.onDispose?.call(widget.pod);
     super.dispose();
   }
 }
