@@ -3,7 +3,7 @@
 ## [0.11.17]
 
 - Released @ 9/2024 (UTC)
-- feat: Add a single element ReducerPod called MutableMod
+- feat: Add a single element ReducerPod called ResponsivePod
 
 ## [0.11.16]
 
