@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.19]
+
+- Released @ 9/2024 (UTC)
+- feat: Update responder in ReducerPod to return FutureOr
+
 ## [0.11.18]
 
 - Released @ 9/2024 (UTC)
