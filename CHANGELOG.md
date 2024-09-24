@@ -4,6 +4,7 @@
 
 - Released @ 9/2024 (UTC)
 - chore: Change set method of Pods to be sync and not async
+- refactor: Move ResponderPod to ReducerPod.single
 
 ## [0.11.19]
 
