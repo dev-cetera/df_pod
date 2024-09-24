@@ -32,7 +32,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
 
   /// Produces a list of Pods to listen to. This gets called recursively each
   /// time any of the Pods in the returned list change.
-  final Iterable<FutureOr<dynamic>> Function() responder;
+  final FutureOr<Iterable<FutureOr<dynamic>>> Function() responder;
 
   /// Reduces the values of the current Pods returned by [responder] to a
   /// single value of type [T], to update this Pod's [value].
@@ -67,38 +67,37 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
 
   FutureOr<T> _getValue() {
     final seqential = Sequential();
-
     final values = responder();
-
-    for (final listenable in _listenables) {
-      listenable.removeListener(_refresh);
-    }
-
-    final resolvedValues = <dynamic>[];
-
-    for (var n = 0; n < values.length; n++) {
-      seqential.add(
-        (_) => mapSyncOrAsync(
-          values.elementAt(n),
-          (value) {
-            if (value is PodListenable) {
-              _listenables.add(value);
-              resolvedValues.add(value.value);
-            } else {
-              resolvedValues.add(value);
-            }
-          },
-        ),
-      );
-    }
-
-    return mapSyncOrAsync(seqential.last, (_) {
+    return mapSyncOrAsync(values, (values) {
       for (final listenable in _listenables) {
-        listenable.addListener(_refresh);
+        listenable.removeListener(_refresh);
       }
-      final valuesToReduce =
-          resolvedValues.map((e) => e is PodListenable ? e.value : e).toList();
-      return reducer(valuesToReduce);
+
+      final resolvedValues = <dynamic>[];
+
+      for (var n = 0; n < values.length; n++) {
+        seqential.add(
+          (_) => mapSyncOrAsync(
+            values.elementAt(n),
+            (value) {
+              if (value is PodListenable) {
+                _listenables.add(value);
+                resolvedValues.add(value.value);
+              } else {
+                resolvedValues.add(value);
+              }
+            },
+          ),
+        );
+      }
+
+      return mapSyncOrAsync(seqential.last, (_) {
+        for (final listenable in _listenables) {
+          listenable.addListener(_refresh);
+        }
+        final valuesToReduce = resolvedValues.map((e) => e is PodListenable ? e.value : e).toList();
+        return reducer(valuesToReduce);
+      });
     });
   }
 }
