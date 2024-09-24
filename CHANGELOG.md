@@ -4,6 +4,7 @@
 
 - Released @ 9/2024 (UTC)
 - feat: Add a single element ReducerPod called ResponsivePod
+- refactor: Update return type from dynamic to generic in responder of ResponsivePod
 
 ## [0.11.16]
 
