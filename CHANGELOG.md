@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.14]
+
+- Released @ 9/2024 (UTC)
+- feat: Pass current pod(s) of builders to their onDispose
+
 ## [0.11.13]
 
 - Released @ 9/2024 (UTC)
