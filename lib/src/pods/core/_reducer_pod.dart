@@ -45,24 +45,10 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  static FutureOr<ReducerPod<T>> create<T>({
-    required FutureOr<Iterable<FutureOr<dynamic>>> Function() responder,
-    required T Function(List<dynamic> values) reducer,
-  }) {
-    final instance = ReducerPod<T>._(
-      responder: responder,
-      reducer: reducer,
-    );
-    return mapSyncOrAsync(
-      instance._refresh,
-      (_) => instance,
-    );
-  }
-
-  static FutureOr<ReducerPod<T>> single<T>({
-    required FutureOr<PodListenable<T>> Function() responder,
-  }) {
-    return ReducerPod.create(
+  static FutureOr<ReducerPod<T>> single<T>(
+    FutureOr<PodListenable<T>> Function() responder,
+  ) {
+    return ReducerPod(
       responder: () => [responder()],
       reducer: (values) => values.first as T,
     );
@@ -72,18 +58,25 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  ReducerPod._({
+  ReducerPod({
     required this.responder,
     required this.reducer,
-  }) : super(null);
-
-  //
-  //
-  //
-
-  FutureOr<void> _refresh() async {
-    return mapSyncOrAsync(_getValue(), (value) => _set(value));
+  }) : super(null) {
+    mapSyncOrAsync(_refresh(), (e) => _completer.complete(this));
   }
+
+  //
+  //
+  //
+
+  final _completer = CompleterOr<ReducerPod<T>>();
+  FutureOr<ReducerPod<T>> get resolved => _completer.futureOr;
+
+  //
+  //
+  //
+
+  FutureOr<void> _refresh() => mapSyncOrAsync(_getValue(), (value) => _set(value));
 
   //
   //
@@ -119,9 +112,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
         for (final listenable in _listenables) {
           listenable.addListener(_refresh);
         }
-        final valuesToReduce = resolvedValues
-            .map((e) => e is PodListenable ? e.value : e)
-            .toList();
+        final valuesToReduce = resolvedValues.map((e) => e is PodListenable ? e.value : e).toList();
         return reducer(valuesToReduce);
       });
     });
