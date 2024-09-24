@@ -16,8 +16,8 @@ import 'core/core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class MutablePod<T> extends ReducerPod<T> {
-  MutablePod(
+base class ResponsivePod<T> extends ReducerPod<T> {
+  ResponsivePod(
     FutureOr<dynamic> Function() responder,
   ) : super(
           responder: () => [responder()],
