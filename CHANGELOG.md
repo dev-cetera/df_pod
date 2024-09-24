@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.16]
+
+- Released @ 9/2024 (UTC)
+- chore: Simplify ReducerPod
+
 ## [0.11.15]
 
 - Released @ 9/2024 (UTC)
