@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.22]
+
+- Released @ 9/2024 (UTC)
+- chore: Improve ReducerPod
+
 ## [0.11.21]
 
 - Released @ 9/2024 (UTC)
