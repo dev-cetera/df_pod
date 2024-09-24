@@ -57,6 +57,15 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
+  Future<void> reset() async {
+    _current = [];
+    await _refresh();
+  }
+
+  //
+  //
+  //
+
   Future<void> _refresh() async {
     final value = _getValue();
     _cachedValue = value;
@@ -97,8 +106,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
         }
       }
     }
-    final valuesToReduce =
-        _current.map((e) => e is PodListenable ? e.value : e).toList();
+    final valuesToReduce = _current.map((e) => e is PodListenable ? e.value : e).toList();
     return reducer(valuesToReduce);
   }
 }
