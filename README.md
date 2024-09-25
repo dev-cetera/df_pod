@@ -201,7 +201,7 @@ PollingPodBuilder(
 pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 ```
 
-### ℹ️ Using PodListCallbackBuilder:
+<!-- ### ℹ️ Using PodListCallbackBuilder:
 
 The `PodListCallbackBuilder` widget allows you to build UI elements based on a dynamically generated list of Pods, reacting to changes in the Pods and the list itself. Unlike `PodListBuilder`, which listens to a static list of Pods, `PodListCallbackBuilder` can handle a chain of Pod dependencies, where changes in one Pod trigger the inclusion of additional Pods in the list. This makes it ideal for scenarios where Pods depend on the state of other Pods, allowing the list of Pods to evolve at runtime.
 
@@ -234,7 +234,7 @@ List<GenericPod?> isLoggedInChain() {
 bool? isLoggedInSnapshot() {
   return pAppServices.value?.pLoginService?.value.pIsLoggedIn?.value;
 }
-```
+``` -->
 
 ## ⚠️ Installation & Setup
 
