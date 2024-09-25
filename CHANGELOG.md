@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.12.1]
+
+- Released @ 9/2024 (UTC)
+- fix: Fix null issue with ReducerPod
+
 ## [0.12.0]
 
 - Released @ 9/2024 (UTC)
