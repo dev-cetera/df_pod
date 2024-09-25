@@ -20,11 +20,13 @@ final _pCounter1 = GlobalPod<int>(1);
 class CounterTest extends StatelessWidget {
   CounterTest({super.key});
 
-  late final pTotal = ReducerPod(
-    responder: () => {
-      Future.value(_pCounter1),
-    },
-    reducer: (values) => (letIntOrNull(values.first) ?? 0) + 1,
+  late final pTotal = Future.value(
+    ReducerPod(
+      responder: () => {
+        _pCounter1,
+      },
+      reducer: (values) => (letIntOrNull(values.first) ?? 0) + 1,
+    ),
   );
 
   @override

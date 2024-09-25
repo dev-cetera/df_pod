@@ -9,11 +9,8 @@
 
 // --- PUBLIC FILES ---
 export 'experimental/easy_pod.dart';
-export 'builders/list_callback_state_builder.dart';
 export 'builders/pod_list_builder.dart';
-export 'builders/pod_list_callback_builder.dart';
 export 'builders/polling_pod_builder.dart';
-export 'builders/list_callback_builder.dart';
 export 'builders/builder_utils.dart';
 export 'builders/pod_builder.dart';
 export 'utils/df_pod_package_exception.dart';
@@ -36,6 +33,9 @@ export 'pods/more_shared_pods/shared_string_list_pod.dart';
 
 // --- PRIVATE FILES (EXCLUDED) ---
 // export '_index.g.dart';
+// export 'builders/_deprecated/list_callback_state_builder.dart';
+// export 'builders/_deprecated/pod_list_callback_builder.dart';
+// export 'builders/_deprecated/list_callback_builder.dart';
 // export 'utils/_pod_finalizer_wrapper.dart';
 // export 'utils/_tuples/pods_2.dart';
 // export 'utils/_tuples/pods_3.dart';
