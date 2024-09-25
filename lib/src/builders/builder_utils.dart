@@ -36,27 +36,29 @@ class OnValueSnapshot<T> extends BuilderSnapshot {
   });
 }
 
-typedef TOnLoadingBuilder<S extends OnLoadingSnapshot> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+// DEPRECATED:
 
-class OnLoadingSnapshot extends BuilderSnapshot {
-  final DateTime createdAt;
-  OnLoadingSnapshot({
-    required super.child,
-    required this.createdAt,
-  });
-}
+// typedef TOnLoadingBuilder<S extends OnLoadingSnapshot> = Widget Function(
+//   BuildContext context,
+//   S snapshot,
+// );
 
-typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget
-    Function(
-  BuildContext context,
-  S snapshot,
-);
+// class OnLoadingSnapshot extends BuilderSnapshot {
+//   final DateTime createdAt;
+//   OnLoadingSnapshot({
+//     required super.child,
+//     required this.createdAt,
+//   });
+// }
 
-class OnNoValueSnapshot<T> extends BuilderSnapshot {
-  OnNoValueSnapshot({
-    required super.child,
-  });
-}
+// typedef TOnNoValueBuilder<S extends OnNoValueSnapshot<dynamic>> = Widget
+//     Function(
+//   BuildContext context,
+//   S snapshot,
+// );
+
+// class OnNoValueSnapshot<T> extends BuilderSnapshot {
+//   OnNoValueSnapshot({
+//     required super.child,
+//   });
+// }
