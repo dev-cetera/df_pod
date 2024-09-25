@@ -32,7 +32,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  df_type: ^0.5.13
+  df_type: ^0.5.15
   df_cleanup: ^0.2.2
 
   shared_preferences: ^2.3.2

@@ -19,6 +19,6 @@ part of 'core.dart';
 base class FutureToPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   final FutureOr<T> future;
   FutureToPod(this.future) : super(null) {
-    mapSyncOrAsync(future, _set);
+    concur(future, _set);
   }
 }
