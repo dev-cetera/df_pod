@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.12.0]
+
+- Released @ 9/2024 (UTC)
+- breaking: Remove deprecated ListCalbackBuilder, ListCallbackStateBuilder, and PoldListCallbackBuilder, and simplify ReducerPod
+
 ## [0.11.23]
 
 - Released @ 9/2024 (UTC)
