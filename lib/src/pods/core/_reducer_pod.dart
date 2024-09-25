@@ -32,7 +32,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
 
   /// Produces a list of Pods to listen to. This gets called recursively each
   /// time any of the Pods in the returned list change.
-  final Iterable<PodListenable<dynamic>> Function() responder;
+  final Iterable<PodListenable<dynamic>?> Function() responder;
 
   /// Reduces the values of the current Pods returned by [responder] to a
   /// single value of type [T], to update this Pod's [value].
@@ -81,11 +81,13 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
     final values = responder().toList();
     for (var n = 0; n < values.length; n++) {
       final value = values[n];
-      _listenables.add(value);
-      value.addListener(_refresh);
+      if (value != null) {
+        _listenables.add(value);
+        value.addListener(_refresh);
+      }
     }
 
-    final valuesToReduce = values.map((e) => e.value).toList();
+    final valuesToReduce = values.map((e) => e?.value).toList();
     return reducer(valuesToReduce);
   }
 }
