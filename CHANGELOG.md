@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.0]
+
+- Released @ 9/2024 (UTC)
+- breaking: Implement automatic resource disposal for Pods via WeakReference
+
 ## [0.12.2]
 
 - Released @ 9/2024 (UTC)

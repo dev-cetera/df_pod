@@ -23,7 +23,8 @@ mixin class WeakChangeNotifier implements Listenable {
   //
 
   int _count = 0;
-  static final _emptyListeners = List<WeakReference<VoidCallback>?>.filled(0, null);
+  static final _emptyListeners =
+      List<WeakReference<VoidCallback>?>.filled(0, null);
   List<WeakReference<VoidCallback>?> _listeners = _emptyListeners;
   int _notificationCallStackDepth = 0;
   int _reentrantlyRemovedListeners = 0;
@@ -107,7 +108,8 @@ mixin class WeakChangeNotifier implements Listenable {
       if (_count == 0) {
         _listeners = List<WeakReference<VoidCallback>?>.filled(1, null);
       } else {
-        final newListeners = List<WeakReference<VoidCallback>?>.filled(_listeners.length * 2, null);
+        final newListeners = List<WeakReference<VoidCallback>?>.filled(
+            _listeners.length * 2, null,);
         for (var i = 0; i < _count; i++) {
           newListeners[i] = _listeners[i];
         }
@@ -158,7 +160,8 @@ mixin class WeakChangeNotifier implements Listenable {
   void _removeAt(int index) {
     _count -= 1;
     if (_count * 2 <= _listeners.length) {
-      final newListeners = List<WeakReference<VoidCallback>?>.filled(_count, null);
+      final newListeners =
+          List<WeakReference<VoidCallback>?>.filled(_count, null);
       for (var i = 0; i < index; i++) {
         newListeners[i] = _listeners[i];
       }
@@ -209,7 +212,8 @@ mixin class WeakChangeNotifier implements Listenable {
             exception: exception,
             stack: stack,
             library: 'DF Pod',
-            context: ErrorDescription('while dispatching notifications for $runtimeType'),
+            context: ErrorDescription(
+                'while dispatching notifications for $runtimeType',),
             informationCollector: () => <DiagnosticsNode>[
               DiagnosticsProperty<WeakChangeNotifier>(
                 'The $runtimeType sending notification was',
@@ -227,7 +231,8 @@ mixin class WeakChangeNotifier implements Listenable {
     if (_notificationCallStackDepth == 0 && _reentrantlyRemovedListeners > 0) {
       final newLength = _count - _reentrantlyRemovedListeners;
       if (newLength * 2 <= _listeners.length) {
-        final newListeners = List<WeakReference<VoidCallback>?>.filled(newLength, null);
+        final newListeners =
+            List<WeakReference<VoidCallback>?>.filled(newLength, null);
         var newIndex = 0;
         for (var i = 0; i < _count; i++) {
           final listener = _listeners[i];
