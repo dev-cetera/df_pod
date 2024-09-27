@@ -10,9 +10,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'core/core.dart';
+part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -46,29 +44,30 @@ base class SharedPod<A, B> extends RootPod<A?> {
 
   @override
   Future<void> set(A? newValue) async {
-    _sharedPreferences ??= await SharedPreferences.getInstance();
-    final v = toValue(newValue);
-    switch (v) {
-      case String s:
-        await _sharedPreferences!.setString(key, s);
-        break;
-      case Iterable<String> list:
-        await _sharedPreferences!.setStringList(key, list.toList());
-        break;
-      case bool b:
-        await _sharedPreferences!.setBool(key, b);
-        break;
-      case int i:
-        await _sharedPreferences!.setInt(key, i);
-        break;
-      case double d:
-        await _sharedPreferences!.setDouble(key, d);
-        break;
-      default:
-        await _sharedPreferences!.remove(key);
-        return;
+    if (_set(newValue)) {
+      final v = toValue(newValue);
+      _sharedPreferences ??= await SharedPreferences.getInstance();
+      switch (v) {
+        case String s:
+          await _sharedPreferences!.setString(key, s);
+          break;
+        case Iterable<String> list:
+          await _sharedPreferences!.setStringList(key, list.toList());
+          break;
+        case bool b:
+          await _sharedPreferences!.setBool(key, b);
+          break;
+        case int i:
+          await _sharedPreferences!.setInt(key, i);
+          break;
+        case double d:
+          await _sharedPreferences!.setDouble(key, d);
+          break;
+        default:
+          await _sharedPreferences!.remove(key);
+          return;
+      }
     }
-    super.set(newValue);
   }
 
   //
@@ -81,7 +80,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
     final v = _sharedPreferences!.get(key) as B?;
     if (v != null) {
       final newValue = fromValue(v);
-      super.set(newValue);
+      super._set(newValue);
     }
   }
 }

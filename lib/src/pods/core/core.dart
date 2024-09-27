@@ -14,6 +14,7 @@ import 'dart:async';
 
 import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_index.g.dart';
@@ -25,6 +26,7 @@ part '_generic_pod_mixin.dart';
 part '_pod_notifier.dart';
 part '_reducer_pod.dart';
 part '_root_pod.dart';
+part '_shared_pod.dart';
 
 part '_reducers/multiple_pod_reducer.dart';
 part '_reducers/pod_reducer_1.dart';

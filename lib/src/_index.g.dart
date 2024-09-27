@@ -16,7 +16,6 @@ export 'builders/builder_utils.dart';
 export 'builders/pod_builder.dart';
 export 'utils/df_pod_package_exception.dart';
 export 'pods/pod_listenable.dart';
-export 'pods/shared_pod.dart';
 export 'pods/shared_temp_pod.dart';
 export 'pods/shared_global_pod.dart';
 export 'pods/protected_pod.dart';

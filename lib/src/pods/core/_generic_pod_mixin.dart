@@ -44,7 +44,7 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
   /// Set the current value to [newValue] if either [T] is not equatable as
   /// deemed by [isEquatable] of if [newValue] is different from the current
   /// value, then schedules [notifyListeners] for the next loop.
-  void _set(T newValue) {
+  bool _set(T newValue) {
     if (!isEquatable<T>() || newValue != _value) {
       _value = newValue;
 
@@ -56,7 +56,9 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
           notifyListeners();
         }
       });
+      return true;
     }
+    return false;
   }
 
   /// Reduces the current Pod and [other] into a single [ChildPod].
