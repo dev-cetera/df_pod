@@ -20,7 +20,7 @@ import '/src/_index.g.dart';
 
 part '_child_pod_base.dart';
 part '_child_pod.dart';
-part '_future_to_pod.dart';
+part '_future_pod.dart';
 part '_generic_pod_mixin.dart';
 part '_pod_notifier.dart';
 part '_reducer_pod.dart';

@@ -18,15 +18,9 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A mixin that provides disposal management for Pods.
-abstract class PodDisposable<T> extends ChangeNotifier
+abstract class PodDisposable<T> extends WeakChangeNotifier
     with DisposeMixin, WillDisposeMixin
     implements PodListenable<T> {
-  /// To be called called immediately before [dispose] if defined.
-  final TOnBeforeDispose<T>? onBeforeDispose;
-
-  PodDisposable({this.onBeforeDispose});
-
   /// A flag indicating whether the Pod has been disposed.
   bool _isDisposed = false;
 
@@ -52,13 +46,12 @@ abstract class PodDisposable<T> extends ChangeNotifier
     }
   }
 
-  /// Calls [onBeforeDispose] then dipsoses this [PodListenable] and sets
-  /// [isDisposed] to `true`. Successive calls to this method will be ignored.
+  /// Dipsoses this [PodListenable] and sets [isDisposed] to `true`.
+  /// Successive calls to this method will be ignored.
   @override
   @mustCallSuper
   void dispose() {
     if (!_isDisposed) {
-      onBeforeDispose?.call(value);
       super.dispose();
       this._isDisposed = true;
     } else {

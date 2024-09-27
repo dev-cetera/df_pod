@@ -10,22 +10,20 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:ui';
-
 import 'package:meta/meta.dart';
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A mixin for Pods that protects [addListener] and [dispose].
+/// A mixin for Pods that protects [addWeakListener] and [dispose].
 @internal
 base mixin ProtectedPodMixin<T> on PodDisposable<T> {
   /// Do not add listeners to this Pod directly.
   @protected
   @override
-  void addListener(VoidCallback listener) {
-    super.addListener(listener);
+  void addWeakListener(Object listener) {
+    super.addWeakListener(listener);
   }
 
   /// Do not dispose this Pod directly.

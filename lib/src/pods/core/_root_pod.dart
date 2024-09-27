@@ -25,10 +25,7 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
   //
   //
 
-  RootPod(
-    super.value, {
-    super.onBeforeDispose,
-  });
+  RootPod(super.value);
 
   /// Returns the current value of the Pod and calls [refresh]
   T get updateValue {

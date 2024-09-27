@@ -17,8 +17,5 @@ import 'core/core.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 base class ProtectedPod<T> extends RootPod<T> with ProtectedPodMixin<T> {
-  ProtectedPod(
-    super.value, {
-    super.onBeforeDispose,
-  });
+  ProtectedPod(super.value);
 }

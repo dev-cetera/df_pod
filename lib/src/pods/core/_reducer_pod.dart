@@ -59,14 +59,15 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
     required this.responder,
     required this.reducer,
   }) : super(null) {
-    _refresh();
+    _refresh!();
   }
 
   //
   //
   //
 
-  void _refresh() => _set(_getValue());
+  // ignore: prefer_function_declarations_over_variables
+  late VoidCallback? _refresh = () => _set(_getValue());
 
   //
   //
@@ -76,18 +77,31 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
 
   T _getValue() {
     for (final listenable in _listenables) {
-      listenable.removeListener(_refresh);
+      listenable.removeListener(_refresh!);
     }
     final values = responder().toList();
     for (var n = 0; n < values.length; n++) {
       final value = values[n];
       if (value != null) {
         _listenables.add(value);
-        value.addListener(_refresh);
+        value.addListener(_refresh!);
       }
     }
 
     final valuesToReduce = values.map((e) => e?.value).toList();
     return reducer(valuesToReduce);
+  }
+
+  //
+  //
+  //
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (final listenable in _listenables) {
+      listenable.removeListener(_refresh!);
+    }
+    _refresh = null;
   }
 }

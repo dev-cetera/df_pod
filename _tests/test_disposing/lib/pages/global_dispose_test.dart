@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:df_log/df_log.dart';
 import 'package:df_pod/df_pod.dart';
 
-final _pGlobal = GlobalPod('Global');
+final _pGlobal = ProtectedPod('Global');
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 

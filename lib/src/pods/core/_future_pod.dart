@@ -16,9 +16,9 @@ part of 'core.dart';
 
 /// A Pod that is initially `null` then sets its [value] when a [Future]
 /// completes.
-base class FutureToPod<T> extends PodNotifier<T?> with GenericPod<T?> {
+base class FuturePod<T> extends PodNotifier<T?> with GenericPod<T?> {
   final FutureOr<T> future;
-  FutureToPod(this.future) : super(null) {
+  FuturePod(this.future) : super(null) {
     consec(future, _set);
   }
 }

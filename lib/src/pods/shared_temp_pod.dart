@@ -21,6 +21,5 @@ base class SharedTempPod<A, B> extends SharedPod<A, B> with ProtectedPodMixin {
     super.key, {
     required super.fromValue,
     required super.toValue,
-    super.onBeforeDispose,
   });
 }

@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pCounter1 = GlobalPod<int>(1);
+final _pCounter1 = ProtectedPod<int>(1);
 
 class ValueListenableBuilderTest extends StatelessWidget {
   ValueListenableBuilderTest({super.key});

@@ -38,7 +38,6 @@ base class SharedPod<A, B> extends RootPod<A?> {
     this.key, {
     required this.fromValue,
     required this.toValue,
-    super.onBeforeDispose,
   }) : super(null);
 
   //

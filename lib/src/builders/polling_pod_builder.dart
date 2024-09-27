@@ -23,7 +23,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final FutureOr<PodListenable<T>>? Function() podPoller;
+  final FutureListenable<T>? Function() podPoller;
 
   //
   //
@@ -80,7 +80,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUpdate());
+    _checkAndUpdate();
   }
 
   //
@@ -90,13 +90,14 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   void _checkAndUpdate() {
     final tempPod = widget.podPoller();
     if (_currentPod != tempPod) {
-      setState(() {
-        _currentPod = tempPod;
-      });
-      if (_currentPod != null) {
-        // Stop polling once we have a valid pod.
-        return;
+      _currentPod = tempPod;
+      if (mounted) {
+        setState(() {});
       }
+    }
+    if (_currentPod != null) {
+      // Stop polling once we have a valid Pod.
+      return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUpdate());
   }

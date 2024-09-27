@@ -82,7 +82,7 @@ pNumbers.update((e) => e..add(5));
 ```dart
 final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 
-// Dispose of Pods when they are no longer needed.
+// Manually dispose of Pods when they are no longer needed.
 pNumbers.dispose();
 ```
 
@@ -200,41 +200,6 @@ PollingPodBuilder(
 
 pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 ```
-
-<!-- ### ℹ️ Using PodListCallbackBuilder:
-
-The `PodListCallbackBuilder` widget allows you to build UI elements based on a dynamically generated list of Pods, reacting to changes in the Pods and the list itself. Unlike `PodListBuilder`, which listens to a static list of Pods, `PodListCallbackBuilder` can handle a chain of Pod dependencies, where changes in one Pod trigger the inclusion of additional Pods in the list. This makes it ideal for scenarios where Pods depend on the state of other Pods, allowing the list of Pods to evolve at runtime.
-
-```dart
-final pAppServices = Pod<AppServices?>(null);
-
-PodListCallbackBuilder(
-  listCallback: isLoggedInChain(),
-  builder: (context, snapshot) {
-    final isLoggedIn = isLoggedInSnapshot();
-    return isLoggedIn == null
-        ? CircularProgressIndicator()
-        : Text('Logged In?: $isLoggedIn');
-  },
-);
-
-// Define the listCallback function that returns the chain of Pods to listen to.
-List<GenericPod?> isLoggedInChain() {
-  return [
-    // The root Pod: when pAppServices becomes non-null, it will provide access to pLoginService.
-    pAppServices,
-    // When pLoginService becomes non-null, it will provide access to pIsLoggedIn.
-    pAppServices.value?.pLoginService,
-    // pIsLoggedIn is only available when pLoginService is initialized and non-null.
-    pAppServices.value?.pLoginService?.value.pIsLoggedIn,
-  ];
-}
-
-// A utility function to easily get the current value of isLoggedIn.
-bool? isLoggedInSnapshot() {
-  return pAppServices.value?.pLoginService?.value.pIsLoggedIn?.value;
-}
-``` -->
 
 ## ⚠️ Installation & Setup
 

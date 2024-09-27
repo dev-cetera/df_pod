@@ -10,96 +10,41 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
-import 'package:flutter/foundation.dart';
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A widget that stays in sync with a [Pod] and rebuilds by calling [builder]
-/// whenever [pod] changes or gets refreshed.
-///
-/// ### Parameters:
-///
-/// - `key`: An optional key to use for the widget.
-///
-/// - `pod`: The [Pod] that triggers rebuilds by invoking the [builder]
-///    whenever its value changes or is refreshed. If the [pod] is a future,
-///    it will be awaited, and the [builder] will be called once the future
-///    completes. While awaiting, the builder receives a `null` value. If [pod]
-///    is not a future or it is `null`, its current value or `null` is passed
-///    to the [builder].
-/// - `builder`: A [TOnValueBuilder] which builds a widget whenever [pod]
-///    changes or gets refreshed.
-/// - `child`: An optional independent widget, that is directly passed to the
-///   [builder]. This can be used for optimizations.
-/// - `onDispose`: An optional function that is invoked when this [PodBuilder]
-///   gets disposed.
-///
-/// ### See Also:
-///
-/// - [ValueListenable], which is what [Pod] is inspired by.
-/// - [ValueListenableBuilder], which is what [PodBuilder] is inspired by.
 class PodBuilder<T> extends StatelessWidget {
   //
   //
   //
 
-  /// The [Pod] that triggers rebuilds by invoking the [builder] whenever its
-  /// value changes or is refreshed. If the [pod] is a future, it will be
-  /// awaited, and the [builder] will be called once the future completes. While
-  /// awaiting, the builder receives a `null` value. If [pod] is not a future or
-  /// it is `null`, its current value or `null` is passed to the [builder].
-  final FutureOr<PodListenable<T>> pod;
+  final FutureListenable<T> pod;
 
   //
   //
   //
 
-  /// A [TOnValueBuilder] which builds a widget whenever [pod] changes or
-  /// gets refreshed.
   final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
 
   //
   //
   //
 
-  /// An optional independent widget, that is directly passed to the [builder].
-  /// This can be used for optimizations.
   final Widget? child;
 
   //
   //
   //
 
-  /// An optional function that is invoked when this [PodBuilder] gets disposed.
   final void Function(PodListenable<T> pod)? onDispose;
 
   //
   //
   //
 
-  /// Constructs a [PodBuilder].
-  ///
-  /// ### Parameters:
-  ///
-  /// - `key`: An optional key to use for the widget.
-  ///
-  /// - `pod`: The [Pod] that triggers rebuilds by invoking the [builder]
-  ///    whenever its value changes or is refreshed. If the [pod] is a future,
-  ///    it will be awaited, and the [builder] will be called once the future
-  ///    completes. While awaiting, the builder receives a `null` value. If [pod]
-  ///    is not a future or it is `null`, its current value or `null` is passed
-  ///    to the [builder].
-  /// - `builder`: A [TOnValueBuilder] which builds a widget whenever [pod]
-  ///    changes or gets refreshed.
-  /// - `child`: An optional independent widget, that is directly passed to the
-  ///   [builder]. This can be used for optimizations.
-  /// - `onDispose`: An optional function that is invoked when this [PodBuilder]
-  ///   gets disposed.
   const PodBuilder({
     super.key,
     required this.pod,
@@ -153,9 +98,6 @@ class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A custom builder widget similar to [ValueListenableBuilder] that supports
-/// nullable [pod], an [onDispose] callback, and auto-disposes the [Pod]
-/// if marked as temporary.
 class _PodBuilder<T> extends StatefulWidget {
   //
   //
@@ -220,7 +162,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     super.initState();
     _staticChild = widget.child;
     _value = widget.pod.value;
-    widget.pod.addListener(_valueChanged);
+    widget.pod.addListener(_valueChanged!);
   }
 
   //
@@ -231,9 +173,9 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   void didUpdateWidget(_PodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.pod != widget.pod) {
-      oldWidget.pod.removeListener(_valueChanged);
+      oldWidget.pod.removeListener(_valueChanged!);
       _value = widget.pod.value;
-      widget.pod.addListener(_valueChanged);
+      widget.pod.addListener(_valueChanged!);
     }
   }
 
@@ -241,13 +183,14 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
   //
 
-  void _valueChanged() {
+  // ignore: prefer_final_fields
+  late void Function()? _valueChanged = () {
     if (mounted) {
       setState(() {
         _value = widget.pod.value;
       });
     }
-  }
+  };
 
   //
   //
@@ -270,7 +213,8 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   void dispose() {
-    widget.pod.removeListener(_valueChanged);
+    widget.pod.removeListener(_valueChanged!);
+    _valueChanged = null;
     widget.onDispose?.call(widget.pod);
     super.dispose();
   }

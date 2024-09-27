@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 import 'package:df_pod/df_pod.dart';
 
-final _pAnotherGlobalPod = GlobalPod('Another Global Pod');
+final _pAnotherGlobalPod = ProtectedPod('Another Global Pod');
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -44,7 +44,7 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
       child: Column(
         children: [
           MyLabel(
-            pText: TempPod('Temp Pod'),
+            pText: ProtectedPod('Temp Pod'),
           ),
           MyLabel(
             pText: _pAnotherGlobalPod,

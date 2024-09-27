@@ -23,7 +23,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
   //
 
-  final Iterable<FutureOr<PodListenable<T>>> podList;
+  final Iterable<FutureListenable<T>> podList;
 
   //
   //
@@ -194,7 +194,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   void _addListenerToPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.addListener(_valueChanged);
+      pod.addListener(_valueChanged!);
     }
   }
 
@@ -204,7 +204,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   void _removeListenerFromPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.removeListener(_valueChanged);
+      pod.removeListener(_valueChanged!);
     }
   }
 
@@ -212,13 +212,14 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   //
   //
 
-  void _valueChanged() {
+  // ignore: prefer_final_fields
+  late void Function()? _valueChanged = () {
     if (mounted) {
       setState(() {
         _values = widget.podList.map((e) => e.value);
       });
     }
-  }
+  };
 
   //
   //
@@ -242,8 +243,9 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   @override
   void dispose() {
     for (final pod in widget.podList) {
-      pod.removeListener(_valueChanged);
+      pod.removeListener(_valueChanged!);
     }
+    _valueChanged = null;
     widget.onDispose?.call(widget.podList);
     super.dispose();
   }

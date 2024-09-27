@@ -25,7 +25,6 @@ final class ChildPod<TParent, TChild> extends _ChildPodBase<TParent, TChild>
   factory ChildPod._({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
-    TOnBeforeDispose<TChild>? onBeforeDispose,
   }) {
     final parents = responder();
     final initialValue = reducer(parents.map((p) => p?.value).toList());
@@ -33,7 +32,6 @@ final class ChildPod<TParent, TChild> extends _ChildPodBase<TParent, TChild>
       responder: responder,
       reducer: reducer,
       initialValue: initialValue,
-      onBeforeDispose: onBeforeDispose,
     );
     temp._initializeParents(parents);
     return temp;
@@ -47,6 +45,5 @@ final class ChildPod<TParent, TChild> extends _ChildPodBase<TParent, TChild>
     required super.responder,
     required super.reducer,
     required super.initialValue,
-    super.onBeforeDispose,
   }) : super();
 }

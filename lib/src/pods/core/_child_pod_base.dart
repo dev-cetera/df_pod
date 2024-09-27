@@ -15,7 +15,7 @@ part of 'core.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
-    with GenericPod<TChild> {
+    with GenericPod<TChild>, ProtectedPodMixin<TChild> {
   //
   //
   //
@@ -31,7 +31,6 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
     required TChild initialValue,
-    super.onBeforeDispose,
   })  : _reducer = reducer,
         _responder = responder,
         super(initialValue);
@@ -60,13 +59,6 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
   //
   //
   //
-
-  /// Do not add listeners to this Pod directly.
-  @protected
-  @override
-  void addListener(VoidCallback listener) {
-    super.addListener(listener);
-  }
 
   /// Do not add listeners to this Pod directly.
   @protected
