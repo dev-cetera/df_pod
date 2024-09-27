@@ -108,7 +108,9 @@ mixin class WeakChangeNotifier implements Listenable {
         _listeners = List<WeakReference<VoidCallback>?>.filled(1, null);
       } else {
         final newListeners = List<WeakReference<VoidCallback>?>.filled(
-            _listeners.length * 2, null,);
+          _listeners.length * 2,
+          null,
+        );
         for (var i = 0; i < _count; i++) {
           newListeners[i] = _listeners[i];
         }
@@ -212,7 +214,8 @@ mixin class WeakChangeNotifier implements Listenable {
             stack: stack,
             library: 'DF Pod',
             context: ErrorDescription(
-                'while dispatching notifications for $runtimeType',),
+              'while dispatching notifications for $runtimeType',
+            ),
             informationCollector: () => <DiagnosticsNode>[
               DiagnosticsProperty<WeakChangeNotifier>(
                 'The $runtimeType sending notification was',

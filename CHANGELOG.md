@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.1]
+
+- Released @ 9/2024 (UTC)
+- chore: Improve SharedPod
+
 ## [0.13.0]
 
 - Released @ 9/2024 (UTC)
