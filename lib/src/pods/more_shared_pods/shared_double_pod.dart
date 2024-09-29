@@ -16,31 +16,29 @@ import '/src/_index.g.dart';
 
 final class SharedDoublePodCreator {
   const SharedDoublePodCreator._();
-  static Future<TSharedDoublePod> local(String key) async {
+  static Future<TSharedDoublePod> create(
+    String key, {
+    double? initialValue,
+  }) async {
     final instance = TSharedDoublePod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
+      initialValue: initialValue,
     );
     await instance.refresh();
     return instance;
   }
 
-  static Future<TSharedTempDoublePod> temp(String key) async {
-    final instance = TSharedTempDoublePod(
+  static Future<TSharedProtectedDoublePod> protected(
+    String key, {
+    double? initialValue,
+  }) async {
+    final instance = TSharedProtectedDoublePod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
-    );
-    await instance.refresh();
-    return instance;
-  }
-
-  static Future<TSharedGlobalDoublePod> global(String key) async {
-    final instance = TSharedGlobalDoublePod(
-      key,
-      fromValue: (rawValue) => rawValue,
-      toValue: (value) => value,
+      initialValue: initialValue,
     );
     await instance.refresh();
     return instance;
@@ -50,5 +48,4 @@ final class SharedDoublePodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedDoublePod = SharedPod<double, double>;
-typedef TSharedTempDoublePod = SharedTempPod<double, double>;
-typedef TSharedGlobalDoublePod = SharedGlobalPod<double, double>;
+typedef TSharedProtectedDoublePod = SharedProtectedPod<double, double>;

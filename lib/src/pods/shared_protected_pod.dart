@@ -10,16 +10,17 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '../_mixins/protected_pod_mixin.dart';
-import 'core/core.dart';
+import '/src/_mixins/protected_pod_mixin.dart';
+
+import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class SharedGlobalPod<A, B> extends SharedPod<A, B>
-    with ProtectedPodMixin {
-  SharedGlobalPod(
+base class SharedProtectedPod<A, B> extends SharedPod<A, B> with ProtectedPodMixin {
+  SharedProtectedPod(
     super.key, {
     required super.fromValue,
     required super.toValue,
+    super.initialValue,
   });
 }

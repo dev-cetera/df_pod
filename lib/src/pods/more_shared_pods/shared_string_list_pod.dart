@@ -16,31 +16,29 @@ import '/src/_index.g.dart';
 
 final class SharedStringListPodCreator {
   const SharedStringListPodCreator._();
-  static Future<TSharedStringListPod> local(String key) async {
+  static Future<TSharedStringListPod> create(
+    String key, {
+    List<String>? initialValue,
+  }) async {
     final instance = TSharedStringListPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
+      initialValue: initialValue,
     );
     await instance.refresh();
     return instance;
   }
 
-  static Future<TSharedTempStringListPod> temp(String key) async {
-    final instance = TSharedTempStringListPod(
+  static Future<TSharedProtectedStringListPod> protected(
+    String key, {
+    List<String>? initialValue,
+  }) async {
+    final instance = TSharedProtectedStringListPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
-    );
-    await instance.refresh();
-    return instance;
-  }
-
-  static Future<TSharedGlobalStringListPod> global(String key) async {
-    final instance = TSharedGlobalStringListPod(
-      key,
-      fromValue: (rawValue) => rawValue,
-      toValue: (value) => value,
+      initialValue: initialValue,
     );
     await instance.refresh();
     return instance;
@@ -50,6 +48,4 @@ final class SharedStringListPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedStringListPod = SharedPod<List<String>, List<String>>;
-typedef TSharedTempStringListPod = SharedTempPod<List<String>, List<String>>;
-typedef TSharedGlobalStringListPod
-    = SharedGlobalPod<List<String>, List<String>>;
+typedef TSharedProtectedStringListPod = SharedProtectedPod<List<String>, List<String>>;

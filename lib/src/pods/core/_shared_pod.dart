@@ -27,6 +27,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
 
   final A? Function(B? rawValue) fromValue;
   final B? Function(A? value) toValue;
+  final A? initialValue;
 
   //
   //
@@ -36,7 +37,8 @@ base class SharedPod<A, B> extends RootPod<A?> {
     this.key, {
     required this.fromValue,
     required this.toValue,
-  }) : super(null);
+    this.initialValue,
+  }) : super(initialValue);
 
   //
   //

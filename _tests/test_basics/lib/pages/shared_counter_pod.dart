@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pSharedCounter = SharedIntPodCreator.global('shared_counter');
+final _pSharedCounter = SharedIntPodCreator.protected('shared_counter');
 
 class SharedCounterPodTest extends StatelessWidget {
   const SharedCounterPodTest({super.key});
@@ -33,8 +33,7 @@ class SharedCounterPodTest extends StatelessWidget {
                 Text('Counter: ${sharedCounterSnapshot.value}'),
           ),
           OutlinedButton(
-            onPressed: () =>
-                _pSharedCounter.then((e) => e.update((e) => (e ?? 0) + 1)),
+            onPressed: () => _pSharedCounter.then((e) => e.update((e) => (e ?? 0) + 1)),
             child: const Text('Add with "update"'),
           ),
         ],

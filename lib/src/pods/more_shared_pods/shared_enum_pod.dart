@@ -18,54 +18,37 @@ final class SharedEnumPodCreator {
   const SharedEnumPodCreator._();
   static Future<TSharedEnumPod<T>> create<T extends Enum>(
     String key,
-    Iterable<T?> options,
-  ) async {
+    Iterable<T?> options, {
+    T? initialValue,
+  }) async {
     final instance = TSharedEnumPod<T>(
       key,
-      fromValue: (rawValue) => rawValue?.name,
-      toValue: (value) {
+      fromValue: (value) {
         return options.firstWhere(
           (e) => e?.name.toLowerCase() == value?.toLowerCase(),
           orElse: () => null,
         );
       },
+      toValue: (rawValue) => rawValue?.name,
     );
     await instance.refresh();
     return instance;
   }
 
-  static Future<TSharedTempEnumPod<T>> temp<T extends Enum>(
+  static Future<TSharedprotectedEnumPod<T>> protected<T extends Enum>(
     String key,
-    Iterable<T?> options,
-  ) async {
-    final instance = TSharedTempEnumPod<T>(
-      key,
-      fromValue: (rawValue) => rawValue?.name,
-      toValue: (value) {
-        return options.firstWhere(
-          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
-          orElse: () => null,
-        );
-      },
-    );
-    await instance.refresh();
-    return instance;
-  }
-
-  static Future<TSharedGlobalEnumPod<T>> global<T extends Enum>(
-    String key,
-    Iterable<T?> options,
-  ) async {
-    final instance = TSharedGlobalEnumPod<T>(
-      key,
-      fromValue: (rawValue) => rawValue?.name,
-      toValue: (value) {
-        return options.firstWhere(
-          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
-          orElse: () => null,
-        );
-      },
-    );
+    Iterable<T?> options, {
+    T? initialValue,
+  }) async {
+    final instance = TSharedprotectedEnumPod<T>(key,
+        fromValue: (value) {
+          return options.firstWhere(
+            (e) => e?.name.toLowerCase() == value?.toLowerCase(),
+            orElse: () => null,
+          );
+        },
+        toValue: (rawValue) => rawValue?.name,
+        initialValue: initialValue);
     await instance.refresh();
     return instance;
   }
@@ -73,6 +56,5 @@ final class SharedEnumPodCreator {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TSharedEnumPod<T extends Enum> = SharedPod<String, T>;
-typedef TSharedTempEnumPod<T extends Enum> = SharedTempPod<String, T>;
-typedef TSharedGlobalEnumPod<T extends Enum> = SharedGlobalPod<String, T>;
+typedef TSharedEnumPod<T extends Enum> = SharedPod<T, String>;
+typedef TSharedprotectedEnumPod<T extends Enum> = SharedProtectedPod<T, String>;

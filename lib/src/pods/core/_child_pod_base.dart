@@ -60,8 +60,6 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  /// Do not add listeners to this Pod directly.
-  @protected
   @override
   void dispose() {
     final parents = _responder();

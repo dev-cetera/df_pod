@@ -16,31 +16,29 @@ import '/src/_index.g.dart';
 
 final class SharedIntPodCreator {
   const SharedIntPodCreator._();
-  static Future<TSharedIntPod> local(String key) async {
+  static Future<TSharedIntPod> create(
+    String key, {
+    int? initialValue,
+  }) async {
     final instance = TSharedIntPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
+      initialValue: initialValue,
     );
     await instance.refresh();
     return instance;
   }
 
-  static Future<TSharedTempIntPod> temp(String key) async {
-    final instance = TSharedTempIntPod(
+  static Future<TSharedProtectedIntPod> protected(
+    String key, {
+    int? initialValue,
+  }) async {
+    final instance = TSharedProtectedIntPod(
       key,
       fromValue: (rawValue) => rawValue,
       toValue: (value) => value,
-    );
-    await instance.refresh();
-    return instance;
-  }
-
-  static Future<TSharedGlobalIntPod> global(String key) async {
-    final instance = TSharedGlobalIntPod(
-      key,
-      fromValue: (rawValue) => rawValue,
-      toValue: (value) => value,
+      initialValue: initialValue,
     );
     await instance.refresh();
     return instance;
@@ -50,5 +48,4 @@ final class SharedIntPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedIntPod = SharedPod<int, int>;
-typedef TSharedTempIntPod = SharedTempPod<int, int>;
-typedef TSharedGlobalIntPod = SharedGlobalPod<int, int>;
+typedef TSharedProtectedIntPod = SharedProtectedPod<int, int>;
