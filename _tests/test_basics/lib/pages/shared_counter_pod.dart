@@ -33,7 +33,8 @@ class SharedCounterPodTest extends StatelessWidget {
                 Text('Counter: ${sharedCounterSnapshot.value}'),
           ),
           OutlinedButton(
-            onPressed: () => _pSharedCounter.then((e) => e.update((e) => (e ?? 0) + 1)),
+            onPressed: () =>
+                _pSharedCounter.then((e) => e.update((e) => (e ?? 0) + 1)),
             child: const Text('Add with "update"'),
           ),
         ],

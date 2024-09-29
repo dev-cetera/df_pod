@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.2]
+
+- Released @ 9/2024 (UTC)
+- chore: Add initialValue property to SharedPod
+
 ## [0.13.1]
 
 - Released @ 9/2024 (UTC)

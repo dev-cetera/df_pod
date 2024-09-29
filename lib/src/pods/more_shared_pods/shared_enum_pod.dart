@@ -48,7 +48,7 @@ final class SharedEnumPodCreator {
           );
         },
         toValue: (rawValue) => rawValue?.name,
-        initialValue: initialValue);
+        initialValue: initialValue,);
     await instance.refresh();
     return instance;
   }

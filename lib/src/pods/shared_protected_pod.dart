@@ -16,7 +16,8 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-base class SharedProtectedPod<A, B> extends SharedPod<A, B> with ProtectedPodMixin {
+base class SharedProtectedPod<A, B> extends SharedPod<A, B>
+    with ProtectedPodMixin {
   SharedProtectedPod(
     super.key, {
     required super.fromValue,
