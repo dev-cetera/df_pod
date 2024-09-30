@@ -40,15 +40,17 @@ final class SharedEnumPodCreator {
     Iterable<T?> options, {
     T? initialValue,
   }) async {
-    final instance = TSharedprotectedEnumPod<T>(key,
-        fromValue: (value) {
-          return options.firstWhere(
-            (e) => e?.name.toLowerCase() == value?.toLowerCase(),
-            orElse: () => null,
-          );
-        },
-        toValue: (rawValue) => rawValue?.name,
-        initialValue: initialValue,);
+    final instance = TSharedprotectedEnumPod<T>(
+      key,
+      fromValue: (value) {
+        return options.firstWhere(
+          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
+          orElse: () => null,
+        );
+      },
+      toValue: (rawValue) => rawValue?.name,
+      initialValue: initialValue,
+    );
     await instance.refresh();
     return instance;
   }
