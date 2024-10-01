@@ -20,37 +20,6 @@ import 'package:df_cleanup/df_cleanup.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// An extension of [ValueListenable], providing a foundational layer for Pods.
-///
-/// The [ValueListenable] class serves as a simplified interface to Pods,
-/// designed specifically for passing to [PodBuilder] or other supported
-/// builders.
-///
-/// It restricts access to modification methods, focusing solely on the
-/// listenable aspect without exposing setters or updaters.
-///
-/// This abstraction is useful for scenarios where you want to expose only
-/// necessary functionalities, ensuring that developers interact with the Pod's
-/// state in a controlled manner, preventing accidental changes.
-///
-/// [ValueListenable] is intended for use in UI components where you need to
-/// respond to state changes without altering the state directly. In contrast,
-/// regular Pods provide methods like `set` or `update` for state modifications.
-///
-/// ### Example:
-///
-/// ```dart
-/// ValueListenable<int> pNumber = Pod<int>(55);
-/// ```
-///
-/// In this example, `pNumber` is limited to the interface provided by
-/// [ValueListenable], ensuring that it can only be used for listening to changes,
-/// while retaining the ability to cast back to any Pod if advanced operations
-/// are needed, e.g.:
-///
-/// ```dart
-/// (pNumber as Pod).set(2);
-/// ```
 abstract class PodDisposable<T> extends WeakChangeNotifier
     with DisposeMixin, WillDisposeMixin
     implements ValueListenable<T> {
