@@ -162,9 +162,9 @@ pChild.update((e) => e.replaceAll('Son', 'Daughter')); // ❌ Syntax error!
 // These will trigger syntax errors if you've correctly set up your
 // analysis_options.yaml:
 pChild.addListener(() {}); // ❌ ChildPods do not take listeners!
-pChild.dispose(); // ❌ ChildPods do not need to be disposed of!
 
-pParent.addListener(() => print('Parent changed!')); // ✔️ OK!
+final listener = () => print('Parent changed!');
+pParent.addStrongRefListener(strongRefListener: listener); // ✔️ OK!
 pParent.dispose(); // ✔️ OK! Disposes pChild as well, its children, their children, and so on.
 ```
 

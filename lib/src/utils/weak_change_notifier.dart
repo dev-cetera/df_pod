@@ -22,8 +22,7 @@ mixin class WeakChangeNotifier implements Listenable {
   //
 
   int _count = 0;
-  static final _emptyListeners =
-      List<WeakReference<VoidCallback>?>.filled(0, null);
+  static final _emptyListeners = List<WeakReference<VoidCallback>?>.filled(0, null);
   List<WeakReference<VoidCallback>?> _listeners = _emptyListeners;
   int _notificationCallStackDepth = 0;
   int _reentrantlyRemovedListeners = 0;
@@ -59,25 +58,42 @@ mixin class WeakChangeNotifier implements Listenable {
 
   /// Register a closure to be called when the object notifies its listeners.
   ///
-  /// **IMPORTANT:**
+  /// The listener must be strongly referenced, meaning it should be stored in
+  /// an instance variable or field. If not, it will be garbage collected
+  /// prematurely.
   ///
-  /// The closure must be strongly referenced in order for automatic garbage
-  /// disposal to work.
+  /// **For example:**
   ///
-  /// **EXAMPLE:**
   /// ```dart
-  /// weakChangeNotifier.addListener((){}); // NO! Anonymous functions are weak references.
   ///
-  /// void doStuff1() { }
-  /// weakChangeNotifier.addListener(doStuff1); // NO! doStuff2 is a weak reference.
+  /// // 👍 CORRECT - Instance functions are strongly referenced:
   ///
-  /// final doStuff2 = (){};
-  /// weakChangeNotifier.addListener(doStuff2); // YES! doStuff2 is a strong reference.
-  /// ```
-  void addWeakListener(Object listener) {
-    addListener(listener as VoidCallback);
+  /// final listener = () {
+  ///   print('Pod value changed');
+  /// };
+  /// weakChangeNotifier.addStrongRefListener(strongRefListener: listener);
+  ///
+  /// // ❌ INCORRECT - Functions defined like this are not strongly referenced:
+  ///
+  /// void listener() {
+  ///   print('Pod value changed');
+  /// }
+  ///
+  /// weakChangeNotifier.addStrongRefListener(strongRefListener: listener);
+  ///
+  /// // ❌ INCORRECT - Anonymous functions are not strongly referenced:
+  ///
+  /// weakChangeNotifier.addStrongRefListener(strongRefListener: () {
+  ///  print('Pod value changed');
+  /// });
+  void addStrongRefListener({
+    required VoidCallback strongRefListener,
+  }) {
+    // ignore: deprecated_member_use_from_same_package
+    addListener(strongRefListener);
   }
 
+  @Deprecated('Deprecated: Please use `addStrongRefListener` instead.')
   @protected
   @override
   void addListener(VoidCallback listener) {
@@ -161,8 +177,7 @@ mixin class WeakChangeNotifier implements Listenable {
   void _removeAt(int index) {
     _count -= 1;
     if (_count * 2 <= _listeners.length) {
-      final newListeners =
-          List<WeakReference<VoidCallback>?>.filled(_count, null);
+      final newListeners = List<WeakReference<VoidCallback>?>.filled(_count, null);
       for (var i = 0; i < index; i++) {
         newListeners[i] = _listeners[i];
       }
@@ -233,8 +248,7 @@ mixin class WeakChangeNotifier implements Listenable {
     if (_notificationCallStackDepth == 0 && _reentrantlyRemovedListeners > 0) {
       final newLength = _count - _reentrantlyRemovedListeners;
       if (newLength * 2 <= _listeners.length) {
-        final newListeners =
-            List<WeakReference<VoidCallback>?>.filled(newLength, null);
+        final newListeners = List<WeakReference<VoidCallback>?>.filled(newLength, null);
         var newIndex = 0;
         for (var i = 0; i < _count; i++) {
           final listener = _listeners[i];

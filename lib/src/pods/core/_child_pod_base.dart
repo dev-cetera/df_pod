@@ -49,12 +49,12 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
   //
   //
 
-  void _refresh() {
+  late final VoidCallback _refresh = () {
     final parents = _responder();
     _initializeParents(parents);
     final newValue = _reducer(parents.map((p) => p?.value).toList());
     _set(newValue);
-  }
+  };
 
   //
   //

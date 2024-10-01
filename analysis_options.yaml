@@ -30,6 +30,7 @@ linter:
     prefer_single_quotes: true
     require_trailing_commas: true
     unnecessary_this: true
+    prefer_function_declarations_over_variables: false,
 
 analyzer:
   language:

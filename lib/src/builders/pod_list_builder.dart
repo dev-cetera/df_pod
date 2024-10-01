@@ -194,7 +194,9 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   void _addListenerToPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.addListener(_valueChanged!);
+      pod.addStrongRefListener(
+        strongRefListener: _valueChanged!,
+      );
     }
   }
 

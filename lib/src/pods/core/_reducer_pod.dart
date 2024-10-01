@@ -66,7 +66,6 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  // ignore: prefer_function_declarations_over_variables
   late VoidCallback? _refresh = () => _set(_getValue());
 
   //
@@ -84,7 +83,9 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
       final value = values[n];
       if (value != null) {
         _listenables.add(value);
-        value.addListener(_refresh!);
+        value.addStrongRefListener(
+          strongRefListener: _refresh!,
+        );
       }
     }
 

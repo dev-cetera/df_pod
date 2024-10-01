@@ -10,20 +10,26 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:ui' show VoidCallback;
+
 import 'package:meta/meta.dart';
 
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A mixin for Pods that protects [addWeakListener] and [dispose].
+/// A mixin for Pods that protects [addStrongRefListener] and [dispose].
 @internal
-base mixin ProtectedPodMixin<T> on PodDisposable<T> {
+base mixin ProtectedPodMixin<T> on PodListenable<T> {
   /// Do not add listeners to this Pod directly.
   @protected
   @override
-  void addWeakListener(Object listener) {
-    super.addWeakListener(listener);
+  void addStrongRefListener({
+    required VoidCallback strongRefListener,
+  }) {
+    super.addStrongRefListener(
+      strongRefListener: strongRefListener,
+    );
   }
 
   /// Do not dispose this Pod directly.

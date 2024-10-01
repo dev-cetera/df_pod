@@ -162,7 +162,9 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     super.initState();
     _staticChild = widget.child;
     _value = widget.pod.value;
-    widget.pod.addListener(_valueChanged!);
+    widget.pod.addStrongRefListener(
+      strongRefListener: _valueChanged!,
+    );
   }
 
   //
@@ -175,7 +177,9 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     if (oldWidget.pod != widget.pod) {
       oldWidget.pod.removeListener(_valueChanged!);
       _value = widget.pod.value;
-      widget.pod.addListener(_valueChanged!);
+      widget.pod.addStrongRefListener(
+        strongRefListener: _valueChanged!,
+      );
     }
   }
 

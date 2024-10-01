@@ -20,7 +20,7 @@ typedef GenericPod<T> = GenericPodMixin<T>;
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A mixin for managing [RootPod] and [ChildPod].
-mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
+mixin GenericPodMixin<T> on PodNotifier<T>, PodListenable<T> {
   //
   //
   //
@@ -29,7 +29,7 @@ mixin GenericPodMixin<T> on PodNotifier<T>, PodDisposable<T> {
 
   void _addChild(_ChildPodBase<dynamic, dynamic> child) {
     if (!_children.contains(child)) {
-      addListener(child._refresh);
+      addStrongRefListener(strongRefListener: child._refresh);
       _children.add(child);
     }
   }
