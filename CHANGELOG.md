@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.5]
+
+- Released @ 10/2024 (UTC)
+- chore: Add compatibility with ValueListenable
+
 ## [0.13.4]
 
 - Released @ 10/2024 (UTC)
