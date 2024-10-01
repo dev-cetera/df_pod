@@ -159,11 +159,13 @@ pChild.update((e) => e.replaceAll('Son', 'Daughter')); // ❌ Syntax error!
 // `analysis_options.yaml` file. This design eliminates the need for direct
 // disposal of a ChildPod via the dispose() method.
 
+final listener = () => print('Something changed!');
+
 // These will trigger syntax errors if you've correctly set up your
 // analysis_options.yaml:
-pChild.addListener(() {}); // ❌ ChildPods do not take listeners!
+pChild.addStrongRefListener(strongRefListener: listener); // ❌ ChildPods do not take listeners!
 
-final listener = () => print('Parent changed!');
+
 pParent.addStrongRefListener(strongRefListener: listener); // ✔️ OK!
 pParent.dispose(); // ✔️ OK! Disposes pChild as well, its children, their children, and so on.
 ```

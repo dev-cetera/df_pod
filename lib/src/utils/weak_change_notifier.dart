@@ -54,6 +54,7 @@ mixin class WeakChangeNotifier implements Listenable {
       listener();
       removeListener(tempListener);
     };
+    // ignore: deprecated_member_use_from_same_package
     addListener(tempListener);
   }
 
