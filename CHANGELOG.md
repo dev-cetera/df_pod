@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.6]
+
+- Released @ 10/2024 (UTC)
+- fix: Add back asPodDisposable() that was accidentally deleted
+
 ## [0.13.5]
 
 - Released @ 10/2024 (UTC)
