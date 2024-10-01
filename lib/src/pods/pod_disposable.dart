@@ -70,6 +70,13 @@ extension CastPodListenableX<T> on ValueListenable<T> {
     return this;
   }
 
+  /// Casts the [ValueListenable] to a [PodDisposable].
+  ///
+  /// Throws a [TypeError] if the cast cannot be performed.
+  PodDisposable<T> asPodDisposable() {
+    return this as PodDisposable<T>;
+  }
+
   /// Casts the [ValueListenable] to a [RootPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.

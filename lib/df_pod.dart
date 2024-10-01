@@ -14,3 +14,4 @@
 library;
 
 export 'src/_index.g.dart';
+export 'package:flutter/foundation.dart' show ValueListenable;
