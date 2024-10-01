@@ -22,7 +22,7 @@ import 'package:df_cleanup/df_cleanup.dart';
 
 /// An extension of [ValueListenable], providing a foundational layer for Pods.
 ///
-/// The [PodListenable] class serves as a simplified interface to Pods,
+/// The [ValueListenable] class serves as a simplified interface to Pods,
 /// designed specifically for passing to [PodBuilder] or other supported
 /// builders.
 ///
@@ -33,25 +33,25 @@ import 'package:df_cleanup/df_cleanup.dart';
 /// necessary functionalities, ensuring that developers interact with the Pod's
 /// state in a controlled manner, preventing accidental changes.
 ///
-/// [PodListenable] is intended for use in UI components where you need to
+/// [ValueListenable] is intended for use in UI components where you need to
 /// respond to state changes without altering the state directly. In contrast,
 /// regular Pods provide methods like `set` or `update` for state modifications.
 ///
 /// ### Example:
 ///
 /// ```dart
-/// PodListenable<int> pNumber = Pod<int>(55);
+/// ValueListenable<int> pNumber = Pod<int>(55);
 /// ```
 ///
 /// In this example, `pNumber` is limited to the interface provided by
-/// [PodListenable], ensuring that it can only be used for listening to changes,
+/// [ValueListenable], ensuring that it can only be used for listening to changes,
 /// while retaining the ability to cast back to any Pod if advanced operations
 /// are needed, e.g.:
 ///
 /// ```dart
 /// (pNumber as Pod).set(2);
 /// ```
-abstract class PodListenable<T> extends WeakChangeNotifier
+abstract class PodDisposable<T> extends WeakChangeNotifier
     with DisposeMixin, WillDisposeMixin
     implements ValueListenable<T> {
   /// A flag indicating whether the Pod has been disposed.
@@ -79,7 +79,7 @@ abstract class PodListenable<T> extends WeakChangeNotifier
     }
   }
 
-  /// Dipsoses this [PodListenable] and sets [isDisposed] to `true`.
+  /// Dipsoses this [ValueListenable] and sets [isDisposed] to `true`.
   /// Successive calls to this method will be ignored.
   @override
   @mustCallSuper
@@ -95,41 +95,41 @@ abstract class PodListenable<T> extends WeakChangeNotifier
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-extension CastPodListenableX<T> on PodListenable<T> {
-  /// Returns the Pod as a [PodListenable].
-  PodListenable<T> asPodListenable() {
+extension CastPodListenableX<T> on ValueListenable<T> {
+  /// Returns the Pod as a [ValueListenable].
+  ValueListenable<T> asValueListenable() {
     return this;
   }
 
-  /// Casts the [PodListenable] to a [RootPod].
+  /// Casts the [ValueListenable] to a [RootPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
   RootPod<T> asRootPod() {
     return this as RootPod<T>;
   }
 
-  /// Casts the [PodListenable] to a [ChildPod].
+  /// Casts the [ValueListenable] to a [ChildPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
   ChildPod<TParent, T> asChildPod<TParent>() {
     return this as ChildPod<TParent, T>;
   }
 
-  /// Casts the [PodListenable] to a [SharedPod].
+  /// Casts the [ValueListenable] to a [SharedPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
   SharedPod<T, TRawValue> asSharedPod<TRawValue>() {
     return this as SharedPod<T, TRawValue>;
   }
 
-  /// Casts the [PodListenable] to a [GenericPod].
+  /// Casts the [ValueListenable] to a [GenericPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
   GenericPod<T> asGenericPod() {
     return this as GenericPod<T>;
   }
 
-  /// Casts the [PodListenable] to a [ProtectedPod].
+  /// Casts the [ValueListenable] to a [ProtectedPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
   ProtectedPod<T> asProtectedPod() {
@@ -139,7 +139,4 @@ extension CastPodListenableX<T> on PodListenable<T> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// An alias for [PodListenable].
-typedef P<T> = PodListenable<T>;
-
-typedef FutureListenable<T> = FutureOr<PodListenable<T>>;
+typedef FutureListenable<T> = FutureOr<ValueListenable<T>>;

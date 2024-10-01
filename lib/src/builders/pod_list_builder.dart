@@ -12,6 +12,8 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
+
 import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
@@ -41,7 +43,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
   //
 
-  final void Function(Iterable<PodListenable<T>> podList)? onDispose;
+  final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
 
   //
   //
@@ -62,7 +64,7 @@ class PodListBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final temp = this.podList;
-    if (temp is List<PodListenable<T>>) {
+    if (temp is List<ValueListenable<T>>) {
       return _PodListBuilder(
         key: key,
         podList: temp,
@@ -130,7 +132,7 @@ class _PodListBuilder<T> extends StatefulWidget {
   //
   //
 
-  final void Function(Iterable<PodListenable<T>> podList)? onDispose;
+  final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
 
   //
   //
@@ -194,9 +196,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
 
   void _addListenerToPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.addStrongRefListener(
-        strongRefListener: _valueChanged!,
-      );
+      pod.addListener(_valueChanged!);
     }
   }
 
@@ -260,7 +260,7 @@ final class PodListBuilderSnapshot<T> extends OnValueSnapshot<Iterable<T?>> {
   //
   //
 
-  final Iterable<FutureOr<PodListenable<T>>>? podList;
+  final Iterable<FutureOr<ValueListenable<T>>>? podList;
 
   //
   //
@@ -273,6 +273,6 @@ final class PodListBuilderSnapshot<T> extends OnValueSnapshot<Iterable<T?>> {
   });
 }
 
-typedef TPodList<T extends Object?> = Iterable<PodListenable<T>>;
+typedef TPodList<T extends Object?> = Iterable<ValueListenable<T>>;
 
 typedef TPodDataList<T extends Object?> = Iterable<T>;

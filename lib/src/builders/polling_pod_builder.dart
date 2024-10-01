@@ -12,6 +12,8 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
+
 import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
@@ -41,7 +43,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final void Function(PodListenable<T>? pod)? onDispose;
+  final void Function(ValueListenable<T>? pod)? onDispose;
 
   //
   //
@@ -71,7 +73,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
 
   late final Widget? _staticChild = widget.child;
-  FutureOr<PodListenable<T>>? _currentPod;
+  FutureOr<ValueListenable<T>>? _currentPod;
 
   //
   //

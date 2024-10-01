@@ -169,7 +169,7 @@
 ## [0.9.4]
 
 - Released @ 10/2024 (UTC)
-- chore: Add casting methods for PodListenable types
+- chore: Add casting methods for ValueListenable types
 
 ## [0.9.3]
 

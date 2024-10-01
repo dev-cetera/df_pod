@@ -10,6 +10,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:flutter/foundation.dart' show ValueListenable;
+
 import 'package:flutter/widgets.dart';
 
 import '/src/_index.g.dart';
@@ -39,7 +41,7 @@ class PodBuilder<T> extends StatelessWidget {
   //
   //
 
-  final void Function(PodListenable<T> pod)? onDispose;
+  final void Function(ValueListenable<T> pod)? onDispose;
 
   //
   //
@@ -60,7 +62,7 @@ class PodBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final temp = pod;
-    if (temp is PodListenable<T>) {
+    if (temp is ValueListenable<T>) {
       return _PodBuilder(
         key: key,
         pod: temp,
@@ -103,7 +105,7 @@ class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final PodListenable<T> pod;
+  final ValueListenable<T> pod;
 
   //
   //
@@ -121,7 +123,7 @@ class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final void Function(PodListenable<T> pod)? onDispose;
+  final void Function(ValueListenable<T> pod)? onDispose;
 
   //
   //
@@ -162,9 +164,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     super.initState();
     _staticChild = widget.child;
     _value = widget.pod.value;
-    widget.pod.addStrongRefListener(
-      strongRefListener: _valueChanged!,
-    );
+    widget.pod.addListener(_valueChanged!);
   }
 
   //
@@ -177,9 +177,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
     if (oldWidget.pod != widget.pod) {
       oldWidget.pod.removeListener(_valueChanged!);
       _value = widget.pod.value;
-      widget.pod.addStrongRefListener(
-        strongRefListener: _valueChanged!,
-      );
+      widget.pod.addListener(_valueChanged!);
     }
   }
 
@@ -231,7 +229,7 @@ final class PodBuilderSnapshot<T> extends OnValueSnapshot<T?> {
   //
   //
 
-  final PodListenable<T>? pod;
+  final ValueListenable<T>? pod;
 
   //
   //
