@@ -16,7 +16,7 @@ part of 'core.dart';
 
 /// An enhanced alternative to [ValueNotifier] that provides additional
 /// lifecycle management capabilities through the [ValueListenable].
-abstract class PodNotifier<T> extends PodDisposable<T> {
+abstract class PodNotifier<T> extends DisposablePod<T> {
   //
   //
   //

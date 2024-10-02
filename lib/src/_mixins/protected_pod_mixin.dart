@@ -20,7 +20,7 @@ import '/src/_index.g.dart';
 
 /// A mixin for Pods that protects [addStrongRefListener] and [dispose].
 @internal
-base mixin ProtectedPodMixin<T> on PodDisposable<T> {
+base mixin ProtectedPodMixin<T> on DisposablePod<T> {
   /// Do not add listeners to this Pod directly.
   @protected
   @override

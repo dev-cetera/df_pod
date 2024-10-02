@@ -20,7 +20,7 @@ import 'package:df_cleanup/df_cleanup.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class PodDisposable<T> extends WeakChangeNotifier
+abstract class DisposablePod<T> extends WeakChangeNotifier
     with DisposeMixin, WillDisposeMixin
     implements ValueListenable<T> {
   /// A flag indicating whether the Pod has been disposed.
@@ -62,6 +62,9 @@ abstract class PodDisposable<T> extends WeakChangeNotifier
   }
 }
 
+@Deprecated('Use DisposablePod<T> instead.')
+typedef PodDisposable<T> = DisposablePod<T>;
+
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 extension CastPodListenableX<T> on ValueListenable<T> {
@@ -70,11 +73,16 @@ extension CastPodListenableX<T> on ValueListenable<T> {
     return this;
   }
 
-  /// Casts the [ValueListenable] to a [PodDisposable].
+  @Deprecated('Use `asDisposablePod` instead.')
+  DisposablePod<T> asPodDisposable() {
+    return this as DisposablePod<T>;
+  }
+
+  /// Casts the [ValueListenable] to a [DisposablePod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
-  PodDisposable<T> asPodDisposable() {
-    return this as PodDisposable<T>;
+  DisposablePod<T> asDisposablePod() {
+    return this as DisposablePod<T>;
   }
 
   /// Casts the [ValueListenable] to a [RootPod].
