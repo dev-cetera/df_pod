@@ -22,8 +22,7 @@ mixin class WeakChangeNotifier implements Listenable {
   //
 
   int _count = 0;
-  static final _emptyListeners =
-      List<WeakReference<VoidCallback>?>.filled(0, null);
+  static final _emptyListeners = List<WeakReference<VoidCallback>?>.filled(0, null);
   List<WeakReference<VoidCallback>?> _listeners = _emptyListeners;
   int _notificationCallStackDepth = 0;
   int _reentrantlyRemovedListeners = 0;
@@ -95,7 +94,8 @@ mixin class WeakChangeNotifier implements Listenable {
     addListener(strongRefListener);
   }
 
-  @Deprecated('Deprecated: Please use `addStrongRefListener` instead.')
+  /// ❌ Do not use this method directly. Use [addStrongRefListener] instead.
+  @Deprecated('Do not use this method directly. Use [addStrongRefListener] instead')
   @protected
   @override
   void addListener(VoidCallback listener) {
@@ -179,8 +179,7 @@ mixin class WeakChangeNotifier implements Listenable {
   void _removeAt(int index) {
     _count -= 1;
     if (_count * 2 <= _listeners.length) {
-      final newListeners =
-          List<WeakReference<VoidCallback>?>.filled(_count, null);
+      final newListeners = List<WeakReference<VoidCallback>?>.filled(_count, null);
       for (var i = 0; i < index; i++) {
         newListeners[i] = _listeners[i];
       }
@@ -251,8 +250,7 @@ mixin class WeakChangeNotifier implements Listenable {
     if (_notificationCallStackDepth == 0 && _reentrantlyRemovedListeners > 0) {
       final newLength = _count - _reentrantlyRemovedListeners;
       if (newLength * 2 <= _listeners.length) {
-        final newListeners =
-            List<WeakReference<VoidCallback>?>.filled(newLength, null);
+        final newListeners = List<WeakReference<VoidCallback>?>.filled(newLength, null);
         var newIndex = 0;
         for (var i = 0; i < _count; i++) {
           final listener = _listeners[i];

@@ -13,5 +13,12 @@
 /// A package offering tools to manage app state using ValueNotifier-like objects called Pods.
 library;
 
-export 'src/_index.g.dart';
+import 'dart:async';
+export 'dart:async';
+
+import 'package:flutter/foundation.dart' show ValueListenable;
 export 'package:flutter/foundation.dart' show ValueListenable;
+
+export 'src/_index.g.dart';
+
+typedef F<T> = FutureOr<ValueListenable<T>>;

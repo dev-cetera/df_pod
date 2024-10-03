@@ -10,23 +10,11 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-/// An exception only thrown by the `df_pod` package.
+/// Base class for exceptions thrown by methods within the `df_pod` package.
 abstract base class DFPodPackageException implements Exception {
-  //
-  //
-  //
-
   final String message;
 
-  //
-  //
-  //
-
-  DFPodPackageException(this.message);
-
-  //
-  //
-  //
+  const DFPodPackageException(this.message);
 
   @override
   String toString() {

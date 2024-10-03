@@ -18,10 +18,15 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A mixin for Pods that protects [addStrongRefListener] and [dispose].
+/// A mixin that protects [addStrongRefListener] and [dispose], hiding these
+/// methods from external access to prevent misuse or unintended behavior.
+///
+/// This is useful when you want to restrict direct access to lifecycle
+/// management methods of the Pod, ensuring that these operations are only
+/// handled internally or through controlled mechanisms.
 @internal
 base mixin ProtectedPodMixin<T> on DisposablePod<T> {
-  /// Do not add listeners to this Pod directly.
+  /// ❌ Do not add listeners to this Pod directly.
   @protected
   @override
   void addStrongRefListener({
@@ -32,7 +37,14 @@ base mixin ProtectedPodMixin<T> on DisposablePod<T> {
     );
   }
 
-  /// Do not dispose this Pod directly.
+  /// ❌ Do not add listeners to this Pod directly.
+  @protected
+  @override
+  void addSingleExecutionListener(VoidCallback listener) {
+    super.addSingleExecutionListener(listener);
+  }
+
+  /// ❌ Do not dispose this Pod directly.
   @protected
   @override
   void dispose() {
