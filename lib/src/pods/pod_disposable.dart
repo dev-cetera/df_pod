@@ -31,7 +31,8 @@ abstract class DisposablePod<T> extends WeakChangeNotifier
   bool get isDisposed => this._isDisposed;
 
   /// ❌ Do not use this method directly. Use [addStrongRefListener] instead.
-  @Deprecated('Do not use this method directly. Use [addStrongRefListener] instead')
+  @Deprecated(
+      'Do not use this method directly. Use [addStrongRefListener] instead',)
   void addListener(VoidCallback listener) {
     if (!_isDisposed) {
       super.addListener(listener);

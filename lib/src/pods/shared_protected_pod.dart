@@ -16,7 +16,6 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-
 /// A [SharedPod] that protects [addStrongRefListener] and [dispose], hiding
 /// these methods from external access to prevent misuse or unintended behavior.
 ///
