@@ -8,7 +8,6 @@
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -49,8 +48,7 @@ class HomePage extends StatelessWidget {
                 interpreter.pNotificationCount,
               ],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },
@@ -142,14 +140,12 @@ class HomePageInterpreter {
   // 10. Simplify Pods from Services so the relevant Page can use them
   // without needing to simplify them in the widget code.
   late final pUserId = authService.pUser.map((e) => e!.id);
-  late final pNotificationCount =
-      notificationService.pNotifications.map((e) => e!.length);
-  late final pConnectionCount =
-      connectionService.pConnections.map((e) => e!.length);
+  late final pNotificationCount = notificationService.pNotifications.map((e) => e!.length);
+  late final pConnectionCount = connectionService.pConnections.map((e) => e!.length);
   late final pNotificationRatio =
       pNotificationCount.reduce(pConnectionCount, (a, b) => a.value / b.value);
-  late final pPriorityNotifications = notificationService.pNotifications
-      .map((e) => e!.where((e) => e.startsWith('priority:')));
+  late final pPriorityNotifications =
+      notificationService.pNotifications.map((e) => e!.where((e) => e.startsWith('priority:')));
 
   // 11. Avoid putting anything but Pods such as methods in the Interpreter. The
   // Interpreter is not a Controller. Its sole purpose is to interpret Services
