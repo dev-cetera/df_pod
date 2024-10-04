@@ -18,7 +18,7 @@ funding:
   - https://www.buymeacoffee.com/robmllze
 topics:
   - bloc
-  - dependency-injection
+  - provider
   - redux
   - riverpod
   - state-management
