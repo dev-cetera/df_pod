@@ -1,23 +1,25 @@
 ##.title
 ## ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ##
-## Dart/Flutter (DF) Packages by DevCetra.com & contributors. Use of this
-## source code is governed by an MIT-style license that can be found in the
-## LICENSE file located in this project's root directory.
+## Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+## source code is governed by an MIT-style license described in the LICENSE
+## file located in this project's root directory.
+##
+## See: https://opensource.org/license/mit
 ##
 ## ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ##.title~
 
 name: df_pod
-description: A package offering tools to manage app state using ValueNotifier-like objects called Pods.
-version: 0.13.9
+description: A package offering tools to manage app state using ValueListenable objects called Pods.
+version: 0.14.0
 repository: https://github.com/robmllze/df_pod
 funding:
   - https://www.buymeacoffee.com/robmllze
 topics:
   - bloc
   - dependency-injection
-  - reactive
+  - redux
   - riverpod
   - state-management
 
@@ -32,8 +34,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  df_type: ^0.5.18
-  df_cleanup: ^0.2.2
+  df_type: ^0.6.1
+  df_cleanup: ^0.3.1
 
   shared_preferences: ^2.3.2
   tuple: ^2.0.2
@@ -42,9 +44,13 @@ dependencies:
 
 ## -----------------------------------------------------------------------------
 
+# Flutter stable channel does not yet support ^1.19.0.
+dependency_overrides:
+  collection: ^1.18.0
+
+## -----------------------------------------------------------------------------
+
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^4.0.0
-  df_log: ^0.2.1
+  flutter_lints: ^5.0.0
+  df_log: ^0.2.2
   get_it: ^7.7.0

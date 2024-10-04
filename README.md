@@ -207,14 +207,20 @@ pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 
 1. Use this package as a dependency by adding it to your `pubspec.yaml` file (see [here](https://pub.dev/packages/df_pod/install)).
 
-2. Update your `analysis_options.yaml` file to enforce syntax errors when attempting to access protected members or override non-virtual members. This is highly recommended because:
+2. Update your `analysis_options.yaml` to the following. This is highly recommended because:
+
+- `prefer_function_declarations_over_variables: false`: The `addStrongRefListener` method requires a strong referenced variable function as an argument, so that it can be garbage collected automatically, and disabling this rule will prevent warnings.
 
 - `invalid_use_of_protected_member: error`: Certain methods in this package are protected to ensure they are only used within controlled contexts, preserving the integrity and consistency of the state management pattern. Enforcing this rule helps prevent misuse that could lead to unexpected behavior or security issues.
 
-- `invalid_override_of_non_virtual_member`: error: Non-virtual members are not designed to be overridden, as doing so could compromise the internal logic and functionality of the service. Enforcing this rule ensures that the core behavior of the package remains stable and predictable, preventing accidental or unauthorized changes.
+- `invalid_override_of_non_virtual_member: error`: Non-virtual members are not designed to be overridden, as doing so could compromise the internal logic and functionality of the service. Enforcing this rule ensures that the core behavior of the package remains stable and predictable, preventing accidental or unauthorized changes.
 
 ```yaml
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_function_declarations_over_variables: false
 
 analyzer:
   errors:

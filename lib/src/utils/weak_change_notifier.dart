@@ -97,7 +97,8 @@ mixin class WeakChangeNotifier implements Listenable {
 
   /// ❌ Do not use this method directly. Use [addStrongRefListener] instead.
   @Deprecated(
-      'Do not use this method directly. Use [addStrongRefListener] instead',)
+    'Do not use this method directly. Use [addStrongRefListener] instead',
+  )
   @protected
   @override
   void addListener(VoidCallback listener) {
