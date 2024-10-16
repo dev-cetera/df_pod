@@ -16,7 +16,8 @@ import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
 
 // Used in _shared_pod.dart
-import 'package:shared_preferences/shared_preferences.dart' deferred as shared_preferences;
+import 'package:shared_preferences/shared_preferences.dart'
+    deferred as shared_preferences;
 
 import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_index.g.dart';
