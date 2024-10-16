@@ -21,7 +21,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
   //
   //
 
-  static SharedPreferences? _sharedPreferences;
+  static dynamic _sharedPreferences;
 
   final String key;
 
@@ -48,7 +48,8 @@ base class SharedPod<A, B> extends RootPod<A?> {
   Future<void> set(A? newValue) async {
     if (_isEquatable(newValue)) {
       final v = await toValue(newValue);
-      _sharedPreferences ??= await SharedPreferences.getInstance();
+      await shared_preferences.loadLibrary();
+      _sharedPreferences ??= await shared_preferences.SharedPreferences.getInstance();
       switch (v) {
         case String s:
           await _sharedPreferences!.setString(key, s);
@@ -93,7 +94,8 @@ base class SharedPod<A, B> extends RootPod<A?> {
 
   @override
   Future<void> refresh() async {
-    _sharedPreferences ??= await SharedPreferences.getInstance();
+    await shared_preferences.loadLibrary();
+    _sharedPreferences ??= await shared_preferences.SharedPreferences.getInstance();
     final v = _sharedPreferences!.get(key) as B?;
     if (v != null) {
       final newValue = await fromValue(v);
