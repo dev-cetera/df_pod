@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.6]
+
+- Released @ 11/2024 (UTC)
+- chore: Update F
+
 ## [0.14.5]
 
 - Released @ 11/2024 (UTC)
