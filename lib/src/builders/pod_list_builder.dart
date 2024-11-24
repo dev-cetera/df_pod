@@ -10,6 +10,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show ValueListenable;
 
 import 'package:flutter/widgets.dart';
@@ -23,7 +25,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
   //
 
-  final TPodList<T> podList;
+  final Iterable<TFutureListenable<T>> podList;
 
   //
   //
@@ -62,13 +64,47 @@ class PodListBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final temp = this.podList;
-    return _PodListBuilder(
-      key: key,
-      podList: temp,
-      builder: builder,
-      onDispose: onDispose,
-      child: child,
-    );
+    if (temp is List<ValueListenable<T>>) {
+      return _PodListBuilder(
+        key: key,
+        podList: temp,
+        builder: builder,
+        onDispose: onDispose,
+        child: child,
+      );
+    } else {
+      return FutureBuilder(
+        future: () async {
+          return await Future.wait(
+            temp.map(
+              (e) => () async {
+                return e;
+              }(),
+            ),
+          );
+        }(),
+        builder: (context, snapshot) {
+          final data = snapshot.data?.nonNulls;
+          if (data != null) {
+            return _PodListBuilder(
+              key: key,
+              podList: data,
+              builder: builder,
+              onDispose: onDispose,
+              child: child,
+            );
+          } else {
+            final snapshot = PodListBuilderSnapshot<T>(
+              podList: null,
+              value: List<T?>.filled(temp.length, null),
+              child: child,
+            );
+            final result = builder(context, snapshot);
+            return result;
+          }
+        },
+      );
+    }
   }
 }
 
