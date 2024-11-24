@@ -10,7 +10,6 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-
 import 'package:flutter/foundation.dart' show ValueListenable;
 
 import 'package:flutter/widgets.dart';
@@ -24,7 +23,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
   //
 
-  final Iterable<TFutureListenable<T>> podList;
+  final TPodList<T> podList;
 
   //
   //
@@ -70,7 +69,7 @@ class PodListBuilder<T> extends StatelessWidget {
       onDispose: onDispose,
       child: child,
     );
-    }
+  }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
