@@ -70,31 +70,32 @@ class PodBuilder<T> extends StatelessWidget {
         onDispose: onDispose,
         child: child,
       );
-    }
-    return FutureBuilder(
-      future: temp as Future<ValueListenable<T>?>,
-      builder: (context, snapshot) {
-        final data = snapshot.data;
-        if (data != null) {
-          return _PodBuilder(
-            key: key,
-            pod: data,
-            builder: builder,
-            onDispose: onDispose,
-            child: child,
-          );
-        } else {
-          return builder(
-            context,
-            PodBuilderSnapshot<T>(
-              pod: null,
-              value: null,
+    } else {
+      return FutureBuilder(
+        future: temp as Future<ValueListenable<T>?>,
+        builder: (context, snapshot) {
+          final data = snapshot.data;
+          if (data != null) {
+            return _PodBuilder(
+              key: key,
+              pod: data,
+              builder: builder,
+              onDispose: onDispose,
               child: child,
-            ),
-          );
-        }
-      },
-    );
+            );
+          } else {
+            return builder(
+              context,
+              PodBuilderSnapshot<T>(
+                pod: null,
+                value: null,
+                child: child,
+              ),
+            );
+          }
+        },
+      );
+    }
   }
 }
 
