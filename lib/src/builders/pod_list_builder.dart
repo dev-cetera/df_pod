@@ -64,16 +64,14 @@ class PodListBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final temp = this.podList;
-    if (temp is TPodList<T>) {
-      return _PodListBuilder(
-        key: key,
-        podList: temp,
-        builder: builder,
-        onDispose: onDispose,
-        child: child,
-      );
-    }
-    return FutureBuilder(
+    return _PodListBuilder(
+      key: key,
+      podList: temp,
+      builder: builder,
+      onDispose: onDispose,
+      child: child,
+    );
+      return FutureBuilder(
       future: () async {
         return await Future.wait(
           temp.map(

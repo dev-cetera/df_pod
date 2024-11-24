@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.4]
+
+- Released @ 11/2024 (UTC)
+- chore: Change FuturePod to SafeFuturePod that uses Option and Result
+
 ## [0.14.3]
 
 - Released @ 11/2024 (UTC)
