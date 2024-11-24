@@ -10,8 +10,6 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async';
-
 import 'package:flutter/foundation.dart' show ValueListenable;
 
 import 'package:flutter/widgets.dart';
@@ -25,7 +23,7 @@ class PollingPodBuilder<T> extends StatefulWidget {
   //
   //
 
-  final FutureListenable<T>? Function() podPoller;
+  final TFutureListenable<T>? Function() podPoller;
 
   //
   //
@@ -73,7 +71,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
 
   late final Widget? _staticChild = widget.child;
-  FutureOr<ValueListenable<T>>? _currentPod;
+  TFutureListenable<T>? _currentPod;
 
   //
   //

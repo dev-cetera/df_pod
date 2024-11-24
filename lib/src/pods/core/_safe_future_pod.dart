@@ -14,11 +14,22 @@ part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A Pod that is initially `null` then sets its [value] when a [Future]
-/// completes.
-base class FuturePod<T> extends PodNotifier<T?> with GenericPod<T?> {
-  final FutureOr<T> future;
-  FuturePod(this.future) : super(null) {
-    consec(future, _set);
+/// A Pod that is initially [None] then sets its [value] when a [FutureOr]
+/// completes as [Ok] or fails as [Err].
+base class SafeFuturePod<T> extends PodNotifier<Option<Result<T, Object>>>
+    with GenericPod<Option<Result<T, Object>>> {
+  /// Creates a [SafeFuturePod] with the specified [future].
+  SafeFuturePod(FutureOr<T> future) : super(const None()) {
+    consec(
+      future,
+      (e) => _set(Some(Ok(e))),
+      onError: (e) => _set(Some(Err(e))),
+    );
   }
+
+  /// Creates a [SafeFuturePod] with the specified [value].
+  SafeFuturePod.value(T value) : super(Some(Ok(value)));
+
+  /// Unwraps the Pod's value.
+  T unwrap() => value.some.unwrap().ok.value;
 }

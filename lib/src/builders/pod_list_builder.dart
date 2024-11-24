@@ -25,7 +25,7 @@ class PodListBuilder<T> extends StatelessWidget {
   //
   //
 
-  final Iterable<FutureListenable<T>> podList;
+  final Iterable<TFutureListenable<T>> podList;
 
   //
   //
@@ -64,7 +64,7 @@ class PodListBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final temp = this.podList;
-    if (temp is List<ValueListenable<T>>) {
+    if (temp is TPodList<T>) {
       return _PodListBuilder(
         key: key,
         podList: temp,
@@ -84,7 +84,7 @@ class PodListBuilder<T> extends StatelessWidget {
         );
       }(),
       builder: (context, snapshot) {
-        final data = snapshot.data;
+        final data = snapshot.data?.nonNulls;
         if (data != null) {
           return _PodListBuilder(
             key: key,
@@ -260,7 +260,7 @@ final class PodListBuilderSnapshot<T> extends OnValueSnapshot<Iterable<T?>> {
   //
   //
 
-  final Iterable<FutureOr<ValueListenable<T>>>? podList;
+  final Iterable<TFutureListenable<T>>? podList;
 
   //
   //

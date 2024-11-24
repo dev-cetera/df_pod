@@ -23,7 +23,7 @@ class PodBuilder<T> extends StatelessWidget {
   //
   //
 
-  final FutureListenable<T> pod;
+  final TFutureListenable<T> pod;
 
   //
   //
@@ -72,7 +72,7 @@ class PodBuilder<T> extends StatelessWidget {
       );
     }
     return FutureBuilder(
-      future: temp,
+      future: temp as Future<ValueListenable<T>?>,
       builder: (context, snapshot) {
         final data = snapshot.data;
         if (data != null) {
