@@ -127,7 +127,7 @@ extension CastPodListenableX<T> on ValueListenable<T> {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef F<T> = TFutureListenable<T>;
+typedef F<T> = FutureOr<ValueListenable<T>>;
 typedef TFutureListenable<T> = FutureOr<ValueListenable<T>?>;
 
 @Deprecated('Use ValueListenable<T> instead.')
