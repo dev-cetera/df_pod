@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.5]
+
+- Released @ 11/2024 (UTC)
+- fix: Stupid bugfix
+
 ## [0.14.4]
 
 - Released @ 11/2024 (UTC)
