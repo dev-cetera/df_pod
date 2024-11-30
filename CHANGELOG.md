@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.9]
+
+- Released @ 11/2024 (UTC)
+- feat: Add a very useful untilPredicate methods to pods
+
 ## [0.14.8]
 
 - Released @ 11/2024 (UTC)
