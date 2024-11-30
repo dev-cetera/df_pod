@@ -12,7 +12,9 @@
 
 import 'dart:async' show FutureOr;
 
+import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import '/src/_index.g.dart';
 
@@ -62,6 +64,28 @@ abstract class DisposablePod<T> extends WeakChangeNotifier
       this._isDisposed = true;
     } else {
       // todo: Log warning!
+    }
+  }
+
+  /// Returns the value of the Pod when the [predicate] returns `true`.
+  FutureOr<T> untilPredicate(bool Function(T value) predicate) {
+    final completer = CompleterOr<T>();
+    void check() {
+      if (predicate(value)) {
+        completer.complete(value);
+      }
+    }
+
+    check();
+    if (completer.isCompleted) {
+      return value;
+    } else {
+      // ignore: deprecated_member_use_from_same_package
+      addListener(check);
+      return consec(completer.futureOr, (e) {
+        removeListener(check);
+        return e;
+      });
     }
   }
 }
