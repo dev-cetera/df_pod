@@ -19,11 +19,40 @@ typedef GenericPod<T> = GenericPodMixin<T>;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
+//
+//
+//
+
 /// A mixin for managing [RootPod] and [ChildPod].
 mixin GenericPodMixin<T> on PodNotifier<T>, ValueListenable<T> {
   //
   //
   //
+
+  /// Returns the value of the Pod when it is not `null`.
+  FutureOr<T1> nonNull<T1 extends T>() => cond((v) => v != null) as T1;
+
+  /// Returns the value of the Pod when the [test] returns `true`.
+  FutureOr<T> cond(bool Function(T value) test) {
+    final completer = CompleterOr<T>();
+    void check() {
+      if (test(value)) {
+        completer.complete(value);
+      }
+    }
+
+    check();
+    if (completer.isCompleted) {
+      return value;
+    } else {
+      // ignore: deprecated_member_use_from_same_package
+      addListener(check);
+      return consec(completer.futureOr, (e) {
+        removeListener(check);
+        return e;
+      });
+    }
+  }
 
   final _children = <_ChildPodBase<dynamic, dynamic>>{};
 
