@@ -115,7 +115,8 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
+    if (oldWidget.podPoller != widget.podPoller ||
+        oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }
   }

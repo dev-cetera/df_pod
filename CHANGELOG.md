@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.12]
+
+- Released @ 1/2025 (UTC)
+- feat: Add additional constructors for PodBuilder, PollingPodBuilder and PodListBuilder
+
 ## [0.14.11]
 
 - Released @ 1/2025 (UTC)
