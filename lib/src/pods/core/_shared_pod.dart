@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -49,8 +49,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
     if (_isEquatable(newValue)) {
       final v = await toValue(newValue);
       await shared_preferences.loadLibrary();
-      _sharedPreferences ??=
-          await shared_preferences.SharedPreferences.getInstance();
+      _sharedPreferences ??= await shared_preferences.SharedPreferences.getInstance();
       switch (v) {
         case String s:
           await _sharedPreferences!.setString(key, s);
@@ -96,8 +95,7 @@ base class SharedPod<A, B> extends RootPod<A?> {
   @override
   Future<void> refresh() async {
     await shared_preferences.loadLibrary();
-    _sharedPreferences ??=
-        await shared_preferences.SharedPreferences.getInstance();
+    _sharedPreferences ??= await shared_preferences.SharedPreferences.getInstance();
     final v = _sharedPreferences!.get(key) as B?;
     if (v != null) {
       final newValue = await fromValue(v);

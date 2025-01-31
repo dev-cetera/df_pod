@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -15,8 +15,7 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final _pFutureCounter =
-    Future.delayed(const Duration(seconds: 3), () => ProtectedPod<int>(1));
+final _pFutureCounter = Future.delayed(const Duration(seconds: 3), () => ProtectedPod<int>(1));
 
 class FutureCounterTest extends StatelessWidget {
   const FutureCounterTest({super.key});
@@ -37,8 +36,7 @@ class FutureCounterTest extends StatelessWidget {
             },
           ),
           OutlinedButton(
-            onPressed: () =>
-                _pFutureCounter.then((e) => e.update((e) => e + 1)),
+            onPressed: () => _pFutureCounter.then((e) => e.update((e) => e + 1)),
             child: const Text('Increase with "update"'),
           ),
           OutlinedButton(

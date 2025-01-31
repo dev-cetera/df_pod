@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -9,6 +9,8 @@
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
+
+import 'dart:async' show Timer;
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 
@@ -18,30 +20,16 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class PodBuilder<T> extends StatelessWidget {
+final class PodBuilder<T> extends StatelessWidget {
   //
   //
   //
 
   final TFutureListenable<T> pod;
-
-  //
-  //
-  //
-
   final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
-
-  //
-  //
-  //
-
-  final Widget? child;
-
-  //
-  //
-  //
-
   final void Function(ValueListenable<T> pod)? onDispose;
+  final Duration? debounceDuration;
+  final Widget? child;
 
   //
   //
@@ -51,8 +39,9 @@ class PodBuilder<T> extends StatelessWidget {
     super.key,
     required this.pod,
     required this.builder,
-    this.child,
     this.onDispose,
+    this.debounceDuration,
+    this.child,
   });
 
   //
@@ -68,6 +57,7 @@ class PodBuilder<T> extends StatelessWidget {
         pod: temp,
         builder: builder,
         onDispose: onDispose,
+        debounceDuration: debounceDuration,
         child: child,
       );
     } else {
@@ -81,6 +71,7 @@ class PodBuilder<T> extends StatelessWidget {
               pod: data,
               builder: builder,
               onDispose: onDispose,
+              debounceDuration: debounceDuration,
               child: child,
             );
           } else {
@@ -101,30 +92,17 @@ class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodBuilder<T> extends StatefulWidget {
+@immutable
+final class _PodBuilder<T> extends StatefulWidget {
   //
   //
   //
 
   final ValueListenable<T> pod;
-
-  //
-  //
-  //
-
   final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
-
-  //
-  //
-  //
-
-  final Widget? child;
-
-  //
-  //
-  //
-
   final void Function(ValueListenable<T> pod)? onDispose;
+  final Duration? debounceDuration;
+  final Widget? child;
 
   //
   //
@@ -134,8 +112,9 @@ class _PodBuilder<T> extends StatefulWidget {
     super.key,
     required this.pod,
     required this.builder,
-    this.child,
     this.onDispose,
+    this.debounceDuration,
+    this.child,
   });
 
   //
@@ -186,14 +165,34 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
   //
 
+  Timer? _debounceTimer;
+
+  /// Allows initial data to be set immediately for responsiveness even if
+  /// the debounce duration is long.
+  bool _skipInitialDebounce = true;
+
   // ignore: prefer_final_fields
-  late void Function()? _valueChanged = () {
+  late void Function()? _valueChanged = widget.debounceDuration != null
+      ? () {
+          if (_skipInitialDebounce) {
+            _skipInitialDebounce = false;
+            __valueChanged();
+            return;
+          } else {
+            _debounceTimer?.cancel();
+            _debounceTimer = Timer(widget.debounceDuration!, () {
+              __valueChanged();
+            });
+          }
+        }
+      : __valueChanged;
+
+  @pragma('vm:prefer-inline')
+  void __valueChanged() {
     if (mounted) {
-      setState(() {
-        _value = widget.pod.value;
-      });
+      setState(() => _value = widget.pod.value);
     }
-  };
+  }
 
   //
   //
@@ -216,6 +215,7 @@ class _PodBuilderState<T> extends State<_PodBuilder<T>> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     widget.pod.removeListener(_valueChanged!);
     _valueChanged = null;
     widget.onDispose?.call(widget.pod);

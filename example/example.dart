@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -50,8 +50,7 @@ class HomePage extends StatelessWidget {
                 interpreter.pNotificationCount,
               ],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },
@@ -143,14 +142,12 @@ class HomePageInterpreter {
   // 10. Simplify Pods from Services so the relevant Page can use them
   // without needing to simplify them in the widget code.
   late final pUserId = authService.pUser.map((e) => e!.id);
-  late final pNotificationCount =
-      notificationService.pNotifications.map((e) => e!.length);
-  late final pConnectionCount =
-      connectionService.pConnections.map((e) => e!.length);
+  late final pNotificationCount = notificationService.pNotifications.map((e) => e!.length);
+  late final pConnectionCount = connectionService.pConnections.map((e) => e!.length);
   late final pNotificationRatio =
       pNotificationCount.reduce(pConnectionCount, (a, b) => a.value / b.value);
-  late final pPriorityNotifications = notificationService.pNotifications
-      .map((e) => e!.where((e) => e.startsWith('priority:')));
+  late final pPriorityNotifications =
+      notificationService.pNotifications.map((e) => e!.where((e) => e.startsWith('priority:')));
 
   // 11. Avoid putting anything but Pods such as methods in the Interpreter. The
   // Interpreter is not a Controller. Its sole purpose is to interpret Services

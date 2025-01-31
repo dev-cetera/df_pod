@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -33,16 +33,14 @@ class ListTest extends StatelessWidget {
           const Text('List Test'),
           PodBuilder(
             pod: _pList,
-            builder: (context, listSnapshot) =>
-                Text('List: ${listSnapshot.value}'),
+            builder: (context, listSnapshot) => Text('List: ${listSnapshot.value}'),
           ),
           OutlinedButton(
             onPressed: () => _pList.update((e) => e..add(e.length)),
             child: const Text('Add with "update"'),
           ),
           OutlinedButton(
-            onPressed: () => _pList
-                .set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
+            onPressed: () => _pList.set(_pList.value.sublist(0, max(_pList.value.length - 1, 0))),
             child: const Text('Remove with "set"'),
           ),
           OutlinedButton(

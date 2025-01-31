@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -20,8 +20,7 @@ import '/src/_index.g.dart';
 final class PodFinalizerWrapper<T> {
   final WeakReference<PodNotifier<T>> _pod;
 
-  static final Finalizer<PodNotifier<dynamic>?> _finalizer =
-      Finalizer((pod) => pod?.dispose());
+  static final Finalizer<PodNotifier<dynamic>?> _finalizer = Finalizer((pod) => pod?.dispose());
 
   PodFinalizerWrapper(PodNotifier<T> pod) : _pod = WeakReference(pod) {
     _finalizer.attach(this, _pod.target);

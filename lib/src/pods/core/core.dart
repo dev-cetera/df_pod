@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -16,8 +16,7 @@ import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
 
 // Used in _shared_pod.dart
-import 'package:shared_preferences/shared_preferences.dart'
-    deferred as shared_preferences;
+import 'package:shared_preferences/shared_preferences.dart' deferred as shared_preferences;
 
 import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_index.g.dart';

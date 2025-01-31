@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -20,30 +20,16 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class PodListBuilder<T> extends StatelessWidget {
+final class PodListBuilder<T> extends StatelessWidget {
   //
   //
   //
 
   final Iterable<TFutureListenable<T>> podList;
-
-  //
-  //
-  //
-
   final TOnValueBuilder<Iterable<T?>, PodListBuilderSnapshot<T>> builder;
-
-  //
-  //
-  //
-
-  final Widget? child;
-
-  //
-  //
-  //
-
+  final Duration? debounceDuration;
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
+  final Widget? child;
 
   //
   //
@@ -53,8 +39,9 @@ class PodListBuilder<T> extends StatelessWidget {
     super.key,
     required this.podList,
     required this.builder,
-    this.child,
     this.onDispose,
+    this.debounceDuration,
+    this.child,
   });
 
   //
@@ -110,30 +97,17 @@ class PodListBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodListBuilder<T> extends StatefulWidget {
+@immutable
+final class _PodListBuilder<T> extends StatefulWidget {
   //
   //
   //
 
   final TPodList<T> podList;
-
-  //
-  //
-  //
-
-  final Widget? child;
-
-  //
-  //
-  //
-
   final TOnValueBuilder<Iterable<T?>, PodListBuilderSnapshot<T>> builder;
-
-  //
-  //
-  //
-
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
+  final Duration? debounceDuration;
+  final Widget? child;
 
   //
   //
@@ -143,8 +117,9 @@ class _PodListBuilder<T> extends StatefulWidget {
     super.key,
     required this.podList,
     required this.builder,
-    this.child,
     this.onDispose,
+    this.debounceDuration,
+    this.child,
   });
 
   //
@@ -215,14 +190,33 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   //
   //
 
+  Timer? _debounceTimer;
+
+  /// Allows initial data to be set immediately for responsiveness even if
+  /// the debounce duration is long.
+  bool _skipInitialDebounce = true;
+
   // ignore: prefer_final_fields
-  late void Function()? _valueChanged = () {
+  late void Function()? _valueChanged = widget.debounceDuration != null
+      ? () {
+          if (_skipInitialDebounce) {
+            _skipInitialDebounce = false;
+            __valueChanged();
+          } else {
+            _debounceTimer?.cancel();
+            _debounceTimer = Timer(widget.debounceDuration!, () {
+              __valueChanged();
+            });
+          }
+        }
+      : __valueChanged;
+
+  @pragma('vm:prefer-inline')
+  void __valueChanged() {
     if (mounted) {
-      setState(() {
-        _values = widget.podList.map((e) => e.value);
-      });
+      setState(() => _values = widget.podList.map((e) => e.value));
     }
-  };
+  }
 
   //
   //

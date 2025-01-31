@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -9,6 +9,7 @@
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
+import 'dart:async' show Timer;
 
 import 'package:flutter/foundation.dart' show ValueListenable;
 
@@ -18,30 +19,17 @@ import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class PollingPodBuilder<T> extends StatefulWidget {
+final class PollingPodBuilder<T> extends StatefulWidget {
   //
   //
   //
 
   final TFutureListenable<T>? Function() podPoller;
-
-  //
-  //
-  //
-
   final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
-
-  //
-  //
-  //
-
-  final Widget? child;
-
-  //
-  //
-  //
-
   final void Function(ValueListenable<T>? pod)? onDispose;
+  final Duration? debounceDuration;
+  final Duration? interval;
+  final Widget? child;
 
   //
   //
@@ -51,13 +39,11 @@ class PollingPodBuilder<T> extends StatefulWidget {
     super.key,
     required this.podPoller,
     required this.builder,
-    this.child,
     this.onDispose,
+    this.debounceDuration,
+    this.interval = const Duration(seconds: 5),
+    this.child,
   });
-
-  //
-  //
-  //
 
   @override
   State<PollingPodBuilder<T>> createState() => _PollingPodBuilderState<T>();
@@ -65,13 +51,14 @@ class PollingPodBuilder<T> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
+final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   //
   //
   //
 
   late final Widget? _staticChild = widget.child;
   TFutureListenable<T>? _currentPod;
+  Timer? _pollingTimer;
 
   //
   //
@@ -80,26 +67,57 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   void initState() {
     super.initState();
-    _checkAndUpdate();
+    _maybeStartPolling();
   }
 
   //
   //
   //
 
-  void _checkAndUpdate() {
-    final tempPod = widget.podPoller();
-    if (_currentPod != tempPod) {
-      _currentPod = tempPod;
+  @override
+  void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
+      _maybeStartPolling();
+    }
+  }
+
+  //
+  //
+  //
+
+  void _maybeStartPolling() {
+    if (!_check()) {
+      _startPolling();
+    }
+  }
+
+  //
+  //
+  //
+
+  void _startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(widget.interval!, (_) {
+      if (_check()) {
+        _pollingTimer?.cancel();
+      }
+    });
+  }
+
+  //
+  //
+  //
+
+  bool _check() {
+    _currentPod = widget.podPoller();
+    if (_currentPod != null) {
       if (mounted) {
         setState(() {});
+        return true;
       }
     }
-    if (_currentPod != null) {
-      // Stop polling once we have a valid Pod.
-      return;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUpdate());
+    return false;
   }
 
   //
@@ -114,6 +132,7 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
         pod: _currentPod!,
         builder: widget.builder,
         onDispose: widget.onDispose,
+        debounceDuration: widget.debounceDuration,
         child: _staticChild,
       );
     } else {
@@ -125,5 +144,15 @@ class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
       final result = widget.builder(context, snapshot);
       return result;
     }
+  }
+
+  //
+  //
+  //
+
+  @override
+  void dispose() {
+    _pollingTimer?.cancel();
+    super.dispose();
   }
 }

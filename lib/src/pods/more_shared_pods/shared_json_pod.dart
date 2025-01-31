@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -24,8 +24,7 @@ final class SharedJsonPodCreator {
   }) async {
     final instance = TSharedJsonPod(
       key,
-      fromValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      fromValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
       toValue: (rawValue) => jsonEncode(rawValue),
     );
     await instance.refresh();
@@ -38,8 +37,7 @@ final class SharedJsonPodCreator {
   }) async {
     final instance = TSharedProtectedJsonPod(
       key,
-      fromValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      fromValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
       toValue: (rawValue) => jsonEncode(rawValue),
       initialValue: initialValue,
     );
@@ -51,5 +49,4 @@ final class SharedJsonPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedJsonPod = SharedPod<Map<String, dynamic>, String>;
-typedef TSharedProtectedJsonPod
-    = SharedProtectedPod<Map<String, dynamic>, String>;
+typedef TSharedProtectedJsonPod = SharedProtectedPod<Map<String, dynamic>, String>;

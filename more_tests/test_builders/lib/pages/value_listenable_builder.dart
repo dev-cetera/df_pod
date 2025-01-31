@@ -1,7 +1,7 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by DevCetra.com & contributors. The use of this
+// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
 // source code is governed by an MIT-style license described in the LICENSE
 // file located in this project's root directory.
 //
@@ -18,8 +18,8 @@ import 'package:flutter/material.dart';
 
 final _pCounter1 = ProtectedPod<int>(1);
 
-class ValueListenableBuilderTest extends StatelessWidget {
-  ValueListenableBuilderTest({super.key});
+class PodBuilderTest extends StatelessWidget {
+  PodBuilderTest({super.key});
 
   final pNumbers = Pod([1, 2, 3, 4, 5]);
 
@@ -32,6 +32,13 @@ class ValueListenableBuilderTest extends StatelessWidget {
       child: Column(
         children: [
           const Text('Counter Test'),
+          PodBuilder(
+            pod: _pCounter1,
+            debounceDuration: const Duration(milliseconds: 100),
+            builder: (context, snapshot) {
+              return Text('Count (delay): ${snapshot.value}');
+            },
+          ),
           PodBuilder(
             pod: _pCounter1,
             builder: (context, snapshot) {
