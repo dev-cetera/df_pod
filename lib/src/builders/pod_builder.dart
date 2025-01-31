@@ -48,6 +48,38 @@ final class PodBuilder<T> extends StatelessWidget {
   //
   //
 
+  // Constructs a [PodBuilder] with a zero debounce duration.
+  @visibleForTesting
+  const PodBuilder.immediate({
+    super.key,
+    required this.pod,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  }) : debounceDuration = Duration.zero;
+
+  /// Constructs a [PodBuilder] with a short debounce duration of 100ms.
+  const PodBuilder.short({
+    super.key,
+    required this.pod,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  }) : debounceDuration = const Duration(milliseconds: 100);
+
+  /// Constructs a [PodBuilder] with a long debounce duration of 500ms.
+  const PodBuilder.long({
+    super.key,
+    required this.pod,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  }) : debounceDuration = const Duration(milliseconds: 500);
+
+  //
+  //
+  //
+
   @override
   Widget build(BuildContext context) {
     final temp = pod;

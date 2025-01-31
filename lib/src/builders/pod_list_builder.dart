@@ -44,6 +44,34 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.child,
   });
 
+  /// Constructs a [PodListBuilder] with a zero debounce duration.
+  @visibleForTesting
+  const PodListBuilder.immediate({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  }) : debounceDuration = Duration.zero;
+
+  /// Constructs a [PodListBuilder] with a short debounce duration of 100ms.
+  const PodListBuilder.short({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  }) : debounceDuration = const Duration(milliseconds: 100);
+
+  /// Constructs a [PodListBuilder] with a long debounce duration of 500ms.
+  const PodListBuilder.long({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  }) : debounceDuration = const Duration(milliseconds: 500);
+
   //
   //
   //

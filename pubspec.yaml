@@ -12,7 +12,7 @@
 
 name: df_pod
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.14.11
+version: 0.14.12
 repository: https://github.com/dev-cetera/df_pod
 funding:
   - https://www.buymeacoffee.com/dev_cetera

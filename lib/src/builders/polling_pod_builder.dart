@@ -41,9 +41,47 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
-    this.interval = const Duration(seconds: 5),
+    this.interval = Duration.zero,
     this.child,
   });
+
+  /// Constructs a [PollingPodBuilder] with zero interval and zero debounce
+  /// duration
+  @visibleForTesting
+  const PollingPodBuilder.immediate({
+    super.key,
+    required this.podPoller,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  })  : interval = Duration.zero,
+        debounceDuration = Duration.zero;
+
+  /// Constructs a [PollingPodBuilder] with a short polling interval of 100ms
+  /// and debounce duration of 100ms.
+  const PollingPodBuilder.short({
+    super.key,
+    required this.podPoller,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  })  : interval = const Duration(milliseconds: 100),
+        debounceDuration = const Duration(milliseconds: 100);
+
+  /// Constructs a [PollingPodBuilder] with a long polling interval of 500ms
+  /// and debounce duration of 500ms.
+  const PollingPodBuilder.long({
+    super.key,
+    required this.podPoller,
+    required this.builder,
+    this.onDispose,
+    this.child,
+  })  : interval = const Duration(milliseconds: 500),
+        debounceDuration = const Duration(milliseconds: 500);
+
+  //
+  //
+  //
 
   @override
   State<PollingPodBuilder<T>> createState() => _PollingPodBuilderState<T>();
@@ -77,8 +115,7 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller ||
-        oldWidget.interval != widget.interval) {
+    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }
   }
