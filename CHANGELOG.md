@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.14.12]
+## [0.14.11]
 
 - Released @ 1/2025 (UTC)
 - feat: Add optional debouncers to builders
