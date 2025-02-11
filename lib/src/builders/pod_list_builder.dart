@@ -11,11 +11,9 @@
 //.title~
 
 import 'dart:async';
-
 import 'package:flutter/foundation.dart' show ValueListenable;
-
 import 'package:flutter/widgets.dart';
-
+import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
 import '/src/_index.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -27,8 +25,10 @@ final class PodListBuilder<T> extends StatelessWidget {
 
   final Iterable<TFutureListenable<T>> podList;
   final TOnValueBuilder<Iterable<T?>, PodListBuilderSnapshot<T>> builder;
-  final Duration? debounceDuration;
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
+  final Duration? debounceDuration;
+  final Duration? cacheDuration;
+
   final Widget? child;
 
   //
@@ -41,6 +41,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
+    this.cacheDuration = Duration.zero,
     this.child,
   });
 
@@ -51,6 +52,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     required this.podList,
     required this.builder,
     this.onDispose,
+    this.cacheDuration = Duration.zero,
     this.child,
   }) : debounceDuration = Duration.zero;
 
@@ -60,6 +62,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     required this.podList,
     required this.builder,
     this.onDispose,
+    this.cacheDuration = Duration.zero,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 100);
 
@@ -69,6 +72,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     required this.podList,
     required this.builder,
     this.onDispose,
+    this.cacheDuration = Duration.zero,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 500);
 
@@ -125,7 +129,6 @@ final class PodListBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-@immutable
 final class _PodListBuilder<T> extends StatefulWidget {
   //
   //
@@ -135,6 +138,7 @@ final class _PodListBuilder<T> extends StatefulWidget {
   final TOnValueBuilder<Iterable<T?>, PodListBuilderSnapshot<T>> builder;
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
   final Duration? debounceDuration;
+  final Duration? cacheDuration;
   final Widget? child;
 
   //
@@ -147,6 +151,7 @@ final class _PodListBuilder<T> extends StatefulWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
+    this.cacheDuration,
     this.child,
   });
 
@@ -155,18 +160,21 @@ final class _PodListBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<_PodListBuilder<T>> createState() => _PodListBuilderState();
+  State<_PodListBuilder<T>> createState() => $PodListBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
+final class $PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   //
   //
   //
 
   late final Widget? _staticChild;
   late Iterable<T> _values;
+
+  @protected
+  static final $cacheManager = CacheManager<Iterable<dynamic>>();
 
   //
   //
@@ -176,7 +184,7 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   void initState() {
     super.initState();
     _staticChild = widget.child;
-    _values = widget.podList.map((e) => e.value);
+    _setValue();
     _addListenerToPods(widget.podList);
   }
 
@@ -189,9 +197,30 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.podList != widget.podList) {
       _removeListenerFromPods(oldWidget.podList);
-      _values = widget.podList.map((e) => e.value);
+      _setValue();
       _addListenerToPods(widget.podList);
     }
+  }
+
+  //
+  //
+  //
+
+  void _setValue() {
+    final temp = widget.podList.map((e) => e.value);
+    if (temp.isEmpty) {
+      _values = $cacheManager.get(widget.key?.toString())?.map((e) => e as T) ?? [];
+    } else {
+      _values = temp;
+    }
+  }
+
+  void _cacheValue() {
+    $cacheManager.cache(
+      widget.key.toString(),
+      widget.podList.map((e) => e.value),
+      cacheDuration: widget.cacheDuration,
+    );
   }
 
   //
@@ -239,10 +268,12 @@ class _PodListBuilderState<T> extends State<_PodListBuilder<T>> {
         }
       : __valueChanged;
 
-  @pragma('vm:prefer-inline')
   void __valueChanged() {
     if (mounted) {
-      setState(() => _values = widget.podList.map((e) => e.value));
+      setState(() {
+        _setValue();
+        _cacheValue();
+      });
     }
   }
 

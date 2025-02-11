@@ -28,6 +28,7 @@ final class PollingPodBuilder<T> extends StatefulWidget {
   final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
   final void Function(ValueListenable<T>? pod)? onDispose;
   final Duration? debounceDuration;
+  final Duration? cacheDuration;
   final Duration? interval;
   final Widget? child;
 
@@ -41,6 +42,7 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
+    this.cacheDuration = Duration.zero,
     this.interval = Duration.zero,
     this.child,
   });
@@ -53,6 +55,7 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     required this.podPoller,
     required this.builder,
     this.onDispose,
+    this.cacheDuration = Duration.zero,
     this.child,
   })  : interval = Duration.zero,
         debounceDuration = Duration.zero;
@@ -64,6 +67,7 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     required this.podPoller,
     required this.builder,
     this.onDispose,
+    this.cacheDuration = Duration.zero,
     this.child,
   })  : interval = const Duration(milliseconds: 100),
         debounceDuration = const Duration(milliseconds: 100);
@@ -75,6 +79,7 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     required this.podPoller,
     required this.builder,
     this.onDispose,
+    this.cacheDuration = Duration.zero,
     this.child,
   })  : interval = const Duration(milliseconds: 500),
         debounceDuration = const Duration(milliseconds: 500);
@@ -115,8 +120,7 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller ||
-        oldWidget.interval != widget.interval) {
+    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }
   }
@@ -172,12 +176,14 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
         builder: widget.builder,
         onDispose: widget.onDispose,
         debounceDuration: widget.debounceDuration,
+        cacheDuration: widget.cacheDuration,
         child: _staticChild,
       );
     } else {
       final snapshot = PodBuilderSnapshot<T>(
         pod: null,
-        value: null,
+        // ignore: invalid_use_of_protected_member
+        value: $PodBuilderState.cacheManager.get(widget.key?.toString()) as T?,
         child: _staticChild,
       );
       final result = widget.builder(context, snapshot);
