@@ -209,7 +209,8 @@ final class $PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   void _setValue() {
     final temp = widget.podList.map((e) => e.value);
     if (temp.isEmpty) {
-      _values = $cacheManager.get(widget.key?.toString())?.map((e) => e as T) ?? [];
+      _values =
+          $cacheManager.get(widget.key?.toString())?.map((e) => e as T) ?? [];
     } else {
       _values = temp;
     }
