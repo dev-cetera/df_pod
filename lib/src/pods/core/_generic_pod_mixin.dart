@@ -34,20 +34,20 @@ mixin GenericPodMixin<T> on PodNotifier<T>, ValueListenable<T> {
 
   /// Returns the value of the Pod when the [test] returns `true`.
   FutureOr<T> cond(bool Function(T value) test) {
-    final completer = CompleterOr<T>();
+    final finisher = Finisher<T>();
     void check() {
       if (test(value)) {
-        completer.complete(value);
+        finisher.complete(value);
       }
     }
 
     check();
-    if (completer.isCompleted) {
+    if (finisher.isCompleted) {
       return value;
     } else {
       // ignore: deprecated_member_use_from_same_package
       addListener(check);
-      return consec(completer.futureOr, (e) {
+      return consec(finisher.futureOr, (e) {
         removeListener(check);
         return e;
       });
