@@ -65,33 +65,36 @@ final class PodReducer7 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn7<P1, P2, P3, P4, P5, P6, P7> = (
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-  GenericPod<P3>? p3,
-  GenericPod<P4>? p4,
-  GenericPod<P5>? p5,
-  GenericPod<P6>? p6,
-  GenericPod<P7>? p7,
-)
+typedef TResponderFn7<P1, P2, P3, P4, P5, P6, P7> =
+    (
+      GenericPod<P1>? p1,
+      GenericPod<P2>? p2,
+      GenericPod<P3>? p3,
+      GenericPod<P4>? p4,
+      GenericPod<P5>? p5,
+      GenericPod<P6>? p6,
+      GenericPod<P7>? p7,
+    )
     Function();
 
-typedef TNullableReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> = C Function(
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-  GenericPod<P3>? p3,
-  GenericPod<P4>? p4,
-  GenericPod<P5>? p5,
-  GenericPod<P6>? p6,
-  GenericPod<P7>? p7,
-);
+typedef TNullableReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> =
+    C Function(
+      GenericPod<P1>? p1,
+      GenericPod<P2>? p2,
+      GenericPod<P3>? p3,
+      GenericPod<P4>? p4,
+      GenericPod<P5>? p5,
+      GenericPod<P6>? p6,
+      GenericPod<P7>? p7,
+    );
 
-typedef TReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> = C Function(
-  GenericPod<P1> p1,
-  GenericPod<P2> p2,
-  GenericPod<P3> p3,
-  GenericPod<P4> p4,
-  GenericPod<P5> p5,
-  GenericPod<P6> p6,
-  GenericPod<P7> p7,
-);
+typedef TReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> =
+    C Function(
+      GenericPod<P1> p1,
+      GenericPod<P2> p2,
+      GenericPod<P3> p3,
+      GenericPod<P4> p4,
+      GenericPod<P5> p5,
+      GenericPod<P6> p6,
+      GenericPod<P7> p7,
+    );

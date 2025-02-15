@@ -96,15 +96,10 @@ class HomePage extends StatelessWidget {
 // Interpreter to a builder function, simplifying the connection between your
 // page and its associated data.
 class HomePageInterpretedBuilder extends StatelessWidget {
-  final Widget Function(
-    BuildContext context,
-    HomePageInterpreter interpreter,
-  ) builder;
+  final Widget Function(BuildContext context, HomePageInterpreter interpreter)
+  builder;
 
-  const HomePageInterpretedBuilder({
-    super.key,
-    required this.builder,
-  });
+  const HomePageInterpretedBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +138,19 @@ class HomePageInterpreter {
   // 10. Simplify Pods from Services so the relevant Page can use them
   // without needing to simplify them in the widget code.
   late final pUserId = authService.pUser.map((e) => e!.id);
-  late final pNotificationCount =
-      notificationService.pNotifications.map((e) => e!.length);
-  late final pConnectionCount =
-      connectionService.pConnections.map((e) => e!.length);
-  late final pNotificationRatio =
-      pNotificationCount.reduce(pConnectionCount, (a, b) => a.value / b.value);
-  late final pPriorityNotifications = notificationService.pNotifications
-      .map((e) => e!.where((e) => e.startsWith('priority:')));
+  late final pNotificationCount = notificationService.pNotifications.map(
+    (e) => e!.length,
+  );
+  late final pConnectionCount = connectionService.pConnections.map(
+    (e) => e!.length,
+  );
+  late final pNotificationRatio = pNotificationCount.reduce(
+    pConnectionCount,
+    (a, b) => a.value / b.value,
+  );
+  late final pPriorityNotifications = notificationService.pNotifications.map(
+    (e) => e!.where((e) => e.startsWith('priority:')),
+  );
 
   // 11. Avoid putting anything but Pods such as methods in the Interpreter. The
   // Interpreter is not a Controller. Its sole purpose is to interpret Services
@@ -181,26 +181,20 @@ class AuthService {
 
   Future<void> login() async {
     // Simulate logging in.
-    await Future.delayed(
-      const Duration(seconds: 1),
-      () async {
-        pUser.set(const User('123'));
+    await Future.delayed(const Duration(seconds: 1), () async {
+      pUser.set(const User('123'));
 
-        // Register the connection service when a user logs in.
-        GetIt.I.registerLazySingleton<ConnectionService>(
-          () => ConnectionService(GetIt.I<AuthService>()),
-          dispose: (e) => e.dispose(),
-        );
-      },
-    );
+      // Register the connection service when a user logs in.
+      GetIt.I.registerLazySingleton<ConnectionService>(
+        () => ConnectionService(GetIt.I<AuthService>()),
+        dispose: (e) => e.dispose(),
+      );
+    });
   }
 
   Future<void> logout() async {
     // Simulate logging out.
-    await Future.delayed(
-      const Duration(seconds: 1),
-      () => pUser.set(null),
-    );
+    await Future.delayed(const Duration(seconds: 1), () => pUser.set(null));
     // Unregister the connection service when a user logs out.
     GetIt.I.unregister<ConnectionService>();
   }

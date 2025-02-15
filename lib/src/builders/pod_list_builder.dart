@@ -255,19 +255,20 @@ final class $PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   bool _skipInitialDebounce = true;
 
   // ignore: prefer_final_fields
-  late void Function()? _valueChanged = widget.debounceDuration != null
-      ? () {
-          if (_skipInitialDebounce) {
-            _skipInitialDebounce = false;
-            __valueChanged();
-          } else {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(widget.debounceDuration!, () {
+  late void Function()? _valueChanged =
+      widget.debounceDuration != null
+          ? () {
+            if (_skipInitialDebounce) {
+              _skipInitialDebounce = false;
               __valueChanged();
-            });
+            } else {
+              _debounceTimer?.cancel();
+              _debounceTimer = Timer(widget.debounceDuration!, () {
+                __valueChanged();
+              });
+            }
           }
-        }
-      : __valueChanged;
+          : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {

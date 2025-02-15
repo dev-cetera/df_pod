@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.16.0]
+
+- Released @ 2/2025 (UTC)
+- chore: Update dependencies
+
 ## [0.15.1]
 
 - Released @ 2/2025 (UTC)

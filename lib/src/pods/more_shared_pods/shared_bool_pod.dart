@@ -16,10 +16,7 @@ import '/src/_index.g.dart';
 
 final class SharedBoolPodCreator {
   const SharedBoolPodCreator._();
-  static Future<TSharedBoolPod> create(
-    String key, {
-    bool? initialValue,
-  }) async {
+  static Future<TSharedBoolPod> create(String key, {bool? initialValue}) async {
     final instance = TSharedBoolPod(
       key,
       fromValue: (rawValue) => rawValue,

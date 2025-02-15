@@ -29,12 +29,8 @@ base mixin ProtectedPodMixin<T> on DisposablePod<T> {
   /// ❌ Do not add listeners to this Pod directly.
   @protected
   @override
-  void addStrongRefListener({
-    required VoidCallback strongRefListener,
-  }) {
-    super.addStrongRefListener(
-      strongRefListener: strongRefListener,
-    );
+  void addStrongRefListener({required VoidCallback strongRefListener}) {
+    super.addStrongRefListener(strongRefListener: strongRefListener);
   }
 
   /// ❌ Do not add listeners to this Pod directly.

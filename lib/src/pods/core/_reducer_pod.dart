@@ -42,9 +42,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  factory ReducerPod.single(
-    ValueListenable<T> Function() responder,
-  ) {
+  factory ReducerPod.single(ValueListenable<T> Function() responder) {
     return ReducerPod(
       responder: () => [responder()],
       reducer: (values) => values.first as T,
@@ -55,10 +53,7 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  ReducerPod({
-    required this.responder,
-    required this.reducer,
-  }) : super(null) {
+  ReducerPod({required this.responder, required this.reducer}) : super(null) {
     _refresh!();
   }
 

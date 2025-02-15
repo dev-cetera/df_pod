@@ -113,11 +113,7 @@ final class PodBuilder<T> extends StatelessWidget {
           } else {
             return builder(
               context,
-              PodBuilderSnapshot<T>(
-                pod: null,
-                value: null,
-                child: child,
-              ),
+              PodBuilderSnapshot<T>(pod: null, value: null, child: child),
             );
           }
         },
@@ -207,9 +203,10 @@ final class $PodBuilderState<T> extends State<_PodBuilder<T>> {
   //
 
   void _setValue() {
-    _value = isNullable<T>()
-        ? widget.pod.value ?? cacheManager.get(widget.key?.toString()) as T
-        : widget.pod.value;
+    _value =
+        isNullable<T>()
+            ? widget.pod.value ?? cacheManager.get(widget.key?.toString()) as T
+            : widget.pod.value;
   }
 
   void _cacheValue() {
@@ -231,20 +228,21 @@ final class $PodBuilderState<T> extends State<_PodBuilder<T>> {
   bool _skipInitialDebounce = true;
 
   // ignore: prefer_final_fields
-  late void Function()? _valueChanged = widget.debounceDuration != null
-      ? () {
-          if (_skipInitialDebounce) {
-            _skipInitialDebounce = false;
-            __valueChanged();
-            return;
-          } else {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(widget.debounceDuration!, () {
+  late void Function()? _valueChanged =
+      widget.debounceDuration != null
+          ? () {
+            if (_skipInitialDebounce) {
+              _skipInitialDebounce = false;
               __valueChanged();
-            });
+              return;
+            } else {
+              _debounceTimer?.cancel();
+              _debounceTimer = Timer(widget.debounceDuration!, () {
+                __valueChanged();
+              });
+            }
           }
-        }
-      : __valueChanged;
+          : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {

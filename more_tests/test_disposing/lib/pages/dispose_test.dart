@@ -41,11 +41,7 @@ class _DisposeTestState extends State<DisposeTest> {
       color: Colors.red.shade200,
       width: double.infinity,
       height: double.infinity,
-      child: const Column(
-        children: [
-          Text('Dispose Test'),
-        ],
-      ),
+      child: const Column(children: [Text('Dispose Test')]),
     );
   }
 

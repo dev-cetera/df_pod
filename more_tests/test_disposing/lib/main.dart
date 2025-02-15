@@ -37,21 +37,11 @@ class _MyAppState extends State<MyApp> {
             setState(() {});
           },
           children: [
-            DisposeTest(
-              key: UniqueKey(),
-            ),
-            SuccessiveDisposesTest(
-              key: UniqueKey(),
-            ),
-            GlobalDisposeTest(
-              key: UniqueKey(),
-            ),
-            TempDisposeTest(
-              key: UniqueKey(),
-            ),
-            ChildPodDisposalTest(
-              key: UniqueKey(),
-            ),
+            DisposeTest(key: UniqueKey()),
+            SuccessiveDisposesTest(key: UniqueKey()),
+            GlobalDisposeTest(key: UniqueKey()),
+            TempDisposeTest(key: UniqueKey()),
+            ChildPodDisposalTest(key: UniqueKey()),
           ],
         ),
       ),

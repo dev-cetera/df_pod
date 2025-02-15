@@ -34,10 +34,7 @@ final class PodReducer2 {
     TResponderFn2<P1, P2> responder,
   ) {
     final response = responder.call();
-    return [
-      response.$1,
-      response.$2,
-    ];
+    return [response.$1, response.$2];
   }
 
   /// Reduces the values from 2 Pods using the provided reducer function.
@@ -46,27 +43,17 @@ final class PodReducer2 {
     TNullableReducerFn2<C, P1, P2> reducer,
   ) {
     final response = responder();
-    return reducer(
-      response.$1,
-      response.$2,
-    );
+    return reducer(response.$1, response.$2);
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn2<P1, P2> = (
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-)
-    Function();
+typedef TResponderFn2<P1, P2> =
+    (GenericPod<P1>? p1, GenericPod<P2>? p2) Function();
 
-typedef TNullableReducerFn2<C, P1, P2> = C Function(
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-);
+typedef TNullableReducerFn2<C, P1, P2> =
+    C Function(GenericPod<P1>? p1, GenericPod<P2>? p2);
 
-typedef TReducerFn2<C, P1, P2> = C Function(
-  GenericPod<P1> p1,
-  GenericPod<P2> p2,
-);
+typedef TReducerFn2<C, P1, P2> =
+    C Function(GenericPod<P1> p1, GenericPod<P2> p2);

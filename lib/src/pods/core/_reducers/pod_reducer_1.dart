@@ -32,9 +32,7 @@ final class PodReducer1 {
   /// Converts the response from the responder function into a list of Pods.
   static List<GenericPod<dynamic>?> _toList<P1>(TResponderFn1<P1> responder) {
     final response = responder.call();
-    return [
-      response.$1,
-    ];
+    return [response.$1];
   }
 
   /// Reduces the values from 1 Pod using the provided reducer function.
@@ -43,9 +41,7 @@ final class PodReducer1 {
     TNullableReducerFn1<C, P1> reducer,
   ) {
     final response = responder();
-    return reducer(
-      response.$1,
-    );
+    return reducer(response.$1);
   }
 }
 
@@ -53,10 +49,6 @@ final class PodReducer1 {
 
 typedef TResponderFn1<P1> = (GenericPod<P1>? p1,) Function();
 
-typedef TNullableReducerFn1<C, P1> = C Function(
-  GenericPod<P1>? p1,
-);
+typedef TNullableReducerFn1<C, P1> = C Function(GenericPod<P1>? p1);
 
-typedef TReducerFn1<C, P1> = C Function(
-  GenericPod<P1> p1,
-);
+typedef TReducerFn1<C, P1> = C Function(GenericPod<P1> p1);

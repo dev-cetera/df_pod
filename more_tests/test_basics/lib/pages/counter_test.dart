@@ -24,9 +24,7 @@ class CounterTest extends StatelessWidget {
 
   late final pTotal = Future.value(
     ReducerPod(
-      responder: () => {
-        _pCounter1,
-      },
+      responder: () => {_pCounter1},
       reducer: (values) => (letIntOrNull(values.first) ?? 0) + 1,
     ),
   );

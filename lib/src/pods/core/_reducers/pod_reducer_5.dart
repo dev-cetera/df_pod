@@ -34,13 +34,7 @@ final class PodReducer5 {
     TResponderFn5<P1, P2, P3, P4, P5> responder,
   ) {
     final response = responder.call();
-    return [
-      response.$1,
-      response.$2,
-      response.$3,
-      response.$4,
-      response.$5,
-    ];
+    return [response.$1, response.$2, response.$3, response.$4, response.$5];
   }
 
   /// Reduces the values from 5 Pods using the provided reducer function.
@@ -61,27 +55,30 @@ final class PodReducer5 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn5<P1, P2, P3, P4, P5> = (
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-  GenericPod<P3>? p3,
-  GenericPod<P4>? p4,
-  GenericPod<P5>? p5,
-)
+typedef TResponderFn5<P1, P2, P3, P4, P5> =
+    (
+      GenericPod<P1>? p1,
+      GenericPod<P2>? p2,
+      GenericPod<P3>? p3,
+      GenericPod<P4>? p4,
+      GenericPod<P5>? p5,
+    )
     Function();
 
-typedef TNullableReducerFn5<C, P1, P2, P3, P4, P5> = C Function(
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-  GenericPod<P3>? p3,
-  GenericPod<P4>? p4,
-  GenericPod<P5>? p5,
-);
+typedef TNullableReducerFn5<C, P1, P2, P3, P4, P5> =
+    C Function(
+      GenericPod<P1>? p1,
+      GenericPod<P2>? p2,
+      GenericPod<P3>? p3,
+      GenericPod<P4>? p4,
+      GenericPod<P5>? p5,
+    );
 
-typedef TReducerFn5<C, P1, P2, P3, P4, P5> = C Function(
-  GenericPod<P1> p1,
-  GenericPod<P2> p2,
-  GenericPod<P3> p3,
-  GenericPod<P4> p4,
-  GenericPod<P5> p5,
-);
+typedef TReducerFn5<C, P1, P2, P3, P4, P5> =
+    C Function(
+      GenericPod<P1> p1,
+      GenericPod<P2> p2,
+      GenericPod<P3> p3,
+      GenericPod<P4> p4,
+      GenericPod<P5> p5,
+    );

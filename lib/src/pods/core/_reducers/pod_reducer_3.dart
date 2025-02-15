@@ -34,11 +34,7 @@ final class PodReducer3 {
     TResponderFn3<P1, P2, P3> responder,
   ) {
     final response = responder.call();
-    return [
-      response.$1,
-      response.$2,
-      response.$3,
-    ];
+    return [response.$1, response.$2, response.$3];
   }
 
   /// Reduces the values from 3 Pods using the provided reducer function.
@@ -47,31 +43,17 @@ final class PodReducer3 {
     TNullableReducerFn3<C, P1, P2, P3> reducer,
   ) {
     final response = responder();
-    return reducer(
-      response.$1,
-      response.$2,
-      response.$3,
-    );
+    return reducer(response.$1, response.$2, response.$3);
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn3<P1, P2, P3> = (
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-  GenericPod<P3>? p3,
-)
-    Function();
+typedef TResponderFn3<P1, P2, P3> =
+    (GenericPod<P1>? p1, GenericPod<P2>? p2, GenericPod<P3>? p3) Function();
 
-typedef TNullableReducerFn3<C, P1, P2, P3> = C Function(
-  GenericPod<P1>? p1,
-  GenericPod<P2>? p2,
-  GenericPod<P3>? p3,
-);
+typedef TNullableReducerFn3<C, P1, P2, P3> =
+    C Function(GenericPod<P1>? p1, GenericPod<P2>? p2, GenericPod<P3>? p3);
 
-typedef TReducerFn3<C, P1, P2, P3> = C Function(
-  GenericPod<P1> p1,
-  GenericPod<P2> p2,
-  GenericPod<P3> p3,
-);
+typedef TReducerFn3<C, P1, P2, P3> =
+    C Function(GenericPod<P1> p1, GenericPod<P2> p2, GenericPod<P3> p3);

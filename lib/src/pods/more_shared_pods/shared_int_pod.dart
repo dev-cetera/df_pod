@@ -16,10 +16,7 @@ import '/src/_index.g.dart';
 
 final class SharedIntPodCreator {
   const SharedIntPodCreator._();
-  static Future<TSharedIntPod> create(
-    String key, {
-    int? initialValue,
-  }) async {
+  static Future<TSharedIntPod> create(String key, {int? initialValue}) async {
     final instance = TSharedIntPod(
       key,
       fromValue: (rawValue) => rawValue,

@@ -37,9 +37,7 @@ class _MyAppState extends State<MyApp> {
             setState(() {});
           },
           children: [
-            PodBuilderTest(
-              key: UniqueKey(),
-            ),
+            PodBuilderTest(key: UniqueKey()),
             // PodListCallbackBuilderTest(
             //   key: UniqueKey(),
             // ),

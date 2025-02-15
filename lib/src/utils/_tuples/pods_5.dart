@@ -27,7 +27,7 @@ final class Pods5<P1, P2, P3, P4, P5> extends Tuple5<P1?, P2?, P3?, P4?, P5?>
   final GenericPod<P5>? p5;
 
   Pods5(this.p1, this.p2, this.p3, this.p4, this.p5)
-      : super(null, null, null, null, null);
+    : super(null, null, null, null, null);
 
   @override
   P1? get item1 => p1?.value;
@@ -45,13 +45,7 @@ final class Pods5<P1, P2, P3, P4, P5> extends Tuple5<P1?, P2?, P3?, P4?, P5?>
   P5? get item5 => p5?.value;
 
   @override
-  List<GenericPod<dynamic>?> get pods => [
-        p1,
-        p2,
-        p3,
-        p4,
-        p5,
-      ];
+  List<GenericPod<dynamic>?> get pods => [p1, p2, p3, p4, p5];
 
   @override
   List<T> valuesWhereType<T>() => toList().whereType<T>().toList();

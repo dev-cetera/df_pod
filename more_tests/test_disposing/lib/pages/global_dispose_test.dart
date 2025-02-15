@@ -37,11 +37,7 @@ class _GlobalDisposeTestState extends State<GlobalDisposeTest> {
       color: Colors.green.shade200,
       width: double.infinity,
       height: double.infinity,
-      child: const Column(
-        children: [
-          Text('Global Dispose Test'),
-        ],
-      ),
+      child: const Column(children: [Text('Global Dispose Test')]),
     );
   }
 

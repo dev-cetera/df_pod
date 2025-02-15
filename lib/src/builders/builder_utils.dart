@@ -14,24 +14,17 @@ import 'package:flutter/widgets.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TOnValueBuilder<T, S extends OnValueSnapshot<T>> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+typedef TOnValueBuilder<T, S extends OnValueSnapshot<T>> =
+    Widget Function(BuildContext context, S snapshot);
 
 class BuilderSnapshot {
   final Widget? child;
 
-  BuilderSnapshot({
-    required this.child,
-  });
+  BuilderSnapshot({required this.child});
 }
 
 class OnValueSnapshot<T> extends BuilderSnapshot {
   final T value;
 
-  OnValueSnapshot({
-    required this.value,
-    required super.child,
-  });
+  OnValueSnapshot({required this.value, required super.child});
 }

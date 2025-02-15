@@ -41,11 +41,7 @@ class _SuccessiveDisposesTestState extends State<SuccessiveDisposesTest> {
       color: Colors.indigo.shade200,
       width: double.infinity,
       height: double.infinity,
-      child: const Column(
-        children: [
-          Text('Successive Disposes Test'),
-        ],
-      ),
+      child: const Column(children: [Text('Successive Disposes Test')]),
     );
   }
 

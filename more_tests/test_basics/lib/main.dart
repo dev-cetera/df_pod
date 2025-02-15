@@ -38,21 +38,11 @@ class _MyAppState extends State<MyApp> {
             setState(() {});
           },
           children: [
-            CounterTest(
-              key: UniqueKey(),
-            ),
-            EasyPodTest(
-              key: UniqueKey(),
-            ),
-            FutureCounterTest(
-              key: UniqueKey(),
-            ),
-            ListTest(
-              key: UniqueKey(),
-            ),
-            SharedCounterPodTest(
-              key: UniqueKey(),
-            ),
+            CounterTest(key: UniqueKey()),
+            EasyPodTest(key: UniqueKey()),
+            FutureCounterTest(key: UniqueKey()),
+            ListTest(key: UniqueKey()),
+            SharedCounterPodTest(key: UniqueKey()),
           ],
         ),
       ),

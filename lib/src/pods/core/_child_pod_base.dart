@@ -31,9 +31,9 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
     required TChild initialValue,
-  })  : _reducer = reducer,
-        _responder = responder,
-        super(initialValue);
+  }) : _reducer = reducer,
+       _responder = responder,
+       super(initialValue);
 
   //
   //
@@ -72,8 +72,7 @@ abstract base class _ChildPodBase<TParent, TChild> extends PodNotifier<TChild>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TValuesReducerFn<TChild, TParentList> = TChild Function(
-  List<TParentList?> parentValues,
-);
+typedef TValuesReducerFn<TChild, TParentList> =
+    TChild Function(List<TParentList?> parentValues);
 
 typedef TPodsResponderFn<T> = Iterable<GenericPod<T>?> Function();

@@ -32,10 +32,7 @@ final class Pods2<P1, P2> extends Tuple2<P1?, P2?>
   P2? get item2 => p2?.value;
 
   @override
-  List<GenericPod<dynamic>?> get pods => [
-        p1,
-        p2,
-      ];
+  List<GenericPod<dynamic>?> get pods => [p1, p2];
 
   @override
   List<T> valuesWhereType<T>() => toList().whereType<T>().toList();

@@ -57,8 +57,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  })  : interval = Duration.zero,
-        debounceDuration = Duration.zero;
+  }) : interval = Duration.zero,
+       debounceDuration = Duration.zero;
 
   /// Constructs a [PollingPodBuilder] with a short polling interval of 100ms
   /// and debounce duration of 100ms.
@@ -69,8 +69,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  })  : interval = const Duration(milliseconds: 100),
-        debounceDuration = const Duration(milliseconds: 100);
+  }) : interval = const Duration(milliseconds: 100),
+       debounceDuration = const Duration(milliseconds: 100);
 
   /// Constructs a [PollingPodBuilder] with a long polling interval of 500ms
   /// and debounce duration of 500ms.
@@ -81,8 +81,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  })  : interval = const Duration(milliseconds: 500),
-        debounceDuration = const Duration(milliseconds: 500);
+  }) : interval = const Duration(milliseconds: 500),
+       debounceDuration = const Duration(milliseconds: 500);
 
   //
   //

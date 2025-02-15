@@ -45,18 +45,10 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
       height: double.infinity,
       child: Column(
         children: [
-          MyLabel(
-            pText: ProtectedPod('Temp Pod'),
-          ),
-          MyLabel(
-            pText: _pAnotherGlobalPod,
-          ),
-          MyLabel(
-            pText: _pNotTempPod,
-          ),
-          MyLabel(
-            pText: _pAnotherTempPod,
-          ),
+          MyLabel(pText: ProtectedPod('Temp Pod')),
+          MyLabel(pText: _pAnotherGlobalPod),
+          MyLabel(pText: _pNotTempPod),
+          MyLabel(pText: _pAnotherTempPod),
         ],
       ),
     );
@@ -78,10 +70,7 @@ class _TempDisposeTestState extends State<TempDisposeTest> {
 class MyLabel extends StatefulWidget {
   final GenericPod<String> pText;
 
-  const MyLabel({
-    super.key,
-    required this.pText,
-  });
+  const MyLabel({super.key, required this.pText});
 
   @override
   State<MyLabel> createState() => _MyLabelState();
