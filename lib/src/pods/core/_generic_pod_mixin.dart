@@ -102,10 +102,10 @@ mixin GenericPodMixin<T> on PodNotifier<T>, ValueListenable<T> {
   }
 
   /// Maps `this` [GenericPod] to a new [ChildPod] using the specified [reducer].
-  ChildPod<T, B> map<B>(B Function(T? value) reducer) {
+  ChildPod<T, B> map<B>(B Function(T value) reducer) {
     return ChildPod<T, B>._(
       responder: () => [this],
-      reducer: (e) => reducer(e.firstOrNull),
+      reducer: (_) => reducer(value),
     );
   }
 
