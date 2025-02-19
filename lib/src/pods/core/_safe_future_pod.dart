@@ -16,21 +16,15 @@ part of 'core.dart';
 
 /// A Pod that is initially [None] then sets its [value] when a [FutureOr]
 /// completes as [Ok] or fails as [Err].
-base class SafeFuturePod<T extends Object> extends PodNotifier<Option<Result<T>>>
+base class SafeFuturePod<T extends Object>
+    extends PodNotifier<Option<Result<T>>>
     with GenericPod<Option<Result<T>>> {
   /// Creates a [SafeFuturePod] with the specified [future].
   SafeFuturePod(FutureOr<T> future) : super(const None()) {
     consec(
       future,
       (e) => _set(Some(Ok(e))),
-      onError: (e) => _set(
-        Some(
-          Err(
-            debugPath: ['SafeFuturePod'],
-            error: e,
-          ),
-        ),
-      ),
+      onError: (e) => _set(Some(Err(debugPath: ['SafeFuturePod'], error: e))),
     );
   }
 
