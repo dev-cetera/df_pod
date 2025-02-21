@@ -28,6 +28,7 @@ final class PollingPodBuilder<T> extends StatefulWidget {
   final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
   final void Function(ValueListenable<T>? pod)? onDispose;
   final Duration? debounceDuration;
+
   final Duration? interval;
   final Widget? child;
 
@@ -115,8 +116,7 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
   @override
   void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller ||
-        oldWidget.interval != widget.interval) {
+    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }
   }
@@ -177,6 +177,7 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
     } else {
       final snapshot = PodBuilderSnapshot<T>(
         pod: null,
+        // ignore: invalid_use_of_protected_member
         value: null,
         child: _staticChild,
       );
