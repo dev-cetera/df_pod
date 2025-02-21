@@ -50,8 +50,7 @@ class HomePage extends StatelessWidget {
                 interpreter.pNotificationCount,
               ],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },
@@ -96,8 +95,7 @@ class HomePage extends StatelessWidget {
 // Interpreter to a builder function, simplifying the connection between your
 // page and its associated data.
 class HomePageInterpretedBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, HomePageInterpreter interpreter)
-  builder;
+  final Widget Function(BuildContext context, HomePageInterpreter interpreter) builder;
 
   const HomePageInterpretedBuilder({super.key, required this.builder});
 
@@ -139,17 +137,17 @@ class HomePageInterpreter {
   // without needing to simplify them in the widget code.
   late final pUserId = authService.pUser.map((e) => e!.id);
   late final pNotificationCount = notificationService.pNotifications.map(
-    (e) => e!.length,
+    (e) => e.length,
   );
   late final pConnectionCount = connectionService.pConnections.map(
-    (e) => e!.length,
+    (e) => e.length,
   );
   late final pNotificationRatio = pNotificationCount.reduce(
     pConnectionCount,
     (a, b) => a.value / b.value,
   );
   late final pPriorityNotifications = notificationService.pNotifications.map(
-    (e) => e!.where((e) => e.startsWith('priority:')),
+    (e) => e.where((e) => e.startsWith('priority:')),
   );
 
   // 11. Avoid putting anything but Pods such as methods in the Interpreter. The

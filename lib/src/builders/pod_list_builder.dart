@@ -84,11 +84,12 @@ final class PodListBuilder<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final temp = this.podList;
     if (temp is List<ValueListenable<T>>) {
-      return _PodListBuilder(
+      return SyncPodListBuilder(
         key: key,
         podList: temp,
         builder: builder,
         onDispose: onDispose,
+        debounceDuration: debounceDuration,
         child: child,
       );
     } else {
@@ -105,11 +106,12 @@ final class PodListBuilder<T> extends StatelessWidget {
         builder: (context, snapshot) {
           final data = snapshot.data?.nonNulls;
           if (data != null) {
-            return _PodListBuilder(
+            return SyncPodListBuilder(
               key: key,
               podList: data,
               builder: builder,
               onDispose: onDispose,
+              debounceDuration: debounceDuration,
               child: child,
             );
           } else {
@@ -129,7 +131,7 @@ final class PodListBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class _PodListBuilder<T> extends StatefulWidget {
+final class SyncPodListBuilder<T> extends StatefulWidget {
   //
   //
   //
@@ -145,7 +147,7 @@ final class _PodListBuilder<T> extends StatefulWidget {
   //
   //
 
-  const _PodListBuilder({
+  const SyncPodListBuilder({
     super.key,
     required this.podList,
     required this.builder,
@@ -160,12 +162,12 @@ final class _PodListBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<_PodListBuilder<T>> createState() => $PodListBuilderState();
+  State<SyncPodListBuilder<T>> createState() => SyncPodListBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class $PodListBuilderState<T> extends State<_PodListBuilder<T>> {
+final class SyncPodListBuilderState<T> extends State<SyncPodListBuilder<T>> {
   //
   //
   //
@@ -174,136 +176,120 @@ final class $PodListBuilderState<T> extends State<_PodListBuilder<T>> {
   late Iterable<T> _values;
 
   @protected
-  static final $cacheManager = CacheManager<Iterable<dynamic>>();
-
-  //
-  //
-  //
+  static final cacheManager = CacheManager<Iterable<dynamic>>();
 
   @override
   void initState() {
     super.initState();
     _staticChild = widget.child;
     _setValue();
+    _cacheValue();
+    _refresh();
     _addListenerToPods(widget.podList);
   }
 
-  //
-  //
-  //
-
   @override
-  void didUpdateWidget(_PodListBuilder<T> oldWidget) {
+  void didUpdateWidget(SyncPodListBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podList != widget.podList) {
+    if (!_arePodListsEqual(widget.podList, oldWidget.podList)) {
       _removeListenerFromPods(oldWidget.podList);
       _setValue();
+      _cacheValue();
       _addListenerToPods(widget.podList);
     }
   }
 
-  //
-  //
-  //
+  bool _arePodListsEqual(TPodList<T> a, TPodList<T> b) {
+    if (identical(a, b)) return true;
+    final aIter = a.iterator;
+    final bIter = b.iterator;
+    while (aIter.moveNext()) {
+      if (!bIter.moveNext() || aIter.current != bIter.current) return false;
+    }
+    return !bIter.moveNext();
+  }
 
   void _setValue() {
-    final temp = widget.podList.map((e) => e.value);
-    if (temp.isEmpty) {
-      _values =
-          $cacheManager.get(widget.key?.toString())?.map((e) => e as T) ?? [];
+    final values = widget.podList.map((e) => e.value);
+    final key = widget.key;
+    if (key != null && values.isEmpty) {
+      _values = cacheManager.get(key.toString())?.map((e) => e as T) ?? [];
     } else {
-      _values = temp;
+      _values = values;
     }
   }
 
   void _cacheValue() {
-    $cacheManager.cache(
-      widget.key.toString(),
+    final key = widget.key;
+    if (key == null) {
+      return;
+    }
+    cacheManager.cache(
+      key.toString(),
       widget.podList.map((e) => e.value),
       cacheDuration: widget.cacheDuration,
     );
   }
 
-  //
-  //
-  //
-
   void _addListenerToPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.addListener(_valueChanged!);
+      pod.addListener(_valueChanged);
     }
   }
-
-  //
-  //
-  //
 
   void _removeListenerFromPods(TPodList<T> pods) {
     for (final pod in pods) {
-      pod.removeListener(_valueChanged!);
+      pod.removeListener(_valueChanged);
     }
   }
 
-  //
-  //
-  //
-
   Timer? _debounceTimer;
 
-  /// Allows initial data to be set immediately for responsiveness even if
-  /// the debounce duration is long.
-  bool _skipInitialDebounce = true;
-
   // ignore: prefer_final_fields
-  late void Function()? _valueChanged =
-      widget.debounceDuration != null
-          ? () {
-            if (_skipInitialDebounce) {
-              _skipInitialDebounce = false;
-              __valueChanged();
-            } else {
-              _debounceTimer?.cancel();
-              _debounceTimer = Timer(widget.debounceDuration!, () {
-                __valueChanged();
-              });
-            }
-          }
-          : __valueChanged;
+  late void Function() _valueChanged = widget.debounceDuration != null
+      ? () {
+          _debounceTimer?.cancel();
+          _debounceTimer = Timer(widget.debounceDuration!, () {
+            __valueChanged();
+          });
+        }
+      : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {
       setState(() {
         _setValue();
         _cacheValue();
+        _refresh();
       });
     }
   }
 
-  //
-  //
-  //
-
-  @override
-  Widget build(BuildContext context) {
+  void _refresh() {
     final snapshot = PodListBuilderSnapshot(
       podList: widget.podList,
       value: _values,
       child: _staticChild,
     );
-    final result = widget.builder(context, snapshot);
-    return result;
+    _temp = Builder(
+      builder: (context) {
+        return widget.builder(context, snapshot);
+      },
+    );
   }
 
-  //
-  //
-  //
+  late Widget _temp;
+
+  @override
+  Widget build(BuildContext context) {
+    return _temp;
+  }
 
   @override
   void dispose() {
     for (final pod in widget.podList) {
-      pod.removeListener(_valueChanged!);
+      pod.removeListener(_valueChanged);
     }
-    _valueChanged = null;
     widget.onDispose?.call(widget.podList);
     super.dispose();
   }

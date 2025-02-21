@@ -88,7 +88,7 @@ final class PodBuilder<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final temp = pod;
     if (temp is ValueListenable<T>) {
-      return _PodBuilder(
+      return SyncPodBuilder(
         key: key,
         pod: temp,
         builder: builder,
@@ -102,7 +102,7 @@ final class PodBuilder<T> extends StatelessWidget {
         builder: (context, snapshot) {
           final data = snapshot.data;
           if (data != null) {
-            return _PodBuilder(
+            return SyncPodBuilder(
               key: key,
               pod: data,
               builder: builder,
@@ -124,8 +124,7 @@ final class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-@immutable
-final class _PodBuilder<T> extends StatefulWidget {
+final class SyncPodBuilder<T> extends StatefulWidget {
   //
   //
   //
@@ -141,7 +140,7 @@ final class _PodBuilder<T> extends StatefulWidget {
   //
   //
 
-  const _PodBuilder({
+  const SyncPodBuilder({
     super.key,
     required this.pod,
     required this.builder,
@@ -156,12 +155,12 @@ final class _PodBuilder<T> extends StatefulWidget {
   //
 
   @override
-  State<_PodBuilder<T>> createState() => $PodBuilderState<T>();
+  State<SyncPodBuilder<T>> createState() => SyncPodBuilderState<T>();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class $PodBuilderState<T> extends State<_PodBuilder<T>> {
+final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
   //
   //
   //
@@ -172,111 +171,92 @@ final class $PodBuilderState<T> extends State<_PodBuilder<T>> {
   @protected
   static final cacheManager = CacheManager<dynamic>();
 
-  //
-  //
-  //
-
   @override
   void initState() {
     super.initState();
     _staticChild = widget.child;
     _setValue();
-    widget.pod.addListener(_valueChanged!);
+    _cacheValue();
+    _refresh();
+    widget.pod.addListener(_valueChanged);
   }
 
-  //
-  //
-  //
-
   @override
-  void didUpdateWidget(_PodBuilder<T> oldWidget) {
+  void didUpdateWidget(SyncPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.pod != widget.pod) {
-      oldWidget.pod.removeListener(_valueChanged!);
+      oldWidget.pod.removeListener(_valueChanged);
       _setValue();
-      widget.pod.addListener(_valueChanged!);
+      _cacheValue();
+      widget.pod.addListener(_valueChanged);
     }
   }
 
-  //
-  //
-  //
-
   void _setValue() {
-    _value =
-        isNullable<T>()
-            ? widget.pod.value ?? cacheManager.get(widget.key?.toString()) as T
-            : widget.pod.value;
+    final key = widget.key;
+    _value = key != null && isNullable<T>()
+        ? cacheManager.get(key.toString()) as T? ?? widget.pod.value
+        : widget.pod.value;
   }
 
   void _cacheValue() {
+    final key = widget.key;
+    if (key == null) {
+      return;
+    }
     cacheManager.cache(
-      widget.key.toString(),
+      key.toString(),
       _value,
       cacheDuration: widget.cacheDuration,
     );
   }
 
-  //
-  //
-  //
-
   Timer? _debounceTimer;
 
-  /// Allows initial data to be set immediately for responsiveness even if
-  /// the debounce duration is long.
-  bool _skipInitialDebounce = true;
-
   // ignore: prefer_final_fields
-  late void Function()? _valueChanged =
-      widget.debounceDuration != null
-          ? () {
-            if (_skipInitialDebounce) {
-              _skipInitialDebounce = false;
-              __valueChanged();
-              return;
-            } else {
-              _debounceTimer?.cancel();
-              _debounceTimer = Timer(widget.debounceDuration!, () {
-                __valueChanged();
-              });
-            }
-          }
-          : __valueChanged;
+  late void Function() _valueChanged = widget.debounceDuration != null
+      ? () {
+          _debounceTimer?.cancel();
+          _debounceTimer = Timer(widget.debounceDuration!, () {
+            __valueChanged();
+          });
+        }
+      : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {
       setState(() {
         _setValue();
         _cacheValue();
+        _refresh();
       });
     }
   }
 
-  //
-  //
-  //
-
-  @override
-  Widget build(BuildContext context) {
+  void _refresh() {
     final snapshot = PodBuilderSnapshot(
       pod: widget.pod,
       value: _value,
       child: _staticChild,
     );
-    final result = widget.builder(context, snapshot);
-    return result;
+    _temp = Builder(
+      builder: (context) {
+        return widget.builder(context, snapshot);
+      },
+    );
   }
 
-  //
-  //
-  //
+  late Widget _temp;
+
+  @override
+  Widget build(BuildContext context) {
+    return _temp;
+  }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    widget.pod.removeListener(_valueChanged!);
-    _valueChanged = null;
+    widget.pod.removeListener(_valueChanged);
     widget.onDispose?.call(widget.pod);
     super.dispose();
   }

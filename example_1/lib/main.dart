@@ -16,8 +16,39 @@ import 'package:flutter/material.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: PageView(
+          onPageChanged: (value) {
+            setState(() {});
+          },
+          children: [
+            PodBuilderTest(key: UniqueKey()),
+            // PodListCallbackBuilderTest(
+            //   key: UniqueKey(),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 final _pCounter1 = ProtectedPod<int>(1);
-late final aa = [_pCounter1];
 
 class PodBuilderTest extends StatefulWidget {
   const PodBuilderTest({super.key});
@@ -38,8 +69,8 @@ class _PodBuilderTestState extends State<PodBuilderTest> {
       child: Column(
         children: [
           const Text('Counter Test'),
-          PodListBuilder(
-            podList: aa,
+          PodBuilder(
+            pod: _pCounter1,
             debounceDuration: const Duration(milliseconds: 500),
             builder: (context, snapshot) {
               return Text('Count (delay): ${_pCounter1.value}');
