@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.16.3]
+
+- Released @ 2/2025 (UTC)
+- fix: Fix debouncing logic in PodBuilder and PodListBuilder
+
 ## [0.16.2]
 
 - Released @ 2/2025 (UTC)
