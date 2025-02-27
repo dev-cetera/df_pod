@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final _pCounter1 = ProtectedPod<int>(1);
-late final aa = [_pCounter1];
+final aa = [_pCounter1];
 
 class PodBuilderTest extends StatefulWidget {
   const PodBuilderTest({super.key});
