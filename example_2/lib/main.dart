@@ -36,9 +36,7 @@ class _MyAppState extends State<MyApp> {
           onPageChanged: (value) {
             setState(() {});
           },
-          children: [
-            PodBuilderTest(key: UniqueKey()),
-          ],
+          children: [PodBuilderTest(key: UniqueKey())],
         ),
       ),
     );
