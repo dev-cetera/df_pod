@@ -67,7 +67,7 @@ final class PodListBuilder<T> extends StatelessWidget {
   }) : debounceDuration = const Duration(milliseconds: 100);
 
   /// Constructs a [PodListBuilder] with a long debounce duration of 500ms.
-  const PodListBuilder.long({
+  const PodListBuilder.moderate({
     super.key,
     required this.podList,
     required this.builder,
@@ -75,6 +75,26 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.cacheDuration = Duration.zero,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 500);
+
+  /// Constructs a [PodListBuilder] with a long debounce duration of 1s.
+  const PodListBuilder.long({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.cacheDuration = Duration.zero,
+    this.child,
+  }) : debounceDuration = const Duration(seconds: 1);
+
+  /// Constructs a [PodListBuilder] with a long debounce duration of 3s.
+  const PodListBuilder.extraLong({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.cacheDuration = Duration.zero,
+    this.child,
+  }) : debounceDuration = const Duration(seconds: 3);
 
   //
   //
@@ -89,6 +109,7 @@ final class PodListBuilder<T> extends StatelessWidget {
         podList: temp,
         builder: builder,
         onDispose: onDispose,
+        cacheDuration: cacheDuration,
         debounceDuration: debounceDuration,
         child: child,
       );
@@ -111,6 +132,7 @@ final class PodListBuilder<T> extends StatelessWidget {
               podList: data,
               builder: builder,
               onDispose: onDispose,
+              cacheDuration: cacheDuration,
               debounceDuration: debounceDuration,
               child: child,
             );
@@ -153,7 +175,7 @@ final class SyncPodListBuilder<T> extends StatefulWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
-    this.cacheDuration,
+    required this.cacheDuration,
     this.child,
   });
 
@@ -246,15 +268,14 @@ final class SyncPodListBuilderState<T> extends State<SyncPodListBuilder<T>> {
   Timer? _debounceTimer;
 
   // ignore: prefer_final_fields
-  late void Function() _valueChanged =
-      widget.debounceDuration != null
-          ? () {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(widget.debounceDuration!, () {
-              __valueChanged();
-            });
-          }
-          : __valueChanged;
+  late void Function() _valueChanged = widget.debounceDuration != null
+      ? () {
+          _debounceTimer?.cancel();
+          _debounceTimer = Timer(widget.debounceDuration!, () {
+            __valueChanged();
+          });
+        }
+      : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {

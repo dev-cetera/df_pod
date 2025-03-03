@@ -50,8 +50,7 @@ class HomePage extends StatelessWidget {
                 interpreter.pNotificationCount,
               ],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },
@@ -96,8 +95,7 @@ class HomePage extends StatelessWidget {
 // Interpreter to a builder function, simplifying the connection between your
 // page and its associated data.
 class HomePageInterpretedBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, HomePageInterpreter interpreter)
-  builder;
+  final Widget Function(BuildContext context, HomePageInterpreter interpreter) builder;
 
   const HomePageInterpretedBuilder({super.key, required this.builder});
 

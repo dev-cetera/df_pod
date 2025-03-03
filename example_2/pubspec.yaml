@@ -1,12 +1,11 @@
-name: example_1
+name: example_2
 publish_to: 'none'
 version: 1.0.0+1
 environment:
   sdk: ^3.7.0
 dependencies:
   flutter:
-    sdk: flutter
-  get_it: ^8.0.0
+    sdk: flutters
   df_pod:
     path: ..
 dev_dependencies:

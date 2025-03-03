@@ -12,7 +12,7 @@
 
 name: df_pod
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.16.4
+version: 0.16.5
 repository: https://github.com/dev-cetera/df_pod
 funding:
   - https://www.buymeacoffee.com/dev_cetera
@@ -35,7 +35,7 @@ dependencies:
     sdk: flutter
 
   df_type: ^0.10.3
-  df_safer_dart: ^0.9.1
+  df_safer_dart: ^0.10.0
   df_cleanup: ^0.4.1
   df_debouncer: ^0.4.4
 
