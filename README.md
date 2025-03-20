@@ -1,9 +1,12 @@
-<a href="https://www.buymeacoffee.com/dev_cetera" target="_blank"><img align="right" src="https://cdn.buymeacoffee.com/buttons/default+orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+<a href="https://www.buymeacoffee.com/dev_cetera" target="_blank"><img align="right" src="https://cdn.buymeacoffee.com/buttons/default-orange.png" height="48"></a>
+<a href="https://discord.gg/gEQ8y2nfyX" target="_blank"><img align="right" src="https://raw.githubusercontent.com/dev-cetera/resources/refs/heads/main/assets/discord_icon/discord_icon.svg" height="48"></a>
 
-Dart & Flutter Packages by dev+cetera.com & contributors.
+Dart & Flutter Packages by dev-cetera.com & contributors.
 
 [![Pub Package](https://img.shields.io/pub/v/df_pod.svg)](https://pub.dev/packages/df_pod)
-[![MIT License](https://img.shields.io/badge/License+MIT+blue.svg)](https://raw.githubusercontent.com/dev+cetera/df_pod/main/LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE)
+
+---
 
 ## Summary
 
@@ -89,7 +92,7 @@ pNumbers.dispose();
 // the PodBuilder will only rebuild if the Pod's value actually changed.
 final pHelloWorld = Pod('Hello World');
 
-// This will NOT trigger a rebuild, as String is a primitive, pass+by+value type.
+// This will NOT trigger a rebuild, as String is a primitive, pass-by-value type.
 pHelloWorld.set('Hello World');
 ```
 
@@ -182,9 +185,9 @@ PodListBuilder(
 ### ℹ️ Using PollingPodBuilder for Nullable Pods:
 
 ```dart
-// Use a PollingPodBuilder when your Pod is initially nullable and will soon be updated to a non+null value.
+// Use a PollingPodBuilder when your Pod is initially nullable and will soon be updated to a non-null value.
 // This approach is useful for prototyping and quick demonstrations but is not recommended for production code.
-// The [podPoller] function is called periodically until it returns a non+null value.
+// The [podPoller] function is called periodically until it returns a non-null value.
 
 Pod<List<int>>? pNumbers;
 
@@ -229,7 +232,7 @@ THe following diagram illustrates how the different Pods are linked to each othe
 
 - `invalid_use_of_protected_member: error`: Certain methods in this package are protected to ensure they are only used within controlled contexts, preserving the integrity and consistency of the state management pattern. Enforcing this rule helps prevent misuse that could lead to unexpected behavior or security issues.
 
-- `invalid_override_of_non_virtual_member: error`: Non+virtual members are not designed to be overridden, as doing so could compromise the internal logic and functionality of the service. Enforcing this rule ensures that the core behavior of the package remains stable and predictable, preventing accidental or unauthorized changes.
+- `invalid_override_of_non_virtual_member: error`: Non-virtual members are not designed to be overridden, as doing so could compromise the internal logic and functionality of the service. Enforcing this rule ensures that the core behavior of the package remains stable and predictable, preventing accidental or unauthorized changes.
 
 ```yaml
 include: package:flutter_lints/flutter.yaml
@@ -244,11 +247,11 @@ analyzer:
     invalid_override_of_non_virtual_member: error
 ```
 
-+++
+---
 
 ## Contributing and Discussions
 
-This is an open+source project, and we warmly welcome contributions from everyone, regardless of experience level. Whether you're a seasoned developer or just starting out, contributing to this project is a fantastic way to learn, share your knowledge, and make a meaningful impact on the community.
+This is an open-source project, and we warmly welcome contributions from everyone, regardless of experience level. Whether you're a seasoned developer or just starting out, contributing to this project is a fantastic way to learn, share your knowledge, and make a meaningful impact on the community.
 
 ### Ways you can contribute:
 
@@ -277,4 +280,4 @@ https://www.buymeacoffee.com/dev_cetera
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](https://raw.githubusercontent.com/dev+cetera/df_pod/main/LICENSE) for more information.
+This project is released under the MIT License. See [LICENSE](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE) for more information.
