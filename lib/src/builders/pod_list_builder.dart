@@ -10,11 +10,12 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async';
+import 'dart:async' show Timer;
 import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:flutter/widgets.dart';
 import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
-import '/src/_index.g.dart';
+
+import 'package:flutter/widgets.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -28,7 +29,7 @@ final class PodListBuilder<T> extends StatelessWidget {
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
-
+  final Iterable<T>? fallback;
   final Widget? child;
 
   //
@@ -43,6 +44,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.debounceDuration,
     this.cacheDuration = Duration.zero,
     this.child,
+    this.fallback,
   });
 
   /// Constructs a [PodListBuilder] with a zero debounce duration.
@@ -54,6 +56,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
+    this.fallback,
   }) : debounceDuration = Duration.zero;
 
   /// Constructs a [PodListBuilder] with a short debounce duration of 100ms.
@@ -64,6 +67,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
+    this.fallback,
   }) : debounceDuration = const Duration(milliseconds: 100);
 
   /// Constructs a [PodListBuilder] with a long debounce duration of 500ms.
@@ -74,6 +78,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
+    this.fallback,
   }) : debounceDuration = const Duration(milliseconds: 500);
 
   /// Constructs a [PodListBuilder] with a long debounce duration of 1s.
@@ -84,6 +89,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
+    this.fallback,
   }) : debounceDuration = const Duration(seconds: 1);
 
   /// Constructs a [PodListBuilder] with a long debounce duration of 3s.
@@ -94,6 +100,7 @@ final class PodListBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
+    this.fallback,
   }) : debounceDuration = const Duration(seconds: 3);
 
   //
@@ -268,15 +275,14 @@ final class SyncPodListBuilderState<T> extends State<SyncPodListBuilder<T>> {
   Timer? _debounceTimer;
 
   // ignore: prefer_final_fields
-  late void Function() _valueChanged =
-      widget.debounceDuration != null
-          ? () {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(widget.debounceDuration!, () {
-              __valueChanged();
-            });
-          }
-          : __valueChanged;
+  late void Function() _valueChanged = widget.debounceDuration != null
+      ? () {
+          _debounceTimer?.cancel();
+          _debounceTimer = Timer(widget.debounceDuration!, () {
+            __valueChanged();
+          });
+        }
+      : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {

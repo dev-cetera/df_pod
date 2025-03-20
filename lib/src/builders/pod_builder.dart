@@ -11,11 +11,12 @@
 //.title~
 
 import 'dart:async' show Timer;
-import 'package:df_type/df_type.dart';
+import 'package:df_type/df_type.dart' show isNullable;
 import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:flutter/widgets.dart';
 import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
-import '/src/_index.g.dart';
+
+import 'package:flutter/widgets.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -29,6 +30,7 @@ final class PodBuilder<T> extends StatelessWidget {
   final void Function(ValueListenable<T> pod)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
+  final T? fallback;
   final Widget? child;
 
   //
@@ -42,12 +44,9 @@ final class PodBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.debounceDuration,
     this.cacheDuration = Duration.zero,
+    this.fallback,
     this.child,
   });
-
-  //
-  //
-  //
 
   // Constructs a [PodBuilder] with a zero debounce duration.
   @visibleForTesting
@@ -57,6 +56,7 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
+    this.fallback,
     this.child,
   }) : debounceDuration = Duration.zero;
 
@@ -67,6 +67,7 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
+    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 100);
 
@@ -77,6 +78,7 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
+    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 500);
 
@@ -87,6 +89,7 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
+    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(seconds: 1);
 
@@ -97,6 +100,7 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
+    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(seconds: 3);
 
@@ -135,7 +139,11 @@ final class PodBuilder<T> extends StatelessWidget {
           } else {
             return builder(
               context,
-              PodBuilderSnapshot<T>(pod: null, value: null, child: child),
+              PodBuilderSnapshot<T>(
+                pod: null,
+                value: fallback,
+                child: child,
+              ),
             );
           }
         },
@@ -216,10 +224,9 @@ final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
 
   void _setValue() {
     final key = widget.key;
-    _value =
-        key != null && isNullable<T>()
-            ? cacheManager.get(key.toString()) as T? ?? widget.pod.value
-            : widget.pod.value;
+    _value = key != null && isNullable<T>()
+        ? cacheManager.get(key.toString()) as T? ?? widget.pod.value
+        : widget.pod.value;
   }
 
   void _cacheValue() {
@@ -237,15 +244,14 @@ final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
   Timer? _debounceTimer;
 
   // ignore: prefer_final_fields
-  late void Function() _valueChanged =
-      widget.debounceDuration != null
-          ? () {
-            _debounceTimer?.cancel();
-            _debounceTimer = Timer(widget.debounceDuration!, () {
-              __valueChanged();
-            });
-          }
-          : __valueChanged;
+  late void Function() _valueChanged = widget.debounceDuration != null
+      ? () {
+          _debounceTimer?.cancel();
+          _debounceTimer = Timer(widget.debounceDuration!, () {
+            __valueChanged();
+          });
+        }
+      : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {

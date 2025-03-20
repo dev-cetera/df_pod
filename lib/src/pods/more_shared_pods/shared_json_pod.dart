@@ -12,7 +12,7 @@
 
 import 'dart:convert';
 
-import '/src/_index.g.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -24,9 +24,7 @@ final class SharedJsonPodCreator {
   }) async {
     final instance = TSharedJsonPod(
       key,
-      fromValue:
-          (value) =>
-              value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      fromValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
       toValue: (rawValue) => jsonEncode(rawValue),
     );
     await instance.refresh();
@@ -39,9 +37,7 @@ final class SharedJsonPodCreator {
   }) async {
     final instance = TSharedProtectedJsonPod(
       key,
-      fromValue:
-          (value) =>
-              value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      fromValue: (value) => value != null ? jsonDecode(value) as Map<String, dynamic> : null,
       toValue: (rawValue) => jsonEncode(rawValue),
       initialValue: initialValue,
     );
@@ -53,5 +49,4 @@ final class SharedJsonPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedJsonPod = SharedPod<Map<String, dynamic>, String>;
-typedef TSharedProtectedJsonPod =
-    SharedProtectedPod<Map<String, dynamic>, String>;
+typedef TSharedProtectedJsonPod = SharedProtectedPod<Map<String, dynamic>, String>;

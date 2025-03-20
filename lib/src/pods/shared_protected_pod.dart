@@ -12,7 +12,7 @@
 
 import '/src/_mixins/protected_pod_mixin.dart';
 
-import '/src/_index.g.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -25,8 +25,7 @@ import '/src/_index.g.dart';
 ///
 /// Extends [SharedPod] and uses [ProtectedPodMixin] to encapsulate and manage
 /// the protection of these critical methods.
-base class SharedProtectedPod<A, B> extends SharedPod<A, B>
-    with ProtectedPodMixin {
+base class SharedProtectedPod<A, B> extends SharedPod<A, B> with ProtectedPodMixin {
   SharedProtectedPod(
     super.key, {
     required super.fromValue,

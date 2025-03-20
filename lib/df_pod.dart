@@ -17,4 +17,4 @@ export 'dart:async';
 
 export 'package:flutter/foundation.dart' show ValueListenable;
 
-export 'src/_index.g.dart';
+export 'src/_src.g.dart';

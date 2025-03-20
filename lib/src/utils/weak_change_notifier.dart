@@ -22,11 +22,11 @@ mixin class WeakChangeNotifier implements Listenable {
   //
 
   int _count = 0;
+  List<WeakReference<VoidCallback>?> _listeners = _emptyListeners;
   static final _emptyListeners = List<WeakReference<VoidCallback>?>.filled(
     0,
     null,
   );
-  List<WeakReference<VoidCallback>?> _listeners = _emptyListeners;
   int _notificationCallStackDepth = 0;
   int _reentrantlyRemovedListeners = 0;
 
@@ -237,14 +237,13 @@ mixin class WeakChangeNotifier implements Listenable {
             context: ErrorDescription(
               'while dispatching notifications for $runtimeType',
             ),
-            informationCollector:
-                () => <DiagnosticsNode>[
-                  DiagnosticsProperty<WeakChangeNotifier>(
-                    'The $runtimeType sending notification was',
-                    this,
-                    style: DiagnosticsTreeStyle.errorProperty,
-                  ),
-                ],
+            informationCollector: () => <DiagnosticsNode>[
+              DiagnosticsProperty<WeakChangeNotifier>(
+                'The $runtimeType sending notification was',
+                this,
+                style: DiagnosticsTreeStyle.errorProperty,
+              ),
+            ],
           ),
         );
       }

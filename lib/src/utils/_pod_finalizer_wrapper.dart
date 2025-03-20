@@ -12,7 +12,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '/src/_index.g.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -20,7 +20,7 @@ import '/src/_index.g.dart';
 final class PodFinalizerWrapper<T> {
   final WeakReference<PodNotifier<T>> _pod;
 
-  static final Finalizer<PodNotifier<dynamic>?> _finalizer = Finalizer(
+  static final _finalizer = Finalizer<PodNotifier<dynamic>?>(
     (pod) => pod?.dispose(),
   );
 

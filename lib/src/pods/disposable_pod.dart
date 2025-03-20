@@ -10,13 +10,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async' show FutureOr;
+import 'package:df_cleanup/df_cleanup.dart' show DisposeMixin, WillDisposeMixin;
 
 import 'package:flutter/foundation.dart';
-
-import '/src/_index.g.dart';
-
-import 'package:df_cleanup/df_cleanup.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -65,70 +62,3 @@ abstract class DisposablePod<T> extends WeakChangeNotifier
     }
   }
 }
-
-@Deprecated('Use DisposablePod<T> instead.')
-typedef PodDisposable<T> = DisposablePod<T>;
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-extension CastPodListenableX<T> on ValueListenable<T> {
-  /// Returns the Pod as a [ValueListenable].
-  ValueListenable<T> asValueListenable() {
-    return this;
-  }
-
-  @Deprecated('Use `asDisposablePod` instead.')
-  DisposablePod<T> asPodDisposable() {
-    return this as DisposablePod<T>;
-  }
-
-  /// Casts the [ValueListenable] to a [DisposablePod].
-  ///
-  /// Throws a [TypeError] if the cast cannot be performed.
-  DisposablePod<T> asDisposablePod() {
-    return this as DisposablePod<T>;
-  }
-
-  /// Casts the [ValueListenable] to a [RootPod].
-  ///
-  /// Throws a [TypeError] if the cast cannot be performed.
-  RootPod<T> asRootPod() {
-    return this as RootPod<T>;
-  }
-
-  /// Casts the [ValueListenable] to a [ChildPod].
-  ///
-  /// Throws a [TypeError] if the cast cannot be performed.
-  ChildPod<TParent, T> asChildPod<TParent>() {
-    return this as ChildPod<TParent, T>;
-  }
-
-  /// Casts the [ValueListenable] to a [SharedPod].
-  ///
-  /// Throws a [TypeError] if the cast cannot be performed.
-  SharedPod<T, TRawValue> asSharedPod<TRawValue>() {
-    return this as SharedPod<T, TRawValue>;
-  }
-
-  /// Casts the [ValueListenable] to a [GenericPod].
-  ///
-  /// Throws a [TypeError] if the cast cannot be performed.
-  GenericPod<T> asGenericPod() {
-    return this as GenericPod<T>;
-  }
-
-  /// Casts the [ValueListenable] to a [ProtectedPod].
-  ///
-  /// Throws a [TypeError] if the cast cannot be performed.
-  ProtectedPod<T> asProtectedPod() {
-    return this as ProtectedPod<T>;
-  }
-}
-
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-
-typedef TFutureListenable<T> = FutureOr<ValueListenable<T>>;
-typedef F<T> = TFutureListenable<T>;
-
-@Deprecated('Use ValueListenable<T> instead.')
-typedef PodListenable<T> = ValueListenable<T>;

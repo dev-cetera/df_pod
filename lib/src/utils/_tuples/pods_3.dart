@@ -13,7 +13,7 @@
 import 'package:tuple/tuple.dart';
 
 import '/src/_mixins/pod_values_where_mixin.dart';
-import '/src/_index.g.dart';
+import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 

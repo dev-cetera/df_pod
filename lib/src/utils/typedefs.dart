@@ -10,21 +10,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '/src/_mixins/protected_pod_mixin.dart' show ProtectedPodMixin;
-
-import 'core/core.dart';
+import 'dart:async' show FutureOr;
+import 'package:flutter/foundation.dart' show ValueListenable;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A [RootPod] that protects [addStrongRefListener] and [dispose], hiding these
-/// methods from external access to prevent misuse or unintended behavior.
-///
-/// This is useful when you want to restrict direct access to lifecycle
-/// management methods of the Pod, ensuring that these operations are only
-/// handled internally or through controlled mechanisms.
-///
-/// Extends [RootPod] and uses [ProtectedPodMixin] to encapsulate and manage
-/// the protection of these critical methods.
-base class ProtectedPod<T> extends RootPod<T> with ProtectedPodMixin<T> {
-  ProtectedPod(super.value);
-}
+typedef TFutureListenable<T> = FutureOr<ValueListenable<T>>;
+typedef F<T> = TFutureListenable<T>;

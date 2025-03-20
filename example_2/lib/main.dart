@@ -1,15 +1,3 @@
-//.title
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//
-// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
-// source code is governed by an MIT-style license described in the LICENSE
-// file located in this project's root directory.
-//
-// See: https://opensource.org/license/mit
-//
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//.title~
-
 import 'package:df_pod/df_pod.dart';
 
 import 'package:flutter/material.dart';
@@ -80,14 +68,12 @@ class _PodBuilderTestState extends State<PodBuilderTest> {
           OutlinedButton(
             onPressed: () {
               _pCounter1.update((e) => e + 1);
-              //setState(() {});
             },
             child: const Text('Increase with "update"'),
           ),
           OutlinedButton(
             onPressed: () {
               _pCounter1.set(_pCounter1.value + 1);
-              setState(() {});
             },
             child: const Text('Increase with "set"'),
           ),

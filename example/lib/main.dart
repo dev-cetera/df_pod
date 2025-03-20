@@ -1,15 +1,3 @@
-//.title
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//
-// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
-// source code is governed by an MIT-style license described in the LICENSE
-// file located in this project's root directory.
-//
-// See: https://opensource.org/license/mit
-//
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//.title~
-
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -45,13 +33,9 @@ class HomePage extends StatelessWidget {
             // within your Page widget, but if necessary, you can use a
             // PodListBuilder like this:
             PodListBuilder(
-              podList: [
-                interpreter.pConnectionCount,
-                interpreter.pNotificationCount,
-              ],
+              podList: [interpreter.pConnectionCount, interpreter.pNotificationCount],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot.value.toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },
@@ -62,9 +46,7 @@ class HomePage extends StatelessWidget {
             PodBuilder(
               pod: interpreter.pNotificationRatio,
               builder: (context, notificationRatioSnapshot) {
-                return Text(
-                  'Notification ratio: ${notificationRatioSnapshot.value}',
-                );
+                return Text('Notification ratio: ${notificationRatioSnapshot.value}');
               },
             ),
             // 6. The above examples show how to bring "Points of Data" (PODS)
@@ -96,8 +78,7 @@ class HomePage extends StatelessWidget {
 // Interpreter to a builder function, simplifying the connection between your
 // page and its associated data.
 class HomePageInterpretedBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, HomePageInterpreter interpreter)
-  builder;
+  final Widget Function(BuildContext context, HomePageInterpreter interpreter) builder;
 
   const HomePageInterpretedBuilder({super.key, required this.builder});
 
@@ -138,12 +119,8 @@ class HomePageInterpreter {
   // 10. Simplify Pods from Services so the relevant Page can use them
   // without needing to simplify them in the widget code.
   late final pUserId = authService.pUser.map((e) => e!.id);
-  late final pNotificationCount = notificationService.pNotifications.map(
-    (e) => e.length,
-  );
-  late final pConnectionCount = connectionService.pConnections.map(
-    (e) => e.length,
-  );
+  late final pNotificationCount = notificationService.pNotifications.map((e) => e.length);
+  late final pConnectionCount = connectionService.pConnections.map((e) => e.length);
   late final pNotificationRatio = pNotificationCount.reduce(
     pConnectionCount,
     (a, b) => a.value / b.value,
@@ -241,11 +218,7 @@ class NotificationService {
   void _startSteam() {
     _stopStream();
     _streamSubscription = Stream.periodic(const Duration(seconds: 5), (count) {
-      return [
-        'priority: I love Pods',
-        'GetIt is nice',
-        'I like Streams.',
-      ][count % 3];
+      return ['priority: I love Pods', 'GetIt is nice', 'I like Streams.'][count % 3];
     }).listen(_pushMessage);
   }
 
@@ -274,10 +247,7 @@ class NotificationService {
 // This can be called in main.dart.
 void onAppStart() {
   GetIt.I
-    ..registerLazySingleton<AuthService>(
-      () => AuthService(),
-      dispose: (e) => e.dispose(),
-    )
+    ..registerLazySingleton<AuthService>(() => AuthService(), dispose: (e) => e.dispose())
     ..registerLazySingleton<NotificationService>(
       () => NotificationService(),
       dispose: (e) => e.dispose(),
