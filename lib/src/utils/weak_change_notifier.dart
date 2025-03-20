@@ -237,13 +237,14 @@ mixin class WeakChangeNotifier implements Listenable {
             context: ErrorDescription(
               'while dispatching notifications for $runtimeType',
             ),
-            informationCollector: () => <DiagnosticsNode>[
-              DiagnosticsProperty<WeakChangeNotifier>(
-                'The $runtimeType sending notification was',
-                this,
-                style: DiagnosticsTreeStyle.errorProperty,
-              ),
-            ],
+            informationCollector:
+                () => <DiagnosticsNode>[
+                  DiagnosticsProperty<WeakChangeNotifier>(
+                    'The $runtimeType sending notification was',
+                    this,
+                    style: DiagnosticsTreeStyle.errorProperty,
+                  ),
+                ],
           ),
         );
       }

@@ -18,7 +18,8 @@ import '/src/_src.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A tuple of 7 [GenericPod] instances.
-final class Pods7<P1, P2, P3, P4, P5, P6, P7> extends Tuple7<P1?, P2?, P3?, P4?, P5?, P6?, P7?>
+final class Pods7<P1, P2, P3, P4, P5, P6, P7>
+    extends Tuple7<P1?, P2?, P3?, P4?, P5?, P6?, P7?>
     implements PodValuesWhereMixin<dynamic> {
   final GenericPod<P1>? p1;
   final GenericPod<P2>? p2;
@@ -29,7 +30,7 @@ final class Pods7<P1, P2, P3, P4, P5, P6, P7> extends Tuple7<P1?, P2?, P3?, P4?,
   final GenericPod<P7>? p7;
 
   Pods7(this.p1, this.p2, this.p3, this.p4, this.p5, this.p6, this.p7)
-      : super(null, null, null, null, null, null, null);
+    : super(null, null, null, null, null, null, null);
 
   @override
   P1? get item1 => p1?.value;

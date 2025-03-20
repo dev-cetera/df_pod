@@ -25,7 +25,8 @@ import '/src/_src.g.dart';
 ///
 /// Extends [SharedPod] and uses [ProtectedPodMixin] to encapsulate and manage
 /// the protection of these critical methods.
-base class SharedProtectedPod<A, B> extends SharedPod<A, B> with ProtectedPodMixin {
+base class SharedProtectedPod<A, B> extends SharedPod<A, B>
+    with ProtectedPodMixin {
   SharedProtectedPod(
     super.key, {
     required super.fromValue,

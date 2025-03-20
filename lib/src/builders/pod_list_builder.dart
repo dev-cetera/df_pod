@@ -275,14 +275,15 @@ final class SyncPodListBuilderState<T> extends State<SyncPodListBuilder<T>> {
   Timer? _debounceTimer;
 
   // ignore: prefer_final_fields
-  late void Function() _valueChanged = widget.debounceDuration != null
-      ? () {
-          _debounceTimer?.cancel();
-          _debounceTimer = Timer(widget.debounceDuration!, () {
-            __valueChanged();
-          });
-        }
-      : __valueChanged;
+  late void Function() _valueChanged =
+      widget.debounceDuration != null
+          ? () {
+            _debounceTimer?.cancel();
+            _debounceTimer = Timer(widget.debounceDuration!, () {
+              __valueChanged();
+            });
+          }
+          : __valueChanged;
 
   void __valueChanged() {
     if (mounted) {

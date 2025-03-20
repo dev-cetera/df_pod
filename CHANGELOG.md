@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.16.7]
+
+- Released @ 3/2025 (UTC)
+- chore: Tidy code and remove deprecated elements
+
 ## [0.16.6]
 
 - Released @ 3/2025 (UTC)
