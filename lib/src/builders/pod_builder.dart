@@ -82,7 +82,7 @@ final class PodBuilder<T> extends StatelessWidget {
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 500);
 
-  /// Constructs a [PodBuilder] with a long debounce duration of 51s.
+  /// Constructs a [PodBuilder] with a long debounce duration of 1s.
   const PodBuilder.long({
     super.key,
     required this.pod,
