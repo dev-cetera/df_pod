@@ -50,8 +50,9 @@ class HomePage extends StatelessWidget {
                 interpreter.pNotificationCount,
               ],
               builder: (context, podListSnapshot) {
-                final [connectionCount!, notificationCount!] =
-                    podListSnapshot.value.toList();
+                final [connectionCount!, notificationCount!] = podListSnapshot
+                    .value
+                    .toList();
                 final notificationRatio = notificationCount / connectionCount;
                 return Text('Notification ratio: $notificationRatio');
               },

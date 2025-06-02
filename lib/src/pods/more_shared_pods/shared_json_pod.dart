@@ -24,9 +24,8 @@ final class SharedJsonPodCreator {
   }) async {
     final instance = TSharedJsonPod(
       key,
-      fromValue:
-          (value) =>
-              value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      fromValue: (value) =>
+          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
       toValue: (rawValue) => jsonEncode(rawValue),
     );
     await instance.refresh();
@@ -39,9 +38,8 @@ final class SharedJsonPodCreator {
   }) async {
     final instance = TSharedProtectedJsonPod(
       key,
-      fromValue:
-          (value) =>
-              value != null ? jsonDecode(value) as Map<String, dynamic> : null,
+      fromValue: (value) =>
+          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
       toValue: (rawValue) => jsonEncode(rawValue),
       initialValue: initialValue,
     );

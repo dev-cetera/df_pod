@@ -42,7 +42,10 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
   /// Updates the current value of the Pod via [updateValue] and calls
   /// [notifyListeners] if the returned value is different from the current
   /// value.
-  void update(T Function(T oldValue) updateValue, {bool notifyImmediately = false}) {
+  void update(
+    T Function(T oldValue) updateValue, {
+    bool notifyImmediately = false,
+  }) {
     final newValue = updateValue(value);
     _set(newValue, notifyImmediately: notifyImmediately);
   }

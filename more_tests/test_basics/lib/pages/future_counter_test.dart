@@ -39,8 +39,8 @@ class FutureCounterTest extends StatelessWidget {
             },
           ),
           OutlinedButton(
-            onPressed:
-                () => _pFutureCounter.then((e) => e.update((e) => e + 1)),
+            onPressed: () =>
+                _pFutureCounter.then((e) => e.update((e) => e + 1)),
             child: const Text('Increase with "update"'),
           ),
           OutlinedButton(

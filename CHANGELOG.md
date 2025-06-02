@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.16.10]
+
+- Released @ 6/2025 (UTC)
+- feat: Add notifyImmediately to set and update
+
 ## [0.16.9]
 
 - Released @ 5/2025 (UTC)
