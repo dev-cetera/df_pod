@@ -52,10 +52,10 @@ class _PodBuilderTestState extends State<PodBuilderTest> {
       child: Column(
         children: [
           const Text('Counter Test'),
-          PodBuilder(
-            pod: _pCounter1,
-            debounceDuration: const Duration(milliseconds: 500),
-            builder: (context, snapshot) {
+          ValueListenableBuilder(
+            valueListenable: _pCounter1,
+            //debounceDuration: const Duration(milliseconds: 500),
+            builder: (context, _, child) {
               return Text('Count (delay): ${_pCounter1.value}');
             },
           ),
@@ -67,7 +67,7 @@ class _PodBuilderTestState extends State<PodBuilderTest> {
           ),
           OutlinedButton(
             onPressed: () {
-              _pCounter1.update((e) => e + 1);
+              _pCounter1.update((e) => e + 1, notifyImmediately: true);
             },
             child: const Text('Increase with "update"'),
           ),

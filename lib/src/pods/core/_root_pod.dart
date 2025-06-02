@@ -35,16 +35,16 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
 
   /// Sets the value of the Pod to [newValue] and calls [notifyListeners] if
   /// the value is different from the current value.
-  void set(T newValue) {
-    _set(newValue);
+  void set(T newValue, {bool notifyImmediately = false}) {
+    _set(newValue, notifyImmediately: notifyImmediately);
   }
 
   /// Updates the current value of the Pod via [updateValue] and calls
   /// [notifyListeners] if the returned value is different from the current
   /// value.
-  void update(T Function(T oldValue) updateValue) {
+  void update(T Function(T oldValue) updateValue, {bool notifyImmediately = false}) {
     final newValue = updateValue(value);
-    _set(newValue);
+    _set(newValue, notifyImmediately: notifyImmediately);
   }
 
   /// Triggers [notifyListeners] after a zero-duration delay.

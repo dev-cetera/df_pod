@@ -5,7 +5,7 @@ environment:
   sdk: ^3.7.0
 dependencies:
   flutter:
-    sdk: flutters
+    sdk: flutter
   df_pod:
     path: ..
 dev_dependencies:

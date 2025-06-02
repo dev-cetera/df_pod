@@ -69,18 +69,21 @@ mixin GenericPodMixin<T> on PodNotifier<T>, ValueListenable<T> {
   /// Set the current value to [newValue] if either [T] is not equatable as
   /// deemed by [isEquatable] of if [newValue] is different from the current
   /// value, then schedules [notifyListeners] for the next loop.
-  bool _set(T newValue) {
+  bool _set(T newValue, {bool notifyImmediately = false}) {
     if (!isEquatable<T>() || newValue != _value) {
       _value = newValue;
-
-      // Delay notifyListeners to the next loop to ensure that listeners
-      // added or removed during this loop, will be notified in the next loop.
-      // See description of [notifyListeners].
-      Future.delayed(Duration.zero, () {
-        if (!isDisposed) {
-          notifyListeners();
-        }
-      });
+      if (notifyImmediately) {
+        notifyListeners();
+      } else {
+        // Delay notifyListeners to the next loop to ensure that listeners
+        // added or removed during this loop, will be notified in the next loop.
+        // See description of [notifyListeners].
+        Future.delayed(Duration.zero, () {
+          if (!isDisposed) {
+            notifyListeners();
+          }
+        });
+      }
       return true;
     }
     return false;
