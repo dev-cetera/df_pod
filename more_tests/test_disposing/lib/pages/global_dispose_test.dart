@@ -53,7 +53,7 @@ class _GlobalDisposeTestState extends State<GlobalDisposeTest> {
         // ignore: invalid_use_of_protected_member
         _pGlobal.dispose();
       } catch (e) {
-        printLightPurple('[SUCCESS]: $e');
+        Log.printPurple('[SUCCESS]: $e');
       }
     }();
     super.dispose();

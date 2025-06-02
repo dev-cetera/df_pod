@@ -55,9 +55,9 @@ class _SuccessiveDisposesTestState extends State<SuccessiveDisposesTest> {
     _pTest.dispose();
     // Check if the Pod is already disposed.
     if (_pTest.isDisposed) {
-      printYellow('[SUCCESS] Pod is already disposed!');
+      Log.printYellow('[SUCCESS] Pod is already disposed!');
     } else {
-      printRed('[FAIL] Pod is NOT already disposed!');
+      Log.printRed('[FAIL] Pod is NOT already disposed!');
     }
     // Check to see if redundant dispose calls are ignored.
     _pTest.dispose();

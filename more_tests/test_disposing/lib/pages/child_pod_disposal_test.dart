@@ -65,13 +65,13 @@ class _ChildPodDisposalTestState extends State<ChildPodDisposalTest> {
   @override
   void dispose() {
     _pTest.dispose();
-    printLightBlue(
+    Log.printBlue(
       '[${_pChild1.isDisposed == true ? 'SUCCESS' : 'FAIL'}]: _pTest/_pChild1 is disposed.',
     );
-    printLightBlue(
+    Log.printBlue(
       '[${_pChild2.isDisposed == true ? 'SUCCESS' : 'FAIL'}]: _pTest/_pChild1/_pChild2 is disposed.',
     );
-    printLightBlue(
+    Log.printBlue(
       '[${_pChild2.isDisposed == true ? 'SUCCESS' : 'FAIL'}]: _pTest/_pChild1/_pChild2/_pChild3 is disposed.',
     );
     super.dispose();

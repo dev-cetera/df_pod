@@ -57,7 +57,7 @@ class _DisposeTestState extends State<DisposeTest> {
       try {
         _pTest.set('');
       } catch (e) {
-        printLightPurple('[SUCCESS]: $e');
+        Log.printPurple('[SUCCESS]: $e');
       }
     }();
     super.dispose();
