@@ -45,9 +45,9 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     }
   }
 
-  final _children = <_ChildPodBase<Object, Object>>{};
+  final _children = <ChildPod<Object, Object>>{};
 
-  void _addChild(_ChildPodBase<Object, Object> child) {
+  void _addChild(ChildPod<Object, Object> child) {
     if (!_children.contains(child)) {
       // ignore: invalid_use_of_visible_for_testing_member
       addStrongRefListener(strongRefListener: child._refresh);
@@ -55,7 +55,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     }
   }
 
-  void _removeChild(_ChildPodBase<Object, Object> child) {
+  void _removeChild(ChildPod<Object, Object> child) {
     final didRemove = _children.remove(child);
     if (didRemove) {
       removeListener(child._refresh);
@@ -96,7 +96,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
 
   /// Maps `this` [GenericPod] to a new [ChildPod] using the specified [reducer].
   ChildPod<T, B> map<B extends Object>(B Function(T value) reducer) {
-    return ChildPod<T, B>._(
+    return ChildPod<T, B>(
       responder: () => [this],
       reducer: (_) => reducer(value),
     );

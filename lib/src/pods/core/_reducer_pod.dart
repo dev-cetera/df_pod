@@ -36,7 +36,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T
 
   /// Reduces the values of the current Pods returned by [responder] to a
   /// single value of type [T], to update this Pod's [value].
-  final T Function(List<Option> values) reducer;
+  final Option<T> Function(List<Option> values) reducer;
 
   //
   //
@@ -45,7 +45,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T
   factory ReducerPod.single(Option<ValueListenable<T>> Function() responder) {
     return ReducerPod(
       responder: () => [responder()],
-      reducer: (values) => values.first as T,
+      reducer: (values) => values.first.transf<T>().unwrap(),
     );
   }
 
@@ -68,14 +68,24 @@ base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T
   //
   //
 
-  late VoidCallback? _refresh = () => _set(_getValue());
+  late VoidCallback? _refresh = () {
+    final option = _getValue();
+    if (option.isSome()) {
+      _set(option.unwrap());
+    }
+  };
 
   //
   //
   //
 
   final _listenables = <ValueListenable<Object>>[];
-  T _getValue() {
+
+  //
+  //
+  //
+
+  Option<T> _getValue() {
     for (final listenable in _listenables) {
       listenable.removeListener(_refresh!);
     }

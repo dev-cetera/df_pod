@@ -23,7 +23,7 @@ final class MultiplePodReducer {
     Iterable<GenericPod<T1>> Function() responder,
     T2 Function(Iterable<GenericPod<T1>> values) reducer,
   ) {
-    return ChildPod<T1, T2>._(
+    return ChildPod<T1, T2>(
       responder: responder,
       reducer: (_) {
         final response = responder();

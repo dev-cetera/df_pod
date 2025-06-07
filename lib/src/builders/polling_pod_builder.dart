@@ -10,7 +10,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async' show Timer;
+import 'dart:async' show Timer, FutureOr;
 import 'package:df_safer_dart/df_safer_dart.dart';
 import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
 import 'package:flutter/foundation.dart' show ValueListenable;
@@ -20,7 +20,22 @@ import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PollingPodBuilder<T extends Object> extends StatefulWidget {
+class PollingPodBuilder<T extends Object> extends ResolvablePollingPodBuilder<T> {
+  PollingPodBuilder({
+    super.key,
+    required Option<FutureOr<ValueListenable<T>>> Function() podPoller,
+    required super.builder,
+    super.onDispose,
+    super.debounceDuration,
+    super.cacheDuration,
+    super.interval,
+    super.child,
+  }) : super(podPoller: () => podPoller().map((e) => Resolvable(() => e)));
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class ResolvablePollingPodBuilder<T extends Object> extends StatefulWidget {
   //
   //
   //
@@ -40,7 +55,7 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   //
   //
 
-  const PollingPodBuilder({
+  const ResolvablePollingPodBuilder({
     super.key,
     required this.podPoller,
     required this.builder,
@@ -51,10 +66,10 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
     this.child,
   });
 
-  /// Constructs a [PollingPodBuilder] with zero interval and zero debounce
+  /// Constructs a [ResolvablePollingPodBuilder] with zero interval and zero debounce
   /// duration
   @visibleForTesting
-  const PollingPodBuilder.immediate({
+  const ResolvablePollingPodBuilder.immediate({
     super.key,
     required this.podPoller,
     required this.builder,
@@ -64,9 +79,9 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   })  : interval = Duration.zero,
         debounceDuration = Duration.zero;
 
-  /// Constructs a [PollingPodBuilder] with a short polling interval of 100ms
+  /// Constructs a [ResolvablePollingPodBuilder] with a short polling interval of 100ms
   /// and debounce duration of 100ms.
-  const PollingPodBuilder.short({
+  const ResolvablePollingPodBuilder.short({
     super.key,
     required this.podPoller,
     required this.builder,
@@ -76,9 +91,9 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   })  : interval = const Duration(milliseconds: 100),
         debounceDuration = const Duration(milliseconds: 100);
 
-  /// Constructs a [PollingPodBuilder] with a long polling interval of 500ms
+  /// Constructs a [ResolvablePollingPodBuilder] with a long polling interval of 500ms
   /// and debounce duration of 500ms.
-  const PollingPodBuilder.moderate({
+  const ResolvablePollingPodBuilder.moderate({
     super.key,
     required this.podPoller,
     required this.builder,
@@ -88,9 +103,9 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   })  : interval = const Duration(milliseconds: 500),
         debounceDuration = const Duration(milliseconds: 500);
 
-  /// Constructs a [PollingPodBuilder] with a long polling interval of 1s and
+  /// Constructs a [ResolvablePollingPodBuilder] with a long polling interval of 1s and
   /// debounce duration of 1s.
-  const PollingPodBuilder.long({
+  const ResolvablePollingPodBuilder.long({
     super.key,
     required this.podPoller,
     required this.builder,
@@ -100,9 +115,9 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   })  : interval = const Duration(seconds: 1),
         debounceDuration = const Duration(seconds: 1);
 
-  /// Constructs a [PollingPodBuilder] with a long polling interval of 3s
+  /// Constructs a [ResolvablePollingPodBuilder] with a long polling interval of 3s
   /// and debounce duration of 3s.
-  const PollingPodBuilder.extraLong({
+  const ResolvablePollingPodBuilder.extraLong({
     super.key,
     required this.podPoller,
     required this.builder,
@@ -117,12 +132,13 @@ final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   //
 
   @override
-  State<PollingPodBuilder<T>> createState() => _PollingPodBuilderState<T>();
+  State<ResolvablePollingPodBuilder<T>> createState() => _ResolvablePollingPodBuilderState<T>();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class _PollingPodBuilderState<T extends Object> extends State<PollingPodBuilder<T>> {
+final class _ResolvablePollingPodBuilderState<T extends Object>
+    extends State<ResolvablePollingPodBuilder<T>> {
   //
   //
   //
@@ -138,7 +154,7 @@ final class _PollingPodBuilderState<T extends Object> extends State<PollingPodBu
   }
 
   @override
-  void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
+  void didUpdateWidget(ResolvablePollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
       _maybeStartPolling();
@@ -174,7 +190,7 @@ final class _PollingPodBuilderState<T extends Object> extends State<PollingPodBu
   @override
   Widget build(BuildContext context) {
     if (_currentPod.isSome()) {
-      return PodBuilder<T>(
+      return ResolvablePodBuilder<T>(
         key: widget.key,
         pod: _currentPod.unwrap(),
         builder: widget.builder,
@@ -189,7 +205,7 @@ final class _PollingPodBuilderState<T extends Object> extends State<PollingPodBu
         PodBuilderOptionSnapshot<T>(
           pod: const None(),
           value: Option.fromNullable(
-            PollingPodBuilder.cacheManager.get(widget.key?.toString()) as Result<T>?,
+            ResolvablePollingPodBuilder.cacheManager.get(widget.key?.toString()) as Result<T>?,
           ),
           child: _staticChild,
         ),

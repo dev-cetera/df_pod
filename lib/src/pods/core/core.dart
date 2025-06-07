@@ -21,7 +21,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_src.g.dart';
 
-part '_child_pod_base.dart';
 part '_child_pod.dart';
 part '_generic_pod_mixin.dart';
 part '_pod_notifier.dart';

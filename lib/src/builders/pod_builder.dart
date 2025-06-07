@@ -10,7 +10,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async' show Timer;
+import 'dart:async' show Timer, FutureOr;
 import 'package:df_log/df_log.dart' show Log;
 import 'package:df_safer_dart/df_safer_dart.dart';
 import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
@@ -21,7 +21,21 @@ import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodBuilder<T extends Object> extends StatelessWidget {
+class PodBuilder<T extends Object> extends ResolvablePodBuilder<T> {
+  PodBuilder({
+    super.key,
+    required FutureOr<ValueListenable<T>> pod,
+    required super.builder,
+    super.onDispose,
+    super.debounceDuration,
+    super.cacheDuration,
+    super.child,
+  }) : super(pod: Resolvable(() => pod));
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class ResolvablePodBuilder<T extends Object> extends StatelessWidget {
   //
   //
   //
@@ -40,7 +54,7 @@ final class PodBuilder<T extends Object> extends StatelessWidget {
   //
   //
 
-  const PodBuilder({
+  const ResolvablePodBuilder({
     super.key,
     required this.pod,
     required this.builder,
@@ -49,57 +63,6 @@ final class PodBuilder<T extends Object> extends StatelessWidget {
     this.cacheDuration = Duration.zero,
     this.child,
   });
-
-  // Constructs a [PodBuilder] with a zero debounce duration.
-  @visibleForTesting
-  const PodBuilder.immediate({
-    super.key,
-    required this.pod,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-  }) : debounceDuration = Duration.zero;
-
-  /// Constructs a [PodBuilder] with a short debounce duration of 100ms.
-  const PodBuilder.short({
-    super.key,
-    required this.pod,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-  }) : debounceDuration = const Duration(milliseconds: 100);
-
-  /// Constructs a [PodBuilder] with a long debounce duration of 500ms.
-  const PodBuilder.moderate({
-    super.key,
-    required this.pod,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-  }) : debounceDuration = const Duration(milliseconds: 500);
-
-  /// Constructs a [PodBuilder] with a long debounce duration of 1s.
-  const PodBuilder.long({
-    super.key,
-    required this.pod,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-  }) : debounceDuration = const Duration(seconds: 1);
-
-  /// Constructs a [PodBuilder] with a long debounce duration of 3s.
-  const PodBuilder.extraLong({
-    super.key,
-    required this.pod,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-  }) : debounceDuration = const Duration(seconds: 3);
 
   //
   //
@@ -226,18 +189,16 @@ final class SyncPodBuilderState<T extends Object> extends State<SyncPodBuilder<T
   @override
   void didUpdateWidget(SyncPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.pod != widget.pod) {
-      oldWidget.pod.ifOk((e) => e.unwrap().removeListener(_valueChanged));
-      _setValue();
-      _cacheValue();
-      widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
-    }
+    oldWidget.pod.ifOk((e) => e.unwrap().removeListener(_valueChanged));
+    _setValue();
+    _cacheValue();
+    widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
   }
 
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue = PodBuilder.cacheManager.get(key.toString()) as Result<T>?;
+      final cachedValue = ResolvablePodBuilder.cacheManager.get(key.toString()) as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -252,7 +213,7 @@ final class SyncPodBuilderState<T extends Object> extends State<SyncPodBuilder<T
     if (key == null) {
       return;
     }
-    PodBuilder.cacheManager.cache(
+    ResolvablePodBuilder.cacheManager.cache(
       key.toString(),
       _value,
       cacheDuration: widget.cacheDuration,

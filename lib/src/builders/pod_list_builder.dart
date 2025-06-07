@@ -10,7 +10,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async' show Timer;
+import 'dart:async' show Timer, FutureOr;
 import 'package:df_log/df_log.dart' show Log;
 import 'package:df_safer_dart/df_safer_dart.dart';
 import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
@@ -21,7 +21,21 @@ import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListBuilder<T extends Object> extends StatelessWidget {
+class PodListBuilder<T extends Object> extends ResolvablePodListBuilder<T> {
+  PodListBuilder({
+    super.key,
+    required Iterable<FutureOr<ValueListenable<T>>> podList,
+    required super.builder,
+    super.onDispose,
+    super.debounceDuration,
+    super.cacheDuration,
+    super.child,
+  }) : super(podList: podList.map((e) => Resolvable(() => e)));
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class ResolvablePodListBuilder<T extends Object> extends StatelessWidget {
   //
   //
   //
@@ -41,7 +55,7 @@ final class PodListBuilder<T extends Object> extends StatelessWidget {
   //
   //
 
-  const PodListBuilder({
+  const ResolvablePodListBuilder({
     super.key,
     required this.podList,
     required this.builder,
@@ -51,62 +65,6 @@ final class PodListBuilder<T extends Object> extends StatelessWidget {
     this.child,
     this.fallback,
   });
-
-  /// Constructs a [PodListBuilder] with a zero debounce duration.
-  @visibleForTesting
-  const PodListBuilder.immediate({
-    super.key,
-    required this.podList,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-    this.fallback,
-  }) : debounceDuration = Duration.zero;
-
-  /// Constructs a [PodListBuilder] with a short debounce duration of 100ms.
-  const PodListBuilder.short({
-    super.key,
-    required this.podList,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-    this.fallback,
-  }) : debounceDuration = const Duration(milliseconds: 100);
-
-  /// Constructs a [PodListBuilder] with a long debounce duration of 500ms.
-  const PodListBuilder.moderate({
-    super.key,
-    required this.podList,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-    this.fallback,
-  }) : debounceDuration = const Duration(milliseconds: 500);
-
-  /// Constructs a [PodListBuilder] with a long debounce duration of 1s.
-  const PodListBuilder.long({
-    super.key,
-    required this.podList,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-    this.fallback,
-  }) : debounceDuration = const Duration(seconds: 1);
-
-  /// Constructs a [PodListBuilder] with a long debounce duration of 3s.
-  const PodListBuilder.extraLong({
-    super.key,
-    required this.podList,
-    required this.builder,
-    this.onDispose,
-    this.cacheDuration = Duration.zero,
-    this.child,
-    this.fallback,
-  }) : debounceDuration = const Duration(seconds: 3);
 
   //
   //
@@ -241,31 +199,17 @@ final class SyncPodListBuilderState<T extends Object> extends State<SyncPodListB
   @override
   void didUpdateWidget(SyncPodListBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_arePodListsEqual(widget.podList, oldWidget.podList)) {
-      _removeListenerFromPods(oldWidget.podList);
-      _setValue();
-      _cacheValue();
-      _addListenerToPods(widget.podList);
-    }
-  }
-
-  bool _arePodListsEqual(
-    Iterable<Result<ValueListenable<T>>> a,
-    Iterable<Result<ValueListenable<T>>> b,
-  ) {
-    if (identical(a, b)) return true;
-    final aIter = a.iterator;
-    final bIter = b.iterator;
-    while (aIter.moveNext()) {
-      if (!bIter.moveNext() || aIter.current != bIter.current) return false;
-    }
-    return !bIter.moveNext();
+    _removeListenerFromPods(oldWidget.podList);
+    _setValue();
+    _cacheValue();
+    _addListenerToPods(widget.podList);
   }
 
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue = PodListBuilder.cacheManager.get(key.toString()) as Iterable<Result<T>>?;
+      final cachedValue =
+          ResolvablePodListBuilder.cacheManager.get(key.toString()) as Iterable<Result<T>>?;
       if (cachedValue != null) {
         _valueList = cachedValue;
         return;
@@ -279,7 +223,7 @@ final class SyncPodListBuilderState<T extends Object> extends State<SyncPodListB
     if (key == null) {
       return;
     }
-    PodListBuilder.cacheManager.cache(
+    ResolvablePodListBuilder.cacheManager.cache(
       key.toString(),
       widget.podList.map((e) => e.map((e) => e.value)),
       cacheDuration: widget.cacheDuration,

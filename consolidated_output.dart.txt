@@ -2133,7 +2133,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T
 
   /// Reduces the values of the current Pods returned by [responder] to a
   /// single value of type [T], to update this Pod's [value].
-  final T Function(List<Object> values) reducer;
+  final T Function(List<Option> values) reducer;
 
   //
   //
@@ -3034,7 +3034,7 @@ abstract base class _ChildPodBase<TParent extends Object, TChild extends Object>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TValuesReducerFn<TChild, TParentList> = TChild Function(List<TParentList?> parentValues);
+typedef TValuesReducerFn<TChild, TParentList> = TChild Function(List<TParentList> parentValues);
 
 typedef TPodsResponderFn<T extends Object> = Iterable<GenericPod<T>> Function();
 

@@ -31,7 +31,7 @@ final class PodReducer7 {
     TResponderFn7<P1, P2, P3, P4, P5, P6, P7> responder,
     TReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> reducer,
   ) {
-    return ChildPod<Object, C>._(
+    return ChildPod<Object, C>(
       responder: () => _toList(responder),
       reducer: (_) => _reduce(responder, reducer),
     );

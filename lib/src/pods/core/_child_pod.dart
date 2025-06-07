@@ -14,36 +14,99 @@ part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A Pod that derives its value from parent Pods using a specified reducer
-/// function, updating when any of its parent Pods change.
-final class ChildPod<TParent extends Object, TChild extends Object>
-    extends _ChildPodBase<TParent, TChild> with ProtectedPodMixin {
+final class ChildPod<TParent extends Object, TChild extends Object> extends PodNotifier<TChild>
+    with GenericPod<TChild>, ProtectedPodMixin<TChild> {
   //
   //
   //
 
-  factory ChildPod._({
+  final TPodsResponderFn<TParent> _responder;
+  final TValuesReducerFn<TChild, TParent> _reducer;
+  late Iterable<GenericPod<TParent>> _parents;
+
+  @override
+  // ignore: overridden_fields
+  late TChild value;
+
+  //
+  //
+  //
+
+  ChildPod({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
-  }) {
-    final parents = responder();
-    final initialValue = reducer(parents.map((p) => p.value).toList());
-    final temp = ChildPod._internal(
-      responder: responder,
-      reducer: reducer,
-      initialValue: initialValue,
-    );
-    temp._initializeParents(parents);
-    return temp;
+  })  : _reducer = reducer,
+        _responder = responder {
+    _parents = responder();
+    value = reducer(parents.map((p) => p.value).toList());
+    _initializeParents(parents);
   }
 
   //
   //
   //
 
-  ChildPod._internal({
-    required super.responder,
-    required super.reducer,
-    required super.initialValue,
-  }) : super();
+  void _initializeParents(Iterable<GenericPod<TParent>> parents) {
+    for (var parent in parents) {
+      parent._addChild(this);
+    }
+  }
+
+  //
+  //
+  //
+
+  @visibleForTesting
+  Iterable<GenericPod<TParent>> get parents => _parents;
+
+  //
+  //
+  //
+
+  bool _isDirty = false;
+
+  late final VoidCallback _refresh = () {
+    // Already scheduled for a refresh.
+    if (_isDirty) return;
+    _isDirty = true;
+
+    // Get the new parents.
+    final newParents = _responder();
+
+    // Unsubscribe from any Pods that are no longer parents.
+    final oldParentsSet = _parents.nonNulls.toSet();
+    final newParentsSet = newParents.nonNulls.toSet();
+    for (final oldParent in oldParentsSet.difference(newParentsSet)) {
+      oldParent._removeChild(this);
+    }
+
+    // Subscribe to new parents.
+    _initializeParents(newParents);
+    _parents = newParents;
+
+    // Recalculate the value
+    final newValue = _reducer(newParents.map((p) => p.value).toList());
+    _set(newValue);
+
+    // Reset the flag.
+    _isDirty = false;
+  };
+
+  //
+  //
+  //
+
+  @override
+  void dispose() {
+    for (var parent in _parents) {
+      parent._removeChild(this);
+    }
+    super.dispose();
+  }
 }
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+typedef TValuesReducerFn<TChild, TParentList> = TChild Function(List<TParentList> parentValues);
+
+typedef TPodsResponderFn<T extends Object> = Iterable<GenericPod<T>> Function();
