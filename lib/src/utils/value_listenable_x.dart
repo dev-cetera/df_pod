@@ -16,7 +16,7 @@ import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-extension ValueListenableX<T> on ValueListenable<T> {
+extension ValueListenableX<T extends Object> on ValueListenable<T> {
   /// Returns the Pod as a [ValueListenable].
   ValueListenable<T> asValueListenable() {
     return this;
@@ -39,14 +39,14 @@ extension ValueListenableX<T> on ValueListenable<T> {
   /// Casts the [ValueListenable] to a [ChildPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
-  ChildPod<TParent, T> asChildPod<TParent>() {
+  ChildPod<TParent, T> asChildPod<TParent extends Object>() {
     return this as ChildPod<TParent, T>;
   }
 
   /// Casts the [ValueListenable] to a [SharedPod].
   ///
   /// Throws a [TypeError] if the cast cannot be performed.
-  SharedPod<T, TRawValue> asSharedPod<TRawValue>() {
+  SharedPod<T, TRawValue> asSharedPod<TRawValue extends Object>() {
     return this as SharedPod<T, TRawValue>;
   }
 

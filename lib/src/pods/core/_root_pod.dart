@@ -15,17 +15,22 @@ part of 'core.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// An alias for [Pod].
-typedef Pod<T> = RootPod<T>;
+typedef Pod<T extends Object> = RootPod<T>;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A Pod that serves as the root of a Pod parent-child chain.
-base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
+base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
   //
   //
   //
 
-  RootPod(super.value);
+  @override
+  @protected
+  // ignore: overridden_fields
+  T value;
+
+  RootPod(this.value);
 
   /// Returns the current value of the Pod and calls [refresh]
   T get updateValue {
@@ -35,8 +40,14 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
 
   /// Sets the value of the Pod to [newValue] and calls [notifyListeners] if
   /// the value is different from the current value.
-  void set(T newValue, {bool notifyImmediately = false}) {
-    _set(newValue, notifyImmediately: notifyImmediately);
+  void set(
+    T newValue, {
+    bool notifyImmediately = true,
+  }) {
+    _set(
+      newValue,
+      notifyImmediately: notifyImmediately,
+    );
   }
 
   /// Updates the current value of the Pod via [updateValue] and calls
@@ -44,10 +55,13 @@ base class RootPod<T> extends PodNotifier<T> with GenericPod<T> {
   /// value.
   void update(
     T Function(T oldValue) updateValue, {
-    bool notifyImmediately = false,
+    bool notifyImmediately = true,
   }) {
     final newValue = updateValue(value);
-    _set(newValue, notifyImmediately: notifyImmediately);
+    _set(
+      newValue,
+      notifyImmediately: notifyImmediately,
+    );
   }
 
   /// Triggers [notifyListeners] after a zero-duration delay.

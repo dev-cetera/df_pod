@@ -11,25 +11,30 @@
 //.title~
 
 import 'dart:async' show Timer;
+import 'package:df_safer_dart/df_safer_dart.dart';
+import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
 import 'package:flutter/foundation.dart' show ValueListenable;
-
 import 'package:flutter/widgets.dart';
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PollingPodBuilder<T> extends StatefulWidget {
+final class PollingPodBuilder<T extends Object> extends StatefulWidget {
   //
   //
   //
 
-  final TFutureListenable<T>? Function() podPoller;
-  final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
+  final Option<Resolvable<ValueListenable<T>>> Function() podPoller;
+  final TOnOptionBuilder<T, PodBuilderOptionSnapshot<T>> builder;
   final void Function(ValueListenable<T>? pod)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
   final Duration? interval;
   final Widget? child;
+
+  @protected
+  static final cacheManager = CacheManager<Object>();
 
   //
   //
@@ -56,8 +61,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  }) : interval = Duration.zero,
-       debounceDuration = Duration.zero;
+  })  : interval = Duration.zero,
+        debounceDuration = Duration.zero;
 
   /// Constructs a [PollingPodBuilder] with a short polling interval of 100ms
   /// and debounce duration of 100ms.
@@ -68,8 +73,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  }) : interval = const Duration(milliseconds: 100),
-       debounceDuration = const Duration(milliseconds: 100);
+  })  : interval = const Duration(milliseconds: 100),
+        debounceDuration = const Duration(milliseconds: 100);
 
   /// Constructs a [PollingPodBuilder] with a long polling interval of 500ms
   /// and debounce duration of 500ms.
@@ -80,8 +85,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  }) : interval = const Duration(milliseconds: 500),
-       debounceDuration = const Duration(milliseconds: 500);
+  })  : interval = const Duration(milliseconds: 500),
+        debounceDuration = const Duration(milliseconds: 500);
 
   /// Constructs a [PollingPodBuilder] with a long polling interval of 1s and
   /// debounce duration of 1s.
@@ -92,8 +97,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  }) : interval = const Duration(seconds: 1),
-       debounceDuration = const Duration(seconds: 1);
+  })  : interval = const Duration(seconds: 1),
+        debounceDuration = const Duration(seconds: 1);
 
   /// Constructs a [PollingPodBuilder] with a long polling interval of 3s
   /// and debounce duration of 3s.
@@ -104,8 +109,8 @@ final class PollingPodBuilder<T> extends StatefulWidget {
     this.onDispose,
     this.cacheDuration = Duration.zero,
     this.child,
-  }) : interval = const Duration(seconds: 3),
-       debounceDuration = const Duration(seconds: 13);
+  })  : interval = const Duration(seconds: 3),
+        debounceDuration = const Duration(seconds: 13);
 
   //
   //
@@ -117,18 +122,14 @@ final class PollingPodBuilder<T> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
+final class _PollingPodBuilderState<T extends Object> extends State<PollingPodBuilder<T>> {
   //
   //
   //
 
   late final Widget? _staticChild = widget.child;
-  TFutureListenable<T>? _currentPod;
+  Option<Resolvable<ValueListenable<T>>> _currentPod = const None();
   Timer? _pollingTimer;
-
-  //
-  //
-  //
 
   @override
   void initState() {
@@ -136,32 +137,19 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
     _maybeStartPolling();
   }
 
-  //
-  //
-  //
-
   @override
   void didUpdateWidget(PollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller ||
-        oldWidget.interval != widget.interval) {
+    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }
   }
-
-  //
-  //
-  //
 
   void _maybeStartPolling() {
     if (!_check()) {
       _startPolling();
     }
   }
-
-  //
-  //
-  //
 
   void _startPolling() {
     _pollingTimer?.cancel();
@@ -172,13 +160,9 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
     });
   }
 
-  //
-  //
-  //
-
   bool _check() {
     _currentPod = widget.podPoller();
-    if (_currentPod != null) {
+    if (_currentPod.isSome()) {
       if (mounted) {
         setState(() {});
         return true;
@@ -187,16 +171,12 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
     return false;
   }
 
-  //
-  //
-  //
-
   @override
   Widget build(BuildContext context) {
-    if (_currentPod != null) {
+    if (_currentPod.isSome()) {
       return PodBuilder<T>(
         key: widget.key,
-        pod: _currentPod!,
+        pod: _currentPod.unwrap(),
         builder: widget.builder,
         onDispose: widget.onDispose,
         debounceDuration: widget.debounceDuration,
@@ -204,21 +184,19 @@ final class _PollingPodBuilderState<T> extends State<PollingPodBuilder<T>> {
         child: _staticChild,
       );
     } else {
-      final snapshot = PodBuilderSnapshot<T>(
-        pod: null,
-        value:
-            // ignore: invalid_use_of_protected_member
-            SyncPodBuilderState.cacheManager.get(widget.key?.toString()) as T?,
-        child: _staticChild,
+      final result = widget.builder(
+        context,
+        PodBuilderOptionSnapshot<T>(
+          pod: const None(),
+          value: Option.fromNullable(
+            PollingPodBuilder.cacheManager.get(widget.key?.toString()) as Result<T>?,
+          ),
+          child: _staticChild,
+        ),
       );
-      final result = widget.builder(context, snapshot);
       return result;
     }
   }
-
-  //
-  //
-  //
 
   @override
   void dispose() {

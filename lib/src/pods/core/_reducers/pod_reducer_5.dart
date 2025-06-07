@@ -19,18 +19,20 @@ final class PodReducer5 {
   PodReducer5._();
 
   /// Reduces 5 Pods into a [ChildPod].
-  static ChildPod<dynamic, C> reduce<C, P1, P2, P3, P4, P5>(
+  static ChildPod<Object, C> reduce<C extends Object, P1 extends Object, P2 extends Object,
+      P3 extends Object, P4 extends Object, P5 extends Object>(
     TResponderFn5<P1, P2, P3, P4, P5> responder,
-    TNullableReducerFn5<C, P1, P2, P3, P4, P5> reducer,
+    TReducerFn5<C, P1, P2, P3, P4, P5> reducer,
   ) {
-    return ChildPod<dynamic, C>._(
+    return ChildPod<Object, C>._(
       responder: () => _toList(responder),
       reducer: (_) => _reduce(responder, reducer),
     );
   }
 
   /// Converts the response from the responder function into a list of Pods.
-  static List<GenericPod<dynamic>?> _toList<P1, P2, P3, P4, P5>(
+  static List<GenericPod<Object>> _toList<P1 extends Object, P2 extends Object, P3 extends Object,
+      P4 extends Object, P5 extends Object>(
     TResponderFn5<P1, P2, P3, P4, P5> responder,
   ) {
     final response = responder.call();
@@ -38,9 +40,10 @@ final class PodReducer5 {
   }
 
   /// Reduces the values from 5 Pods using the provided reducer function.
-  static C _reduce<C, P1, P2, P3, P4, P5>(
+  static C _reduce<C extends Object, P1 extends Object, P2 extends Object, P3 extends Object,
+      P4 extends Object, P5 extends Object>(
     TResponderFn5<P1, P2, P3, P4, P5> responder,
-    TNullableReducerFn5<C, P1, P2, P3, P4, P5> reducer,
+    TReducerFn5<C, P1, P2, P3, P4, P5> reducer,
   ) {
     final response = responder();
     return reducer(
@@ -55,30 +58,23 @@ final class PodReducer5 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn5<P1, P2, P3, P4, P5> =
-    (
-      GenericPod<P1>? p1,
-      GenericPod<P2>? p2,
-      GenericPod<P3>? p3,
-      GenericPod<P4>? p4,
-      GenericPod<P5>? p5,
-    )
-    Function();
+typedef TResponderFn5<P1 extends Object, P2 extends Object, P3 extends Object, P4 extends Object,
+        P5 extends Object>
+    = (
+  GenericPod<P1> p1,
+  GenericPod<P2> p2,
+  GenericPod<P3> p3,
+  GenericPod<P4> p4,
+  GenericPod<P5> p5,
+)
+        Function();
 
-typedef TNullableReducerFn5<C, P1, P2, P3, P4, P5> =
-    C Function(
-      GenericPod<P1>? p1,
-      GenericPod<P2>? p2,
-      GenericPod<P3>? p3,
-      GenericPod<P4>? p4,
-      GenericPod<P5>? p5,
-    );
-
-typedef TReducerFn5<C, P1, P2, P3, P4, P5> =
-    C Function(
-      GenericPod<P1> p1,
-      GenericPod<P2> p2,
-      GenericPod<P3> p3,
-      GenericPod<P4> p4,
-      GenericPod<P5> p5,
-    );
+typedef TReducerFn5<C extends Object, P1 extends Object, P2 extends Object, P3 extends Object,
+        P4 extends Object, P5 extends Object>
+    = C Function(
+  GenericPod<P1> p1,
+  GenericPod<P2> p2,
+  GenericPod<P3> p3,
+  GenericPod<P4> p4,
+  GenericPod<P5> p5,
+);

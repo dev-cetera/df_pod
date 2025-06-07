@@ -11,6 +11,7 @@
 //.title~
 
 import 'dart:convert';
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
 
 import '/src/_src.g.dart';
 
@@ -20,36 +21,34 @@ final class SharedJsonPodCreator {
   const SharedJsonPodCreator._();
   static Future<TSharedJsonPod> create(
     String key, {
-    Map<String, dynamic>? initialValue,
-  }) async {
-    final instance = TSharedJsonPod(
+    Map<String, Object>? initialValue,
+  }) {
+    final finalInitialValue = initialValue ?? const {};
+    return TSharedJsonPod.create(
       key,
-      fromValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
-      toValue: (rawValue) => jsonEncode(rawValue),
+      fromValue: (rawValue) =>
+          rawValue != null ? jsonDecode(rawValue) as Map<String, Object> : finalInitialValue,
+      toValue: (value) => jsonEncode(value),
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 
-  static Future<TSharedProtectedJsonPod> protected(
+  static Async<TSharedProtectedJsonPod> protected(
     String key, {
-    Map<String, dynamic>? initialValue,
-  }) async {
-    final instance = TSharedProtectedJsonPod(
+    Map<String, Object>? initialValue,
+  }) {
+    final finalInitialValue = initialValue ?? const {};
+    return TSharedProtectedJsonPod.create(
       key,
-      fromValue: (value) =>
-          value != null ? jsonDecode(value) as Map<String, dynamic> : null,
-      toValue: (rawValue) => jsonEncode(rawValue),
-      initialValue: initialValue,
+      fromValue: (rawValue) =>
+          rawValue != null ? jsonDecode(rawValue) as Map<String, Object> : finalInitialValue,
+      toValue: (value) => jsonEncode(value),
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TSharedJsonPod = SharedPod<Map<String, dynamic>, String>;
-typedef TSharedProtectedJsonPod =
-    SharedProtectedPod<Map<String, dynamic>, String>;
+typedef TSharedJsonPod = SharedPod<Map<String, Object>, String>;
+typedef TSharedProtectedJsonPod = SharedProtectedPod<Map<String, Object>, String>;

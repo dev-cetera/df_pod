@@ -15,70 +15,64 @@ part of 'core.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// An alias for [GenericPod].
-typedef GenericPod<T> = GenericPodMixin<T>;
+typedef GenericPod<T extends Object> = GenericPodMixin<T>;
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 /// A mixin for managing [RootPod] and [ChildPod].
-mixin GenericPodMixin<T> on PodNotifier<T>, ValueListenable<T> {
+mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   //
   //
   //
-
-  /// Returns the value of the Pod when it is not `null`.
-  FutureOr<T1> nonNull<T1 extends T>() => cond((v) => v != null) as T1;
 
   /// Returns the value of the Pod when the [test] returns `true`.
-  FutureOr<T> cond(bool Function(T value) test) {
-    final finisher = Finisher<T>();
-    void check() {
+  Resolvable<T> cond(bool Function(T value) test) {
+    final finisher = SafeFinisher<T>();
+    final check = () {
       if (test(value)) {
-        finisher.complete(value);
+        finisher.finish(value);
       }
-    }
-
+    };
     check();
     if (finisher.isCompleted) {
-      return value;
+      return SyncOk.value(value);
     } else {
-      // ignore: deprecated_member_use_from_same_package
-      addListener(check);
-      return consec(finisher.futureOr, (e) {
+      addStrongRefListener(strongRefListener: check);
+      return finisher.resolvable().map((e) {
         removeListener(check);
         return e;
       });
     }
   }
 
-  final _children = <_ChildPodBase<dynamic, dynamic>>{};
+  final _children = <_ChildPodBase<Object, Object>>{};
 
-  void _addChild(_ChildPodBase<dynamic, dynamic> child) {
+  void _addChild(_ChildPodBase<Object, Object> child) {
     if (!_children.contains(child)) {
+      // ignore: invalid_use_of_visible_for_testing_member
       addStrongRefListener(strongRefListener: child._refresh);
       _children.add(child);
     }
   }
 
-  void _removeChild(_ChildPodBase<dynamic, dynamic> child) {
+  void _removeChild(_ChildPodBase<Object, Object> child) {
     final didRemove = _children.remove(child);
     if (didRemove) {
       removeListener(child._refresh);
     }
   }
 
-  /// Set the current value to [newValue] if either [T] is not equatable as
-  /// deemed by [isEquatable] of if [newValue] is different from the current
-  /// value, then schedules [notifyListeners] for the next loop.
-  bool _set(T newValue, {bool notifyImmediately = false}) {
-    if (!isEquatable<T>() || newValue != _value) {
-      _value = newValue;
+  bool _set(
+    T newValue, {
+    bool notifyImmediately = true,
+  }) {
+    if (!isEquatable<T>() || newValue != value) {
+      value = newValue;
       if (notifyImmediately) {
         notifyListeners();
       } else {
-        // Delay notifyListeners to the next loop to ensure that listeners
-        // added or removed during this loop, will be notified in the next loop.
-        // See description of [notifyListeners].
-        Future.delayed(Duration.zero, () {
+        // Avoid "setState() or markNeedsBuild() called during build" warning.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!isDisposed) {
             notifyListeners();
           }
@@ -90,18 +84,18 @@ mixin GenericPodMixin<T> on PodNotifier<T>, ValueListenable<T> {
   }
 
   /// Reduces the current Pod and [other] into a single [ChildPod].
-  ChildPod<dynamic, C> reduce<C, O>(
+  ChildPod<Object, C> reduce<C extends Object, O extends Object>(
     GenericPod<O> other,
     TReducerFn2<C, T, O> reducer,
   ) {
     return PodReducer2.reduce<C, T, O>(
       () => (this, other),
-      (a, b) => reducer(a!, b!),
+      (a, b) => reducer(a, b),
     );
   }
 
   /// Maps `this` [GenericPod] to a new [ChildPod] using the specified [reducer].
-  ChildPod<T, B> map<B>(B Function(T value) reducer) {
+  ChildPod<T, B> map<B extends Object>(B Function(T value) reducer) {
     return ChildPod<T, B>._(
       responder: () => [this],
       reducer: (_) => reducer(value),

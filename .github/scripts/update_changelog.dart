@@ -106,8 +106,8 @@ class _VersionSection {
   _VersionSection({
     required this.version,
     required this.releasedAt,
-    this.updates = const {},
-  });
+    Set<String>? updates,
+  }) : this.updates = updates ?? {};
 
   //
   //

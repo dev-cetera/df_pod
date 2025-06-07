@@ -10,10 +10,11 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async' show FutureOr;
-import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:flutter/widgets.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TFutureListenable<T> = FutureOr<ValueListenable<T>>;
-typedef F<T> = TFutureListenable<T>;
+class BuilderSnapshot {
+  final Widget? child;
+  const BuilderSnapshot({required this.child});
+}

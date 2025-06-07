@@ -11,27 +11,30 @@
 //.title~
 
 import 'dart:async' show Timer;
-import 'package:df_type/df_type.dart' show isNullable;
-import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:df_log/df_log.dart' show Log;
+import 'package:df_safer_dart/df_safer_dart.dart';
 import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
-
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/widgets.dart';
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodBuilder<T> extends StatelessWidget {
+final class PodBuilder<T extends Object> extends StatelessWidget {
   //
   //
   //
 
-  final TFutureListenable<T> pod;
-  final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
+  final Resolvable<ValueListenable<T>> pod;
+  final TOnOptionBuilder<T, PodBuilderOptionSnapshot<T>> builder;
   final void Function(ValueListenable<T> pod)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
-  final T? fallback;
   final Widget? child;
+
+  @protected
+  static final cacheManager = CacheManager<Object>();
 
   //
   //
@@ -44,7 +47,6 @@ final class PodBuilder<T> extends StatelessWidget {
     this.onDispose,
     this.debounceDuration,
     this.cacheDuration = Duration.zero,
-    this.fallback,
     this.child,
   });
 
@@ -56,7 +58,6 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
-    this.fallback,
     this.child,
   }) : debounceDuration = Duration.zero;
 
@@ -67,7 +68,6 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
-    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 100);
 
@@ -78,7 +78,6 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
-    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(milliseconds: 500);
 
@@ -89,7 +88,6 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
-    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(seconds: 1);
 
@@ -100,7 +98,6 @@ final class PodBuilder<T> extends StatelessWidget {
     required this.builder,
     this.onDispose,
     this.cacheDuration = Duration.zero,
-    this.fallback,
     this.child,
   }) : debounceDuration = const Duration(seconds: 3);
 
@@ -110,12 +107,20 @@ final class PodBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final temp = pod;
-    if (temp is ValueListenable<T>) {
+    if (pod.isSync()) {
       return SyncPodBuilder(
         key: key,
-        pod: temp,
-        builder: builder,
+        pod: pod.unwrapSync().value,
+        builder: (context, snapshot) {
+          return builder(
+            context,
+            PodBuilderOptionSnapshot(
+              pod: Some(snapshot.pod),
+              value: Some(snapshot.value),
+              child: child,
+            ),
+          );
+        },
         onDispose: onDispose,
         cacheDuration: cacheDuration,
         debounceDuration: debounceDuration,
@@ -123,14 +128,23 @@ final class PodBuilder<T> extends StatelessWidget {
       );
     } else {
       return FutureBuilder(
-        future: temp as Future<ValueListenable<T>?>,
+        future: pod.unwrapAsync().value,
         builder: (context, snapshot) {
-          final data = snapshot.data;
-          if (data != null) {
+          final pod = snapshot.data;
+          if (snapshot.hasData && pod != null) {
             return SyncPodBuilder(
               key: key,
-              pod: data,
-              builder: builder,
+              pod: pod,
+              builder: (context, snapshot) {
+                return builder(
+                  context,
+                  PodBuilderOptionSnapshot(
+                    pod: Some(snapshot.pod),
+                    value: Some(snapshot.value),
+                    child: child,
+                  ),
+                );
+              },
               onDispose: onDispose,
               cacheDuration: cacheDuration,
               debounceDuration: debounceDuration,
@@ -139,7 +153,13 @@ final class PodBuilder<T> extends StatelessWidget {
           } else {
             return builder(
               context,
-              PodBuilderSnapshot<T>(pod: null, value: fallback, child: child),
+              PodBuilderOptionSnapshot(
+                pod: Option.fromNullable(pod),
+                value: Option.fromNullable(
+                  cacheManager.get(key?.toString()) as Result<T>?,
+                ),
+                child: child,
+              ),
             );
           }
         },
@@ -150,13 +170,13 @@ final class PodBuilder<T> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodBuilder<T> extends StatefulWidget {
+final class SyncPodBuilder<T extends Object> extends StatefulWidget {
   //
   //
   //
 
-  final ValueListenable<T> pod;
-  final TOnValueBuilder<T?, PodBuilderSnapshot<T>> builder;
+  final Result<ValueListenable<T>> pod;
+  final TOnValueBuilder<T, PodBuilderValueSnapshot<T>> builder;
   final void Function(ValueListenable<T> pod)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
@@ -186,16 +206,13 @@ final class SyncPodBuilder<T> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
+final class SyncPodBuilderState<T extends Object> extends State<SyncPodBuilder<T>> {
   //
   //
   //
 
   late final Widget? _staticChild;
-  late T _value;
-
-  @protected
-  static final cacheManager = CacheManager<dynamic>();
+  late Result<T> _value;
 
   @override
   void initState() {
@@ -203,26 +220,31 @@ final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
     _staticChild = widget.child;
     _setValue();
     _cacheValue();
-    _refresh();
-    widget.pod.addListener(_valueChanged);
+    widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
   }
 
   @override
   void didUpdateWidget(SyncPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.pod != widget.pod) {
-      oldWidget.pod.removeListener(_valueChanged);
+      oldWidget.pod.ifOk((e) => e.unwrap().removeListener(_valueChanged));
       _setValue();
       _cacheValue();
-      widget.pod.addListener(_valueChanged);
+      widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
     }
   }
 
   void _setValue() {
     final key = widget.key;
-    _value = key != null && isNullable<T>()
-        ? cacheManager.get(key.toString()) as T? ?? widget.pod.value
-        : widget.pod.value;
+    if (key != null) {
+      final cachedValue = PodBuilder.cacheManager.get(key.toString()) as Result<T>?;
+      if (cachedValue != null) {
+        _value = cachedValue;
+        return;
+      }
+    }
+
+    _value = widget.pod.map((e) => e.value);
   }
 
   void _cacheValue() {
@@ -230,7 +252,7 @@ final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
     if (key == null) {
       return;
     }
-    cacheManager.cache(
+    PodBuilder.cacheManager.cache(
       key.toString(),
       _value,
       cacheDuration: widget.cacheDuration,
@@ -254,62 +276,73 @@ final class SyncPodBuilderState<T> extends State<SyncPodBuilder<T>> {
       setState(() {
         _setValue();
         _cacheValue();
-        _refresh();
       });
     }
   }
 
-  void _refresh() {
-    final snapshot = PodBuilderSnapshot(
-      pod: widget.pod,
-      value: _value,
-      child: _staticChild,
-    );
-    _temp = Builder(
-      builder: (context) {
-        return widget.builder(context, snapshot);
-      },
-    );
-  }
-
-  late Widget _temp;
-
   @override
   Widget build(BuildContext context) {
-    return _temp;
+    return widget.builder(
+      context,
+      PodBuilderValueSnapshot(
+        pod: widget.pod,
+        value: _value,
+        child: _staticChild,
+      ),
+    );
   }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    widget.pod.removeListener(_valueChanged);
-    widget.onDispose?.call(widget.pod);
+    if (widget.pod.isOk()) {
+      widget.pod.unwrap().removeListener(_valueChanged);
+      widget.onDispose?.call(widget.pod.unwrap());
+    } else {
+      Log.err('Tried to dispose Err<ValueListenable<T>>!', {#df_pod});
+    }
     super.dispose();
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodBuilderSnapshot<T> extends OnValueSnapshot<T?> {
-  //
-  //
-  //
+final class PodBuilderValueSnapshot<T extends Object> extends OnValueSnapshot<T> {
+  final Result<ValueListenable<T>> pod;
 
-  final ValueListenable<T>? pod;
-
-  //
-  //
-  //
-
-  PodBuilderSnapshot({
+  const PodBuilderValueSnapshot({
     required this.pod,
     required super.value,
     required super.child,
   });
+}
 
-  //
-  //
-  //
+final class PodBuilderOptionSnapshot<T extends Object> extends OnOptionSnapshot<T> {
+  final Option<Result<ValueListenable<T>>> pod;
 
-  bool get hasValue => pod != null;
+  const PodBuilderOptionSnapshot({
+    required this.pod,
+    required super.value,
+    required super.child,
+  });
+}
+
+typedef TOnValueBuilder<T extends Object, S extends OnValueSnapshot<T>> = Widget Function(
+  BuildContext context,
+  S snapshot,
+);
+
+class OnValueSnapshot<T extends Object> extends BuilderSnapshot {
+  final Result<T> value;
+  const OnValueSnapshot({required this.value, required super.child});
+}
+
+typedef TOnOptionBuilder<T extends Object, S extends OnOptionSnapshot<T>> = Widget Function(
+  BuildContext context,
+  S snapshot,
+);
+
+class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
+  final Option<Result<T>> value;
+  const OnOptionSnapshot({required this.value, required super.child});
 }

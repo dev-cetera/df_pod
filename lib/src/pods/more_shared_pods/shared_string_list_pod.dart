@@ -10,6 +10,8 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -19,34 +21,31 @@ final class SharedStringListPodCreator {
   static Future<TSharedStringListPod> create(
     String key, {
     List<String>? initialValue,
-  }) async {
-    final instance = TSharedStringListPod(
+  }) {
+    final finalInitialValue = initialValue ?? const [];
+    return TSharedStringListPod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 
-  static Future<TSharedProtectedStringListPod> protected(
+  static Async<TSharedProtectedStringListPod> protected(
     String key, {
     List<String>? initialValue,
-  }) async {
-    final instance = TSharedProtectedStringListPod(
+  }) {
+    final finalInitialValue = initialValue ?? const [];
+    return TSharedProtectedStringListPod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedStringListPod = SharedPod<List<String>, List<String>>;
-typedef TSharedProtectedStringListPod =
-    SharedProtectedPod<List<String>, List<String>>;
+typedef TSharedProtectedStringListPod = SharedProtectedPod<List<String>, List<String>>;

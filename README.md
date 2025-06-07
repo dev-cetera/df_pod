@@ -8,6 +8,8 @@ Dart & Flutter Packages by dev-cetera.com & contributors.
 
 ---
 
+// #df_pod
+
 ## Summary
 
 This package provides tools for managing app state using ValueNotifier like objects called Pods. For a practical demonstration of how Pods work in conjunction with [GetIt](https://pub.dev/packages/get_it) for state management, refer to [this example](https://pub.dev/packages/df_pod/example). For a full feature set, please refer to the [API reference](https://pub.dev/documentation/df_pod/).

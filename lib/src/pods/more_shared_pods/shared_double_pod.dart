@@ -10,38 +10,39 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedDoublePodCreator {
   const SharedDoublePodCreator._();
+
   static Future<TSharedDoublePod> create(
     String key, {
     double? initialValue,
-  }) async {
-    final instance = TSharedDoublePod(
+  }) {
+    final finalInitialValue = initialValue ?? 0.0;
+    return TSharedDoublePod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 
-  static Future<TSharedProtectedDoublePod> protected(
+  static Async<TSharedProtectedDoublePod> protected(
     String key, {
     double? initialValue,
-  }) async {
-    final instance = TSharedProtectedDoublePod(
+  }) {
+    final finalInitialValue = initialValue ?? 0.0;
+    return TSharedProtectedDoublePod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 }
 

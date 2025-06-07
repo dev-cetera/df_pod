@@ -11,13 +11,16 @@
 //.title~
 
 import 'package:df_cleanup/df_cleanup.dart' show DisposeMixin, WillDisposeMixin;
+import 'package:df_log/df_log.dart' show Log;
+import 'package:df_safer_dart/df_safer_dart.dart';
 
 import 'package:flutter/foundation.dart';
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-abstract class DisposablePod<T> extends WeakChangeNotifier
+abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
     with DisposeMixin, WillDisposeMixin
     implements ValueListenable<T> {
   /// A flag indicating whether the Pod has been disposed.
@@ -36,7 +39,7 @@ abstract class DisposablePod<T> extends WeakChangeNotifier
     if (!_isDisposed) {
       super.addListener(listener);
     } else {
-      // todo: Log warning!
+      Log.alert('Tried to add a listener to a disposed Pod!', {#df_pod});
     }
   }
 
@@ -45,7 +48,7 @@ abstract class DisposablePod<T> extends WeakChangeNotifier
     if (!_isDisposed) {
       super.removeListener(listener);
     } else {
-      // todo: Log warning!
+      Log.alert('Tried to remove a listener from a disposed Pod!', {#df_pod});
     }
   }
 
@@ -58,7 +61,10 @@ abstract class DisposablePod<T> extends WeakChangeNotifier
       super.dispose();
       this._isDisposed = true;
     } else {
-      // todo: Log warning!
+      Log.alert('Tried to dispose a Pod again!', {#df_pod});
     }
   }
+
+  @pragma('vm:prefer-inline')
+  Sync<DisposablePod<T>> asSync() => Sync.value(Ok(this));
 }

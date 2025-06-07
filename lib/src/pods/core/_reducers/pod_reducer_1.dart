@@ -19,24 +19,24 @@ final class PodReducer1 {
   PodReducer1._();
 
   /// Reduces 1 Pod into a [ChildPod].
-  static ChildPod<dynamic, C> reduce<C, P1>(
+  static ChildPod<Object, C> reduce<C extends Object, P1 extends Object>(
     TResponderFn1<P1> responder,
     TNullableReducerFn1<C, P1> reducer,
   ) {
-    return ChildPod<dynamic, C>._(
+    return ChildPod<Object, C>._(
       responder: () => _toList(responder),
       reducer: (_) => _reduce(responder, reducer),
     );
   }
 
   /// Converts the response from the responder function into a list of Pods.
-  static List<GenericPod<dynamic>?> _toList<P1>(TResponderFn1<P1> responder) {
+  static List<GenericPod> _toList<P1 extends Object>(TResponderFn1<P1> responder) {
     final response = responder.call();
     return [response.$1];
   }
 
   /// Reduces the values from 1 Pod using the provided reducer function.
-  static C _reduce<C, P1>(
+  static C _reduce<C extends Object, P1 extends Object>(
     TResponderFn1<P1> responder,
     TNullableReducerFn1<C, P1> reducer,
   ) {
@@ -47,8 +47,8 @@ final class PodReducer1 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn1<P1> = (GenericPod<P1>? p1,) Function();
+typedef TResponderFn1<P1 extends Object> = (GenericPod<P1> p1,) Function();
 
-typedef TNullableReducerFn1<C, P1> = C Function(GenericPod<P1>? p1);
+typedef TNullableReducerFn1<C extends Object, P1 extends Object> = C Function(GenericPod<P1> p1);
 
-typedef TReducerFn1<C, P1> = C Function(GenericPod<P1> p1);
+typedef TReducerFn1<C extends Object, P1 extends Object> = C Function(GenericPod<P1> p1);

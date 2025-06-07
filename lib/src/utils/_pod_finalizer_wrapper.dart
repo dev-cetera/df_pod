@@ -17,10 +17,10 @@ import '/src/_src.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 @visibleForTesting
-final class PodFinalizerWrapper<T> {
+final class PodFinalizerWrapper<T extends Object> {
   final WeakReference<PodNotifier<T>> _pod;
 
-  static final _finalizer = Finalizer<PodNotifier<dynamic>?>(
+  static final _finalizer = Finalizer<DisposablePod<dynamic>?>(
     (pod) => pod?.dispose(),
   );
 

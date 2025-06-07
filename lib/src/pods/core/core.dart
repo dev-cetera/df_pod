@@ -15,17 +15,14 @@ import 'dart:async';
 import 'package:df_safer_dart/df_safer_dart.dart';
 import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
-
-// Used in _shared_pod.dart
-import 'package:shared_preferences/shared_preferences.dart'
-    deferred as shared_preferences;
+import 'package:flutter/widgets.dart' show WidgetsBinding;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_src.g.dart';
 
 part '_child_pod_base.dart';
 part '_child_pod.dart';
-part '_safe_future_pod.dart';
 part '_generic_pod_mixin.dart';
 part '_pod_notifier.dart';
 part '_reducer_pod.dart';

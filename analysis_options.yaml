@@ -47,7 +47,7 @@ analyzer:
     depend_on_referenced_packages: error
     flutter_style_todos: error
     invalid_override_of_non_virtual_member: error
-    invalid_use_of_protected_member: error
+    invalid_use_of_protected_member: ignore
     no_leading_underscores_for_local_identifiers: error
     prefer_final_in_for_each: error
     prefer_relative_imports: error

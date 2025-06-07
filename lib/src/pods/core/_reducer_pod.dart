@@ -25,24 +25,24 @@ part of 'core.dart';
 ///
 /// Note that when this pod disposes via [dispose], it will not dispose the Pods
 /// provided by [responder]. Explicit disposal is needed.
-base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
+base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
   //
   //
   //
 
   /// Produces a list of Pods to listen to. This gets called recursively each
   /// time any of the Pods in the returned list change.
-  final Iterable<ValueListenable<dynamic>?> Function() responder;
+  final Iterable<Option<ValueListenable<Object>>> Function() responder;
 
   /// Reduces the values of the current Pods returned by [responder] to a
   /// single value of type [T], to update this Pod's [value].
-  final T Function(List<dynamic> values) reducer;
+  final T Function(List<Option> values) reducer;
 
   //
   //
   //
 
-  factory ReducerPod.single(ValueListenable<T> Function() responder) {
+  factory ReducerPod.single(Option<ValueListenable<T>> Function() responder) {
     return ReducerPod(
       responder: () => [responder()],
       reducer: (values) => values.first as T,
@@ -53,7 +53,14 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  ReducerPod({required this.responder, required this.reducer}) : super(null) {
+  @override
+  // ignore: overridden_fields
+  late T value;
+
+  ReducerPod({
+    required this.responder,
+    required this.reducer,
+  }) {
     _refresh!();
   }
 
@@ -67,22 +74,20 @@ base class ReducerPod<T> extends PodNotifier<T?> with GenericPod<T?> {
   //
   //
 
-  final _listenables = <ValueListenable<dynamic>>[];
-
+  final _listenables = <ValueListenable<Object>>[];
   T _getValue() {
     for (final listenable in _listenables) {
       listenable.removeListener(_refresh!);
     }
     final values = responder().toList();
     for (var n = 0; n < values.length; n++) {
-      final value = values[n];
-      if (value != null) {
-        _listenables.add(value);
-        value.addListener(_refresh!);
-      }
+      final option = values[n];
+      if (option.isNone()) continue;
+      final value = option.unwrap();
+      _listenables.add(value);
+      value.addListener(_refresh!);
     }
-
-    final valuesToReduce = values.map((e) => e?.value).toList();
+    final valuesToReduce = values.map((e) => e.map((e) => e.value)).toList();
     return reducer(valuesToReduce);
   }
 

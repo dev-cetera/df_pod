@@ -10,35 +10,41 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedBoolPodCreator {
   const SharedBoolPodCreator._();
-  static Future<TSharedBoolPod> create(String key, {bool? initialValue}) async {
-    final instance = TSharedBoolPod(
+
+  static Future<TSharedBoolPod> create(String key, {bool? initialValue}) {
+    // Provide a non-nullable default for the required `initialValue`.
+    final finalInitialValue = initialValue ?? false;
+
+    return TSharedBoolPod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      // If storage is null, return the default value.
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 
-  static Future<TSharedProtectedBoolPod> protected(
+  static Async<TSharedProtectedBoolPod> protected(
     String key, {
     bool? initialValue,
-  }) async {
-    final instance = TSharedProtectedBoolPod(
+  }) {
+    // Provide a non-nullable default for the required `initialValue`.
+    final finalInitialValue = initialValue ?? false;
+    return TSharedProtectedBoolPod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      // If storage is null, return the default value.
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 }
 

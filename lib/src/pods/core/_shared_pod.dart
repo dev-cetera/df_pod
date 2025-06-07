@@ -14,85 +14,53 @@ part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-/// A Pod that persists its value in shared preferences, allowing for seamless\
-/// data storage and retrieval across app sessions.
-base class SharedPod<A, B> extends RootPod<A?> {
+base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   //
   //
   //
 
-  static dynamic _sharedPreferences;
+  SharedPreferences? _sharedPreferences;
+
+  //
+  //
+  //
 
   final String key;
-
-  final FutureOr<A?>? Function(B? rawValue) fromValue;
-  final FutureOr<B?>? Function(A? value) toValue;
-  final A? initialValue;
+  final A Function(B? rawValue) fromValue;
+  final B Function(A value) toValue;
+  final A initialValue;
 
   //
   //
   //
 
+  @protected
   SharedPod(
     this.key, {
     required this.fromValue,
     required this.toValue,
-    this.initialValue,
+    required this.initialValue,
   }) : super(initialValue);
 
   //
   //
   //
 
-  @override
-  Future<void> set(A? newValue, {bool notifyImmediately = false}) async {
-    if (_isEquatable(newValue)) {
-      final v = await toValue(newValue);
-      await shared_preferences.loadLibrary();
-      _sharedPreferences ??=
-          await shared_preferences.SharedPreferences.getInstance();
-      switch (v) {
-        case String s:
-          await _sharedPreferences!.setString(key, s);
-          break;
-        case Iterable<String> list:
-          await _sharedPreferences!.setStringList(key, list.toList());
-          break;
-        case bool b:
-          await _sharedPreferences!.setBool(key, b);
-          break;
-        case int i:
-          await _sharedPreferences!.setInt(key, i);
-          break;
-        case double d:
-          await _sharedPreferences!.setDouble(key, d);
-          break;
-        default:
-          await _sharedPreferences!.remove(key);
-          return;
-      }
-      _value = newValue;
-      if (notifyImmediately) {
-        notifyListeners();
-      } else {
-        Future.delayed(Duration.zero, () {
-          if (!isDisposed) {
-            notifyListeners();
-          }
-        });
-      }
-    }
-  }
-
-  //
-  //
-  //
-
-  bool _isEquatable(A? newValue) {
-    if (!isEquatable<A>() || newValue != _value) {
-      return true;
-    }
-    return false;
+  /// Creates and initializes a [SharedPod] by loading its value from storage.
+  static Future<SharedPod<A, B>> create<A extends Object, B extends Object>(
+    String key, {
+    required A Function(B? rawValue) fromValue,
+    required B Function(A value) toValue,
+    required A initialValue,
+  }) async {
+    final instance = SharedPod<A, B>(
+      key,
+      fromValue: fromValue,
+      toValue: toValue,
+      initialValue: initialValue,
+    );
+    await instance.refresh();
+    return instance;
   }
 
   //
@@ -100,14 +68,64 @@ base class SharedPod<A, B> extends RootPod<A?> {
   //
 
   @override
-  Future<void> refresh() async {
-    await shared_preferences.loadLibrary();
-    _sharedPreferences ??=
-        await shared_preferences.SharedPreferences.getInstance();
-    final v = _sharedPreferences!.get(key) as B?;
-    if (v != null) {
-      final newValue = await fromValue(v);
-      super._set(newValue);
+  Future<void> set(
+    A newValue, {
+    bool notifyImmediately = true,
+  }) async {
+    final v = toValue(newValue);
+    _sharedPreferences ??= await SharedPreferences.getInstance();
+    switch (v) {
+      case final String s:
+        await _sharedPreferences!.setString(key, s);
+      case final bool b:
+        await _sharedPreferences!.setBool(key, b);
+      case final int i:
+        await _sharedPreferences!.setInt(key, i);
+      case final double d:
+        await _sharedPreferences!.setDouble(key, d);
+      case final Iterable<String> list:
+        await _sharedPreferences!.setStringList(key, list.toList());
+      default:
+        throw Err(
+          'SharedPod only supports storing String, int, bool, double, and Iterable<String>. '
+          'The provided value type is ${v.runtimeType}.',
+        );
     }
+    _set(
+      newValue,
+      notifyImmediately: notifyImmediately,
+    );
+  }
+
+  //
+  //
+  //
+
+  Future<void> delete({
+    bool notifyImmediately = true,
+  }) async {
+    _sharedPreferences ??= await SharedPreferences.getInstance();
+    await _sharedPreferences!.remove(key);
+    _set(
+      initialValue,
+      notifyImmediately: notifyImmediately,
+    );
+  }
+
+  //
+  //
+  //
+
+  @override
+  Future<void> refresh({
+    bool notifyImmediately = true,
+  }) async {
+    _sharedPreferences ??= await SharedPreferences.getInstance();
+    final v = _sharedPreferences!.get(key);
+    final newValue = fromValue(v as B?);
+    _set(
+      newValue,
+      notifyImmediately: notifyImmediately,
+    );
   }
 }

@@ -19,7 +19,7 @@ final class MultiplePodReducer {
   MultiplePodReducer._();
 
   /// Reduces multiple Pods into a [ChildPod].
-  static ChildPod<T1, T2> reduce<T1, T2>(
+  static ChildPod<T1, T2> reduce<T1 extends Object, T2 extends Object>(
     Iterable<GenericPod<T1>> Function() responder,
     T2 Function(Iterable<GenericPod<T1>> values) reducer,
   ) {

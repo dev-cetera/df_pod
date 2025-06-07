@@ -10,35 +10,35 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedIntPodCreator {
   const SharedIntPodCreator._();
-  static Future<TSharedIntPod> create(String key, {int? initialValue}) async {
-    final instance = TSharedIntPod(
+  static Future<TSharedIntPod> create(String key, {int? initialValue}) {
+    final finalInitialValue = initialValue ?? 0;
+    return TSharedIntPod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 
-  static Future<TSharedProtectedIntPod> protected(
+  static Async<TSharedProtectedIntPod> protected(
     String key, {
     int? initialValue,
-  }) async {
-    final instance = TSharedProtectedIntPod(
+  }) {
+    final finalInitialValue = initialValue ?? 0;
+    return TSharedProtectedIntPod.create(
       key,
-      fromValue: (rawValue) => rawValue,
+      fromValue: (rawValue) => rawValue ?? finalInitialValue,
       toValue: (value) => value,
-      initialValue: initialValue,
+      initialValue: finalInitialValue,
     );
-    await instance.refresh();
-    return instance;
   }
 }
 

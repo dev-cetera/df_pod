@@ -25,12 +25,13 @@ import '/src/_src.g.dart';
 /// management methods of the Pod, ensuring that these operations are only
 /// handled internally or through controlled mechanisms.
 @internal
-base mixin ProtectedPodMixin<T> on DisposablePod<T> {
+base mixin ProtectedPodMixin<T extends Object> on DisposablePod<T> {
   /// ❌ Do not add listeners to this Pod directly.
   @protected
   @override
-  void addStrongRefListener({required VoidCallback strongRefListener}) {
-    super.addStrongRefListener(strongRefListener: strongRefListener);
+  void addListener(VoidCallback listener) {
+    // ignore: deprecated_member_use_from_same_package
+    super.addListener(listener);
   }
 
   /// ❌ Do not add listeners to this Pod directly.

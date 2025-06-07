@@ -35,11 +35,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  df_type: ^0.10.3
-  df_safer_dart: ^0.11.1
+  df_type: ^0.10.4
+  df_safer_dart: ^0.12.2
   df_cleanup: ^0.4.1
-  df_debouncer: ^0.4.6
-
+  df_debouncer: ^0.4.8
+  df_log: ^0.3.9
   shared_preferences: ^2.5.3
   tuple: ^2.0.2
   equatable: ^2.0.7
@@ -48,5 +48,4 @@ dependencies:
 ## -----------------------------------------------------------------------------
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
-  df_log: ^0.3.5
+  flutter_lints: ^6.0.0

@@ -10,53 +10,60 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
+
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 final class SharedEnumPodCreator {
   const SharedEnumPodCreator._();
-  static Future<TSharedEnumPod<T>> create<T extends Enum>(
-    String key,
-    Iterable<T?> options, {
-    T? initialValue,
-  }) async {
-    final instance = TSharedEnumPod<T>(
-      key,
-      fromValue: (value) {
-        return options.firstWhere(
-          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
-          orElse: () => null,
-        );
-      },
-      toValue: (rawValue) => rawValue?.name,
-    );
-    await instance.refresh();
-    return instance;
-  }
 
-  static Future<TSharedprotectedEnumPod<T>> protected<T extends Enum>(
-    String key,
-    Iterable<T?> options, {
-    T? initialValue,
-  }) async {
-    final instance = TSharedprotectedEnumPod<T>(
+  /// Creates a pod that persists an enum value.
+  ///
+  /// Requires a non-nullable `initialValue` to ensure type safety, as there
+  /// is no universal default for enums.
+  static Future<TSharedEnumPod<T>> create<T extends Enum>(
+    String key, {
+    required Iterable<T> options,
+    required T initialValue,
+  }) {
+    return TSharedEnumPod.create(
       key,
-      fromValue: (value) {
+      fromValue: (rawValue) {
+        if (rawValue == null) return initialValue;
+        // Find the enum by its name, or fall back to the initialValue.
         return options.firstWhere(
-          (e) => e?.name.toLowerCase() == value?.toLowerCase(),
-          orElse: () => null,
+          (e) => e.name.toLowerCase() == rawValue.toLowerCase(),
+          orElse: () => initialValue,
         );
       },
-      toValue: (rawValue) => rawValue?.name,
+      toValue: (value) => value.name,
       initialValue: initialValue,
     );
-    await instance.refresh();
-    return instance;
+  }
+
+  static Async<TSharedProtectedEnumPod<T>> protected<T extends Enum>(
+    String key, {
+    required Iterable<T> options,
+    required T initialValue,
+  }) {
+    return TSharedProtectedEnumPod.create(
+      key,
+      fromValue: (rawValue) {
+        if (rawValue == null) return initialValue;
+        return options.firstWhere(
+          (e) => e.name.toLowerCase() == rawValue.toLowerCase(),
+          orElse: () => initialValue,
+        );
+      },
+      toValue: (value) => value.name,
+      initialValue: initialValue,
+    );
   }
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedEnumPod<T extends Enum> = SharedPod<T, String>;
-typedef TSharedprotectedEnumPod<T extends Enum> = SharedProtectedPod<T, String>;
+typedef TSharedProtectedEnumPod<T extends Enum> = SharedProtectedPod<T, String>;

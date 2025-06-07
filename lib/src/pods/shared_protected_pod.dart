@@ -10,8 +10,10 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '/src/_mixins/protected_pod_mixin.dart';
+import 'package:df_safer_dart/df_safer_dart.dart' show Async;
+import 'package:meta/meta.dart' show protected;
 
+import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -25,12 +27,39 @@ import '/src/_src.g.dart';
 ///
 /// Extends [SharedPod] and uses [ProtectedPodMixin] to encapsulate and manage
 /// the protection of these critical methods.
-base class SharedProtectedPod<A, B> extends SharedPod<A, B>
+base class SharedProtectedPod<A extends Object, B extends Object> extends SharedPod<A, B>
     with ProtectedPodMixin {
+  //
+  //
+  //
+
+  @protected
   SharedProtectedPod(
     super.key, {
     required super.fromValue,
     required super.toValue,
-    super.initialValue,
+    required super.initialValue,
   });
+
+  //
+  //
+  //
+
+  /// Creates and initializes a [SharedProtectedPod] by loading its value from storage.
+  static Async<SharedProtectedPod<A, B>> create<A extends Object, B extends Object>(
+    String key, {
+    required A Function(B? rawValue) fromValue,
+    required B Function(A value) toValue,
+    required A initialValue,
+  }) =>
+      Async(() async {
+        final instance = SharedProtectedPod<A, B>(
+          key,
+          fromValue: fromValue,
+          toValue: toValue,
+          initialValue: initialValue,
+        );
+        await instance.refresh();
+        return instance;
+      });
 }
