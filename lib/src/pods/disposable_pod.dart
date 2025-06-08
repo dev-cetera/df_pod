@@ -12,7 +12,6 @@
 
 import 'package:df_cleanup/df_cleanup.dart' show DisposeMixin, WillDisposeMixin;
 import 'package:df_log/df_log.dart' show Log;
-import 'package:df_safer_dart/df_safer_dart.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -64,7 +63,4 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
       Log.alert('Tried to dispose a Pod again!', {#df_pod});
     }
   }
-
-  @pragma('vm:prefer-inline')
-  Sync<DisposablePod<T>> asSync() => Sync.value(Ok(this));
 }

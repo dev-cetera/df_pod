@@ -24,6 +24,12 @@ abstract class PodNotifier<T extends Object> extends DisposablePod<T> {
   @override
   @protected
   late T value;
+
+  //
+  //
+  //
+
+  T getValue() => value;
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░

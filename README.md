@@ -6,223 +6,279 @@ Dart & Flutter Packages by dev-cetera.com & contributors.
 [![Pub Package](https://img.shields.io/pub/v/df_pod.svg)](https://pub.dev/packages/df_pod)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE)
 
+`df_pod` is a modern, type-safe, and composable state management library for Flutter. It enhances the `ValueListenable` pattern with monadic safety, automatic memory management, and a powerful, declarative API for deriving state. Designed to be simple, predictable, and robust, it eliminates common pitfalls like `null` errors and memory leaks.
+
 ---
 
-// #df_pod
+## ℹ️ Features
 
-## Summary
+- **Monadic Safety**: Uses `Option` and `Result` from [df_safer_dart](https://pub.dev/packages/df_safer_dart) to explicitly handle loading, data, and error states, eliminating `null` checks.
+- **Composable & Declarative**: Create derived state by mapping or reducing pods, with automatic updates when dependencies change.
+- **Automatic Memory Management**: Weakly referenced listeners and automatic child pod disposal prevent memory leaks without manual cleanup.
+- **Familiar API**: Extends `ValueNotifier` with enhanced capabilities, integrating seamlessly with Flutter's reactive model.
+- **Specialized Builder Widgets**: Includes `PodBuilder`, `PodListBuilder`, and `PollingPodBuilder` for efficient UI updates.
+- **Performance Controls**: Fine-tune UI rebuilds with `debounceDuration` and `cacheDuration`.
+- **Persistent State**: Provides `SharedPod` helpers for easy state persistence with `SharedPreferences`.
 
-This package provides tools for managing app state using ValueNotifier like objects called Pods. For a practical demonstration of how Pods work in conjunction with [GetIt](https://pub.dev/packages/get_it) for state management, refer to [this example](https://pub.dev/packages/df_pod/example). For a full feature set, please refer to the [API reference](https://pub.dev/documentation/df_pod/).
+## ℹ️ Core Concepts
 
-## Quickstart
+The core unit of state is a **Pod**. By convention, pod variables are prefixed with `p` (e.g., `pCounter`, `pUser`) for easy identification.
 
-### ℹ️ Defining a Pod:
+- **`Pod<T>`**: A mutable `ValueListenable<T>` for root state, directly created and updated.
+- **`ChildPod<T>`**: A read-only pod derived by mapping or reducing parent pods, updating automatically with parent changes.
+- **`ReducerPod`**: A `ChildPod` that combines multiple parent pods, updating when any parent changes.
+- **`PodBuilder`**: A widget that listens to a `Pod` and rebuilds the UI on value changes.
+- **`PodListBuilder`**: A widget that listens to a list of pods, rebuilding when any pod changes.
+
+## ℹ️ Quickstart
+
+### 1. Define a Root Pod
+
+A `Pod` holds mutable state, from simple values to complex objects.
 
 ```dart
-// Define a Pod, similar to how you would define a ValueNotifier.
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+final pCounter = Pod<int>(0);
+final pItems = Pod<List<String>>(['Apple', 'Banana']);
 ```
 
-### ℹ️ Using a PodBuilder in the UI:
+### 2. Build UI with `PodBuilder`
+
+`PodBuilder` listens to a pod and rebuilds the UI, handling synchronous pods, `Future<Pod>`, or error-throwing futures.
 
 ```dart
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-
-// Use the PodBuilder in your UI, similar to a ValueListenableBuilder.
-PodBuilder(
-  pod: pNumbers,
+PodBuilder<int>(
+  pod: pCounter,
   builder: (context, snapshot) {
-    final numbers = snapshot.value!;
-    return Text('Count: ${numbers.length}');
-  },
-);
-
-// You can also use a regular old ValueListenableBuilder.
-ValueListenableBuilder(
-  valueListenable: _pCounter1,
-  builder: (context, value, child) {
-    return Text('Count: $value');
+    final count = snapshot.value.unwrap().unwrap();
+    return Text('Count: $count');
   },
 );
 ```
 
-### ℹ️ Using PodBuilder with Futures:
+For asynchronous operations, `PodBuilder` manages loading, success, and error states.
 
 ```dart
-// PodBuilders can also take Futures.
-final pNumbers = Future.delayed(const Duration(seconds: 3), () => Pod<int>(1));
+Future<Pod<String>> fetchUser() async {
+  await Future<void>.delayed(const Duration(seconds: 2));
+  if (Random().nextBool()) {
+    return Pod('Jane Doe');
+  } else {
+    throw Exception('Failed to load user.');
+  }
+}
 
-PodBuilder(
-  pod: pNumbers,
+PodBuilder<String>(
+  pod: fetchUser(),
   builder: (context, snapshot) {
-    final numbers = snapshot.value;
-    final completed = numbers != null;
-    if (completed) {
-      return Text('Count: ${numbers.length}');
-    } else {
-      return Text('Loading...');
+    final option = snapshot.value;
+    if (option.isNone()) {
+      return const CircularProgressIndicator();
     }
+    final result = option.unwrap();
+    if (result.isErr()) {
+      final err = result.err().unwrap();
+      return Text('Error: ${err.error}');
+    }
+    final ok = result.unwrap();
+    return Text('Hello: $ok');
   },
+),
+```
+
+### 3. Update a Pod's State
+
+Modify a `Pod` using `.set()` or `.update()`. Listeners like `PodBuilder` or `ChildPod` react automatically.
+
+```dart
+pCounter.update((currentCount) => currentCount + 1);
+pItems.set(['Orange', 'Grape']);
+```
+
+### 4. Create Derived State with `.map()` and `.reduce()`
+
+Create a read-only `ChildPod` by transforming a parent pod.
+
+```dart
+final pItems = Pod<List<String>>(['Apple', 'Banana', 'Cherry']);
+final pItemCount = pItems.map((itemList) => itemList.length);
+final pCountMessage = pItemCount.map((count) => 'You have $count items.');
+
+PodBuilder<String>(
+  pod: pCountMessage,
+  builder: (context, snapshot) => Text(snapshot.value.unwrap().unwrap()),
 );
 ```
 
-### ℹ️ Setting and Updating a Pod:
+Use `ReducerPod` to combine multiple pods.
 
 ```dart
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
+final pFirstName = Pod('John');
+final pLastName = Pod('Doe');
+final pFullName = pFirstName.reduce(
+  pLastName,
+  (first, last) => '${first.getValue()} ${last.getValue()}',
+);
 
-// Set a Pod with the set function. This will trigger all associated PodBuilders to rebuild.
-pNumbers.set([1, 2, 4]);
-
-// Update a Pod with the update function. This will also trigger all associated PodBuilders to rebuild.
-pNumbers.update((e) => e..add(5));
-```
-
-### ℹ️ Disposing of Pods:
-
-```dart
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-
-// Manually dispose of Pods when they are no longer needed.
-pNumbers.dispose();
-```
-
-### ℹ️ PodBuilder Optimization:
-
-```dart
-// If the Pod<T> type T is a primitive type or implements Equatable*,
-// the PodBuilder will only rebuild if the Pod's value actually changed.
-final pHelloWorld = Pod('Hello World');
-
-// This will NOT trigger a rebuild, as String is a primitive, pass-by-value type.
-pHelloWorld.set('Hello World');
-```
-
-_\* Find the Equatable package here: https://pub.dev/packages/equatable_
-
-### ℹ️ Transforming a Pod into a ChildPod:
-
-```dart
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-
-// A Pod can be transformed into a ChildPod using the map function.
-final pLength = pNumbers.map((e) => e!.length);
-
-final ChildPod<List<int>, int> pSum = pNumbers.map((e) => e!.reduce((a, b) => a + b));
-
-PodBuilder(
-  pod: pSum,
-  // Changing pNumbers will trigger a rebuild.
+PodBuilder<String>(
+  pod: pFullName,
   builder: (context, snapshot) {
-    final sum = snapshot.value!;
-    return Text('Sum: ${sum}');
+    return Text('Full Name: ${snapshot.value.unwrap()}');
   },
 );
 ```
 
-### ℹ️ Further Mapping a ChildPod:
+## ℹ️ A Practical Example: Building a Search UI
+
+### 1. Define Root State
+
+Start with a root pod for the search query.
 
 ```dart
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-final pLength = pNumbers.map((e) => e!.length);
-
-// A ChildPod can be further mapped into another ChildPod.
-final pInverseLength = pLength.map((e) => 1 / e!);
+final pSearchQuery = Pod('');
 ```
 
-### ℹ️ Reducing Multiple Pods into a ChildPod:
+### 2. Handle Async Operations and Errors
+
+Use `PodBuilder` to handle asynchronous API calls, managing loading, success, and error states.
 
 ```dart
-final pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
-final pLength = pNumbers.map((e) => e!.length);
-final pInverseLength = pLength.map((e) => 1 / e!);
-
-// Pods can also be reduced into a single ChildPod:
-final pZero = pLength.reduce(pInverseLength, (p1, p2) => p1.value * p2.value);
+PodBuilder<List<String>>(
+  pod: searchApi(query),
+  builder: (context, snapshot) {
+    if (snapshot.value.isNone()) {
+      return const CircularProgressIndicator();
+    }
+    final result = snapshot.value.unwrap();
+    if (result.isErr()) {
+      final error = result.err().unwrap().error;
+      return Text('Error: $error');
+    }
+    final products = result.unwrap();
+    return ListView(children: [for (final product in products) Text(product)]);
+  },
+);
 ```
 
-### ℹ️ Restrictions on ChildPods:
+### 3. Create Derived State with `.map()` and `.reduce()`
+
+Build reactive state declaratively.
 
 ```dart
-
-final Pod<String> pParent = Pod('I am a Parent');
-
-pParent.update((e) => e.replaceAll('Parent', 'Father')); // ✔️ OK!
-
-final ChildPod<String, String> pChild = pParent.map((e) => e.replaceAll('Father', 'Son'));
-
-// A ChildPod cannot be set or updated directly. When its parent changes,
-// its value is immediately updated from its mapping function.
-pChild.update((e) => e.replaceAll('Son', 'Daughter')); // ❌ Syntax error!
-
-// Attempting to add listeners or dispose of a ChildPod will result in a syntax
-// error if you've set the `protected_member` rule in your
-// `analysis_options.yaml` file. This design eliminates the need for direct
-// disposal of a ChildPod via the dispose() method.
-
-final listener = () => print('Something changed!');
-
-// These will trigger syntax errors if you've correctly set up your
-// analysis_options.yaml:
-pChild.addStrongRefListener(strongRefListener: listener); // ❌ ChildPods do not take listeners!
-
-
-pParent.addStrongRefListener(strongRefListener: listener); // ✔️ OK!
-pParent.dispose(); // ✔️ OK! Disposes pChild as well, its children, their children, and so on.
+final pLatestResults = Pod<List<String>>([]);
+final pResultCount = pLatestResults.map((results) => results.length);
+final pSummaryMessage = pResultCount.reduce(
+  pSearchQuery,
+  (count, query) {
+    if (query.value.isEmpty) return 'Enter a search term.';
+    return 'Found ${count.value} result(s) for "${query.value}".';
+  },
+);
 ```
 
-### ℹ️ Using Multiple Pods with PodListBuilder:
+### 4. Build UI from Multiple Pods with `PodListBuilder`
+
+`PodListBuilder` efficiently handles multiple pods, rebuilding when any change.
 
 ```dart
-// You can use multiple Pods with a PodListBuilder.
 PodListBuilder(
-  podList: [pLength, pSum],
+  podList: [pResultCount, pSummaryMessage],
   builder: (context, snapshot) {
-    final [length, sum] = snapshot.value!.toList();
-    return Text('Length is $length and sum is $sum');
+    final values = snapshot.value.map((e) => e.unwrap());
+    final [resultCount as int, summaryMessage as String] = values.toList();
+    return Card(child: Text(message));
   },
 );
 ```
 
-### ℹ️ Using PollingPodBuilder for Nullable Pods:
+For additional pods, such as cart or login status:
 
 ```dart
-// Use a PollingPodBuilder when your Pod is initially nullable and will soon be updated to a non-null value.
-// This approach is useful for prototyping and quick demonstrations but is not recommended for production code.
-// The [podPoller] function is called periodically until it returns a non-null value.
+final pProductCount = Pod(10);
+final pCartTotal = Pod(99.99);
+final pIsLoggedIn = Pod(true);
 
-Pod<List<int>>? pNumbers;
-
-PollingPodBuilder(
-  podPoller: () => pNumbers,
+PodListBuilder(
+  podList: [pProductCount, pCartTotal, pIsLoggedIn],
   builder: (context, snapshot) {
-    final numbers = snapshot.value!;
-    return Text('Count: ${numbers.length}');
+    final values = snapshot.value.map((e) => e.unwrap()).toList();
+    final count = values[0] as int;
+    final total = values[1] as double;
+    final loggedIn = values[2] as bool;
+    if (!loggedIn) {
+      return const Text('Please log in.');
+    }
+    return Text('You have $count items in your cart. Total: \$$total');
   },
 );
-
-pNumbers = Pod<List<int>>([1, 2, 3, 4, 5]);
 ```
 
-## Pod Type Hierarchy
+### 5. Tune Performance with `debounceDuration` and `cacheDuration`
 
-THe following diagram illustrates how the different Pods are linked to each other and other widgets. An equal amount of "+" means the same hierarchical level. More "+" means lower down in the hierarchy and less "+" means higher up the hierarchy.
+- **debounceDuration**: Delays updates to prevent rapid API calls.
+- **cacheDuration**: Caches results for instant display, using a stable `Key`.
 
-```txt
-+ EasyPod
-+ Listenable
-+++ WeakChangeNotifier
-+++ ValueListenable
-+++++ DisposablePod and ProtectedPodMixin
-+++++++ PodNotifier and GenericPodMixin (GenericPod)
-+++++++++ _ChildPodBase
-+++++++++++ ChildPod
-+++++++++ RootPod
-+++++++++++ SharedPod
-+++++++++++++ SharedProtectedPod
-+++++++++ ReducerPod
-+++++++++ SafeFuturePod
+```dart
+PodBuilder<String>(
+  pod: pSearchQuery,
+  // Even if pSearchQuery updates every millisecond, the builder will only update every 400ms.
+  debounceDuration: const Duration(milliseconds: 400),
+  builder: (context, querySnapshot) {
+    final query = querySnapshot.value.unwrap().unwrap();
+    if (query.isEmpty) return const Text('Enter a search term.');
+    return PodBuilder<List<String>>(
+      // A stable key is required for caching!
+      key: ValueKey(query),
+      pod: searchApi(query),
+       // Results are cached for 2 minutes of inactivity:
+      cacheDuration: const Duration(minutes: 2),
+      builder: (context, resultsSnapshot) {
+        // Handle loading/error/success
+      },
+    );
+  },
+);
 ```
+
+## ℹ️ Advanced Features
+
+### Automatic Memory Management
+
+`df_pod` ensures safety and prevents leaks:
+
+- **Automatic Listener Cleanup**: Listeners use `WeakReferences`. When a `PodBuilder` is removed from the widget tree, its listener is garbage collected automatically.
+- **Automatic Child Disposal**: Disposing a parent pod disposes its derived children.
+
+```dart
+final pParent = Pod(0);
+final pChild = pParent.map((value) => value * 2);
+final pGrandChild = pChild.map((value) => value + 1);
+pParent.dispose(); // Disposes pParent, pChild, and pGrandChild.
+```
+
+### The `addStrongRefListener` Method
+
+For persistent listeners outside the UI, use `addStrongRefListener`, requiring manual removal.
+
+```dart
+void scope() {
+  // This is a strong referenced callback. It is tied to myListener. When myListener goes out of scope, pMyPod will tell the garbage collector it's ready to be disposed of.
+  final myListener = () => print('Pod changed!');
+  pMyPod.addStrongRefListener(strongRefListener: myListener);
+
+  // If you use anonymous functions or weak referenced functions, pMyPod will prematurely dispose these functions since they are not tied to a scope like myListener is.
+  pMyPod.addStrongRefListener(strongRefListener: () {
+     print('Anonymous weak referenced function!')
+  });
+  pMyPod.addStrongRefListener(strongRefListener: weakRefFunction);
+}
+
+// This is a weak reference.
+void weakRefFunction() {
+  print('Weak referenced functions should be avoided!')
+}
+```
+
+**Rule of Thumb**: Use `PodBuilder` for UI; reserve `addStrongRefListener` for non-UI logic.
 
 ## ⚠️ Installation & Setup
 
