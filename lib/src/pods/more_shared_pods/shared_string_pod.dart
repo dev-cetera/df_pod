@@ -18,10 +18,7 @@ import '/src/_src.g.dart';
 
 final class SharedStringPodCreator {
   const SharedStringPodCreator._();
-  static Future<TSharedStringPod> create(
-    String key, {
-    String? initialValue,
-  }) {
+  static Future<TSharedStringPod> create(String key, {String? initialValue}) {
     final finalInitialValue = initialValue ?? '';
     return TSharedStringPod.create(
       key,

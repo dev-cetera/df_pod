@@ -14,7 +14,8 @@ part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent extends Object, TChild extends Object> extends PodNotifier<TChild>
+final class ChildPod<TParent extends Object, TChild extends Object>
+    extends PodNotifier<TChild>
     with GenericPod<TChild>, ProtectedPodMixin<TChild> {
   //
   //
@@ -35,8 +36,8 @@ final class ChildPod<TParent extends Object, TChild extends Object> extends PodN
   ChildPod({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
-  })  : _reducer = reducer,
-        _responder = responder {
+  }) : _reducer = reducer,
+       _responder = responder {
     _parents = responder();
     value = reducer(parents.map((p) => p.value).toList());
     _initializeParents(parents);
@@ -107,6 +108,7 @@ final class ChildPod<TParent extends Object, TChild extends Object> extends PodN
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TValuesReducerFn<TChild, TParentList> = TChild Function(List<TParentList> parentValues);
+typedef TValuesReducerFn<TChild, TParentList> =
+    TChild Function(List<TParentList> parentValues);
 
 typedef TPodsResponderFn<T extends Object> = Iterable<GenericPod<T>> Function();

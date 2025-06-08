@@ -20,14 +20,15 @@ final class PodReducer7 {
 
   /// Reduces 7 Pods into a [ChildPod].
   static ChildPod<Object, C> reduce<
-      C extends Object,
-      P1 extends Object,
-      P2 extends Object,
-      P3 extends Object,
-      P4 extends Object,
-      P5 extends Object,
-      P6 extends Object,
-      P7 extends Object>(
+    C extends Object,
+    P1 extends Object,
+    P2 extends Object,
+    P3 extends Object,
+    P4 extends Object,
+    P5 extends Object,
+    P6 extends Object,
+    P7 extends Object
+  >(
     TResponderFn7<P1, P2, P3, P4, P5, P6, P7> responder,
     TReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> reducer,
   ) {
@@ -38,10 +39,15 @@ final class PodReducer7 {
   }
 
   /// Converts the response from the responder function into a list of Pods.
-  static List<GenericPod<Object>> _toList<P1 extends Object, P2 extends Object, P3 extends Object,
-      P4 extends Object, P5 extends Object, P6 extends Object, P7 extends Object>(
-    TResponderFn7<P1, P2, P3, P4, P5, P6, P7> responder,
-  ) {
+  static List<GenericPod<Object>> _toList<
+    P1 extends Object,
+    P2 extends Object,
+    P3 extends Object,
+    P4 extends Object,
+    P5 extends Object,
+    P6 extends Object,
+    P7 extends Object
+  >(TResponderFn7<P1, P2, P3, P4, P5, P6, P7> responder) {
     final response = responder.call();
     return [
       response.$1,
@@ -55,8 +61,16 @@ final class PodReducer7 {
   }
 
   /// Reduces the values from 7 Pods using the provided reducer function.
-  static C _reduce<C extends Object, P1 extends Object, P2 extends Object, P3 extends Object,
-      P4 extends Object, P5 extends Object, P6 extends Object, P7 extends Object>(
+  static C _reduce<
+    C extends Object,
+    P1 extends Object,
+    P2 extends Object,
+    P3 extends Object,
+    P4 extends Object,
+    P5 extends Object,
+    P6 extends Object,
+    P7 extends Object
+  >(
     TResponderFn7<P1, P2, P3, P4, P5, P6, P7> responder,
     TReducerFn7<C, P1, P2, P3, P4, P5, P6, P7> reducer,
   ) {
@@ -75,27 +89,42 @@ final class PodReducer7 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn7<P1 extends Object, P2 extends Object, P3 extends Object, P4 extends Object,
-        P5 extends Object, P6 extends Object, P7 extends Object>
-    = (
-  GenericPod<P1> p1,
-  GenericPod<P2> p2,
-  GenericPod<P3> p3,
-  GenericPod<P4> p4,
-  GenericPod<P5> p5,
-  GenericPod<P6> p6,
-  GenericPod<P7> p7,
-)
-        Function();
+typedef TResponderFn7<
+  P1 extends Object,
+  P2 extends Object,
+  P3 extends Object,
+  P4 extends Object,
+  P5 extends Object,
+  P6 extends Object,
+  P7 extends Object
+> =
+    (
+      GenericPod<P1> p1,
+      GenericPod<P2> p2,
+      GenericPod<P3> p3,
+      GenericPod<P4> p4,
+      GenericPod<P5> p5,
+      GenericPod<P6> p6,
+      GenericPod<P7> p7,
+    )
+    Function();
 
-typedef TReducerFn7<C extends Object, P1 extends Object, P2 extends Object, P3 extends Object,
-        P4 extends Object, P5 extends Object, P6 extends Object, P7 extends Object>
-    = C Function(
-  GenericPod<P1> p1,
-  GenericPod<P2> p2,
-  GenericPod<P3> p3,
-  GenericPod<P4> p4,
-  GenericPod<P5> p5,
-  GenericPod<P6> p6,
-  GenericPod<P7> p7,
-);
+typedef TReducerFn7<
+  C extends Object,
+  P1 extends Object,
+  P2 extends Object,
+  P3 extends Object,
+  P4 extends Object,
+  P5 extends Object,
+  P6 extends Object,
+  P7 extends Object
+> =
+    C Function(
+      GenericPod<P1> p1,
+      GenericPod<P2> p2,
+      GenericPod<P3> p3,
+      GenericPod<P4> p4,
+      GenericPod<P5> p5,
+      GenericPod<P6> p6,
+      GenericPod<P7> p7,
+    );

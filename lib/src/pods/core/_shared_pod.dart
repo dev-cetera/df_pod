@@ -68,10 +68,7 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   //
 
   @override
-  Future<void> set(
-    A newValue, {
-    bool notifyImmediately = true,
-  }) async {
+  Future<void> set(A newValue, {bool notifyImmediately = true}) async {
     final v = toValue(newValue);
     _sharedPreferences ??= await SharedPreferences.getInstance();
     switch (v) {
@@ -91,25 +88,17 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
           'The provided value type is ${v.runtimeType}.',
         );
     }
-    _set(
-      newValue,
-      notifyImmediately: notifyImmediately,
-    );
+    _set(newValue, notifyImmediately: notifyImmediately);
   }
 
   //
   //
   //
 
-  Future<void> delete({
-    bool notifyImmediately = true,
-  }) async {
+  Future<void> delete({bool notifyImmediately = true}) async {
     _sharedPreferences ??= await SharedPreferences.getInstance();
     await _sharedPreferences!.remove(key);
-    _set(
-      initialValue,
-      notifyImmediately: notifyImmediately,
-    );
+    _set(initialValue, notifyImmediately: notifyImmediately);
   }
 
   //
@@ -117,15 +106,10 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   //
 
   @override
-  Future<void> refresh({
-    bool notifyImmediately = true,
-  }) async {
+  Future<void> refresh({bool notifyImmediately = true}) async {
     _sharedPreferences ??= await SharedPreferences.getInstance();
     final v = _sharedPreferences!.get(key);
     final newValue = fromValue(v as B?);
-    _set(
-      newValue,
-      notifyImmediately: notifyImmediately,
-    );
+    _set(newValue, notifyImmediately: notifyImmediately);
   }
 }

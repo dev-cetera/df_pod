@@ -28,7 +28,10 @@ import 'package:flutter/foundation.dart';
 mixin class WeakChangeNotifier implements Listenable {
   int _count = 0;
   List<WeakReference<VoidCallback>?> _listeners = _emptyListeners;
-  static final _emptyListeners = List<WeakReference<VoidCallback>?>.filled(0, null);
+  static final _emptyListeners = List<WeakReference<VoidCallback>?>.filled(
+    0,
+    null,
+  );
 
   int _notificationCallStackDepth = 0;
   int _reentrantlyRemovedListeners = 0;
@@ -193,7 +196,9 @@ mixin class WeakChangeNotifier implements Listenable {
             exception: exception,
             stack: stack,
             library: 'df_pod',
-            context: ErrorDescription('while dispatching notifications for $runtimeType'),
+            context: ErrorDescription(
+              'while dispatching notifications for $runtimeType',
+            ),
           ),
         );
       }
@@ -212,7 +217,10 @@ mixin class WeakChangeNotifier implements Listenable {
     if (_count == 0) {
       _listeners = List<WeakReference<VoidCallback>?>.filled(1, null);
     } else {
-      final newListeners = List<WeakReference<VoidCallback>?>.filled(_listeners.length * 2, null);
+      final newListeners = List<WeakReference<VoidCallback>?>.filled(
+        _listeners.length * 2,
+        null,
+      );
       for (var i = 0; i < _count; i++) {
         newListeners[i] = _listeners[i];
       }
@@ -225,7 +233,10 @@ mixin class WeakChangeNotifier implements Listenable {
     _count--;
     // Shrink the list if it's sparsely populated to conserve memory.
     if (_count * 2 <= _listeners.length) {
-      final newListeners = List<WeakReference<VoidCallback>?>.filled(_count, null);
+      final newListeners = List<WeakReference<VoidCallback>?>.filled(
+        _count,
+        null,
+      );
       for (var i = 0; i < index; i++) {
         newListeners[i] = _listeners[i];
       }
@@ -258,7 +269,10 @@ mixin class WeakChangeNotifier implements Listenable {
       if (newLength * 2 <= _listeners.length) {
         // As in _removeAt, we only shrink the list when the real number of
         // listeners is half the length of our list.
-        final newListeners = List<WeakReference<VoidCallback>?>.filled(newLength, null);
+        final newListeners = List<WeakReference<VoidCallback>?>.filled(
+          newLength,
+          null,
+        );
         var newIndex = 0;
         for (var i = 0; i < _count; i++) {
           final listenerRef = _listeners[i];

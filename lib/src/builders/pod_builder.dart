@@ -169,7 +169,8 @@ final class SyncPodBuilder<T extends Object> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodBuilderState<T extends Object> extends State<SyncPodBuilder<T>> {
+final class SyncPodBuilderState<T extends Object>
+    extends State<SyncPodBuilder<T>> {
   //
   //
   //
@@ -198,7 +199,8 @@ final class SyncPodBuilderState<T extends Object> extends State<SyncPodBuilder<T
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue = ResolvablePodBuilder.cacheManager.get(key.toString()) as Result<T>?;
+      final cachedValue =
+          ResolvablePodBuilder.cacheManager.get(key.toString()) as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -268,7 +270,8 @@ final class SyncPodBuilderState<T extends Object> extends State<SyncPodBuilder<T
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodBuilderValueSnapshot<T extends Object> extends OnValueSnapshot<T> {
+final class PodBuilderValueSnapshot<T extends Object>
+    extends OnValueSnapshot<T> {
   final Result<ValueListenable<T>> pod;
 
   const PodBuilderValueSnapshot({
@@ -278,7 +281,8 @@ final class PodBuilderValueSnapshot<T extends Object> extends OnValueSnapshot<T>
   });
 }
 
-final class PodBuilderOptionSnapshot<T extends Object> extends OnOptionSnapshot<T> {
+final class PodBuilderOptionSnapshot<T extends Object>
+    extends OnOptionSnapshot<T> {
   final Option<Result<ValueListenable<T>>> pod;
 
   const PodBuilderOptionSnapshot({
@@ -288,20 +292,16 @@ final class PodBuilderOptionSnapshot<T extends Object> extends OnOptionSnapshot<
   });
 }
 
-typedef TOnValueBuilder<T extends Object, S extends OnValueSnapshot<T>> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+typedef TOnValueBuilder<T extends Object, S extends OnValueSnapshot<T>> =
+    Widget Function(BuildContext context, S snapshot);
 
 class OnValueSnapshot<T extends Object> extends BuilderSnapshot {
   final Result<T> value;
   const OnValueSnapshot({required this.value, required super.child});
 }
 
-typedef TOnOptionBuilder<T extends Object, S extends OnOptionSnapshot<T>> = Widget Function(
-  BuildContext context,
-  S snapshot,
-);
+typedef TOnOptionBuilder<T extends Object, S extends OnOptionSnapshot<T>> =
+    Widget Function(BuildContext context, S snapshot);
 
 class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;

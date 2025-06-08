@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.17.0]
+
+- Released @ 6/2025 (UTC)
+- breaking: Remove null, use monads and update documentatipn
+
 ## [0.16.10]
 
 - Released @ 6/2025 (UTC)

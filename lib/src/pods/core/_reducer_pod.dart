@@ -25,7 +25,8 @@ part of 'core.dart';
 ///
 /// Note that when this pod disposes via [dispose], it will not dispose the Pods
 /// provided by [responder]. Explicit disposal is needed.
-base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
+base class ReducerPod<T extends Object> extends PodNotifier<T>
+    with GenericPod<T> {
   //
   //
   //
@@ -57,10 +58,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T
   // ignore: overridden_fields
   late T value;
 
-  ReducerPod({
-    required this.responder,
-    required this.reducer,
-  }) {
+  ReducerPod({required this.responder, required this.reducer}) {
     _refresh!();
   }
 

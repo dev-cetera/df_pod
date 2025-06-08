@@ -62,10 +62,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     }
   }
 
-  bool _set(
-    T newValue, {
-    bool notifyImmediately = true,
-  }) {
+  bool _set(T newValue, {bool notifyImmediately = true}) {
     if (!isEquatable<T>() || newValue != value) {
       value = newValue;
       if (notifyImmediately) {

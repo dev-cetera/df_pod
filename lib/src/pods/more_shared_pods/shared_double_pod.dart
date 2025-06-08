@@ -19,10 +19,7 @@ import '/src/_src.g.dart';
 final class SharedDoublePodCreator {
   const SharedDoublePodCreator._();
 
-  static Future<TSharedDoublePod> create(
-    String key, {
-    double? initialValue,
-  }) {
+  static Future<TSharedDoublePod> create(String key, {double? initialValue}) {
     final finalInitialValue = initialValue ?? 0.0;
     return TSharedDoublePod.create(
       key,

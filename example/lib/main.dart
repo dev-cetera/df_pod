@@ -19,7 +19,9 @@ const mockProducts = [
 /// Simulates a network API call to search for products.
 /// It can either succeed with a `Pod<List<String>>` or fail with an exception.
 Future<Pod<List<String>>> searchApi(String query) async {
-  await Future<void>.delayed(const Duration(milliseconds: 800)); // Simulate network latency
+  await Future<void>.delayed(
+    const Duration(milliseconds: 800),
+  ); // Simulate network latency
 
   if (query.toLowerCase() == 'error') {
     throw Exception('Network failed. Please try again.');
@@ -27,7 +29,9 @@ Future<Pod<List<String>>> searchApi(String query) async {
   if (query.isEmpty) {
     return Pod([]);
   }
-  final results = mockProducts.where((p) => p.toLowerCase().contains(query.toLowerCase())).toList();
+  final results = mockProducts
+      .where((p) => p.toLowerCase().contains(query.toLowerCase()))
+      .toList();
   return Pod(results);
 }
 
@@ -141,7 +145,9 @@ class SearchSummary extends StatelessWidget {
             child: Text(
               '[$count]: $message',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
             ),
           ),
         );
@@ -164,7 +170,9 @@ class SearchResults extends StatelessWidget {
         final query = querySnapshot.value.unwrap().unwrap();
 
         if (query.isEmpty) {
-          return const Center(child: Icon(Icons.search, size: 64, color: Colors.grey));
+          return const Center(
+            child: Icon(Icons.search, size: 64, color: Colors.grey),
+          );
         }
 
         // The inner PodBuilder handles the async search operation.
@@ -186,7 +194,10 @@ class SearchResults extends StatelessWidget {
             if (result.isErr()) {
               final error = result.err().unwrap().error;
               return Center(
-                child: Text('An error occurred: $error', style: const TextStyle(color: Colors.red)),
+                child: Text(
+                  'An error occurred: $error',
+                  style: const TextStyle(color: Colors.red),
+                ),
               );
             }
 
@@ -200,11 +211,10 @@ class SearchResults extends StatelessWidget {
 
             return ListView.builder(
               itemCount: products.length,
-              itemBuilder:
-                  (_, index) => ListTile(
-                    leading: const Icon(Icons.shopping_bag_outlined),
-                    title: Text(products[index]),
-                  ),
+              itemBuilder: (_, index) => ListTile(
+                leading: const Icon(Icons.shopping_bag_outlined),
+                title: Text(products[index]),
+              ),
             );
           },
         );
