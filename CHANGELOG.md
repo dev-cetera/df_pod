@@ -1,10 +1,14 @@
 # Changelog
 
+## [0.17.1]
+
+- Released @ 6/2025 (UTC)
+- chore: Update dependencies
+
 ## [0.17.0]
 
 - Released @ 6/2025 (UTC)
 - breaking: Remove null, use monads and update documentatipn
-- chore: Update dependencies
 
 ## [0.16.10]
 
