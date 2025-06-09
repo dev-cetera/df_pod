@@ -27,7 +27,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
 
   /// Returns the value of the Pod when the [test] returns `true`.
   Resolvable<T> cond(bool Function(T value) test) {
-    final finisher = SafeFinisher<T>();
+    final finisher = Finisher<T>();
     final check = () {
       if (test(value)) {
         finisher.finish(value);
@@ -35,7 +35,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     };
     check();
     if (finisher.isCompleted) {
-      return SyncOk.value(value);
+      return Sync.value(Ok(value));
     } else {
       addStrongRefListener(strongRefListener: check);
       return finisher.resolvable().map((e) {
