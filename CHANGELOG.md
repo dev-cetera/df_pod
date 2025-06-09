@@ -4,6 +4,7 @@
 
 - Released @ 6/2025 (UTC)
 - breaking: Remove null, use monads and update documentatipn
+- chore: Update dependencies
 
 ## [0.16.10]
 
