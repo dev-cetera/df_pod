@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.18.1]
+
+- Released @ 6/2025 (UTC)
+- feat: Add reduce function to OnOptionSnapshot and OnOptionListSnapshot
+
 ## [0.18.0]
 
 - Released @ 6/2025 (UTC)
