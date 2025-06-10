@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.18.0]
+
+- Released @ 6/2025 (UTC)
+- breaking: Improved PodBuilders
+
 ## [0.17.1]
 
 - Released @ 6/2025 (UTC)
