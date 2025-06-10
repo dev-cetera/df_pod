@@ -13,7 +13,6 @@
 import 'dart:async' show Timer, FutureOr;
 import 'package:df_log/df_log.dart' show Log;
 import 'package:df_safer_dart/df_safer_dart.dart';
-import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/widgets.dart';
 
@@ -41,14 +40,11 @@ class ResolvablePodBuilder<T extends Object> extends StatelessWidget {
   //
 
   final Resolvable<ValueListenable<T>> pod;
-  final TOnOptionBuilder<T, PodBuilderOptionSnapshot<T>> builder;
+  final TOnOptionBuilder<T, PodBuilderSnapshot<T>> builder;
   final void Function(ValueListenable<T> pod)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
   final Widget? child;
-
-  @protected
-  static final cacheManager = CacheManager<Object>();
 
   //
   //
@@ -73,59 +69,22 @@ class ResolvablePodBuilder<T extends Object> extends StatelessWidget {
     if (pod.isSync()) {
       return SyncPodBuilder(
         key: key,
-        pod: pod.unwrapSync().value,
-        builder: (context, snapshot) {
-          return builder(
-            context,
-            PodBuilderOptionSnapshot(
-              pod: Some(snapshot.pod),
-              value: Some(snapshot.value),
-              child: child,
-            ),
-          );
-        },
+        pod: pod.sync().unwrap(),
+        builder: builder,
         onDispose: onDispose,
-        cacheDuration: cacheDuration,
         debounceDuration: debounceDuration,
+        cacheDuration: cacheDuration,
         child: child,
       );
     } else {
-      return FutureBuilder(
-        future: pod.unwrapAsync().value,
-        builder: (context, snapshot) {
-          final pod = snapshot.data;
-          if (snapshot.hasData && pod != null) {
-            return SyncPodBuilder(
-              key: key,
-              pod: pod,
-              builder: (context, snapshot) {
-                return builder(
-                  context,
-                  PodBuilderOptionSnapshot(
-                    pod: Some(snapshot.pod),
-                    value: Some(snapshot.value),
-                    child: child,
-                  ),
-                );
-              },
-              onDispose: onDispose,
-              cacheDuration: cacheDuration,
-              debounceDuration: debounceDuration,
-              child: child,
-            );
-          } else {
-            return builder(
-              context,
-              PodBuilderOptionSnapshot(
-                pod: Option.fromNullable(pod),
-                value: Option.fromNullable(
-                  cacheManager.get(key?.toString()) as Result<T>?,
-                ),
-                child: child,
-              ),
-            );
-          }
-        },
+      return AsyncPodBuilder(
+        key: key,
+        pod: pod.async().unwrap(),
+        builder: builder,
+        onDispose: onDispose,
+        debounceDuration: debounceDuration,
+        cacheDuration: cacheDuration,
+        child: child,
       );
     }
   }
@@ -133,13 +92,13 @@ class ResolvablePodBuilder<T extends Object> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodBuilder<T extends Object> extends StatefulWidget {
+class SyncPodBuilder<T extends Object> extends StatelessWidget {
   //
   //
   //
 
-  final Result<ValueListenable<T>> pod;
-  final TOnValueBuilder<T, PodBuilderValueSnapshot<T>> builder;
+  final Sync<ValueListenable<T>> pod;
+  final TOnOptionBuilder<T, PodBuilderSnapshot<T>> builder;
   final void Function(ValueListenable<T> pod)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
@@ -155,6 +114,117 @@ final class SyncPodBuilder<T extends Object> extends StatefulWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
+    this.cacheDuration = Duration.zero,
+    this.child,
+  });
+
+  //
+  //
+  //
+
+  @override
+  Widget build(BuildContext context) {
+    return PodResultBuilder(
+      key: key,
+      pod: pod.value,
+      builder: builder,
+      onDispose: onDispose,
+      cacheDuration: cacheDuration,
+      debounceDuration: debounceDuration,
+      child: child,
+    );
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class AsyncPodBuilder<T extends Object> extends StatelessWidget {
+  //
+  //
+  //
+
+  final Async<ValueListenable<T>> pod;
+  final TOnOptionBuilder<T, PodBuilderSnapshot<T>> builder;
+  final void Function(ValueListenable<T> pod)? onDispose;
+  final Duration? debounceDuration;
+  final Duration? cacheDuration;
+  final Widget? child;
+
+  //
+  //
+  //
+
+  const AsyncPodBuilder({
+    super.key,
+    required this.pod,
+    required this.builder,
+    this.onDispose,
+    this.debounceDuration,
+    this.cacheDuration = Duration.zero,
+    this.child,
+  });
+
+  //
+  //
+  //
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: pod.value,
+      builder: (context, snapshot) {
+        final pod = snapshot.data;
+        if (snapshot.hasData && pod != null) {
+          return PodResultBuilder(
+            key: key,
+            pod: pod,
+            builder: builder,
+            onDispose: onDispose,
+            cacheDuration: cacheDuration,
+            debounceDuration: debounceDuration,
+            child: child,
+          );
+        } else {
+          return builder(
+            context,
+            PodBuilderSnapshot(
+              pod: Option.fromNullable(pod),
+              value: Option.fromNullable(
+                PodBuilderCacheManager.i.cacheManager.get(key?.toString()) as Result<T>?,
+              ),
+              child: child,
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+final class PodResultBuilder<T extends Object> extends StatefulWidget {
+  //
+  //
+  //
+
+  final Result<ValueListenable<T>> pod;
+  final TOnOptionBuilder<T, PodBuilderSnapshot<T>> builder;
+  final void Function(ValueListenable<T> pod)? onDispose;
+  final Duration? debounceDuration;
+  final Duration? cacheDuration;
+  final Widget? child;
+
+  //
+  //
+  //
+
+  const PodResultBuilder({
+    super.key,
+    required this.pod,
+    required this.builder,
+    this.onDispose,
+    this.debounceDuration,
     required this.cacheDuration,
     this.child,
   });
@@ -164,19 +234,22 @@ final class SyncPodBuilder<T extends Object> extends StatefulWidget {
   //
 
   @override
-  State<SyncPodBuilder<T>> createState() => SyncPodBuilderState<T>();
+  State<PodResultBuilder<T>> createState() => PodResultBuilderState<T>();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodBuilderState<T extends Object>
-    extends State<SyncPodBuilder<T>> {
+final class PodResultBuilderState<T extends Object> extends State<PodResultBuilder<T>> {
   //
   //
   //
 
   late final Widget? _staticChild;
   late Result<T> _value;
+
+  //
+  //
+  //
 
   @override
   void initState() {
@@ -187,8 +260,12 @@ final class SyncPodBuilderState<T extends Object>
     widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
   }
 
+  //
+  //
+  //
+
   @override
-  void didUpdateWidget(SyncPodBuilder<T> oldWidget) {
+  void didUpdateWidget(PodResultBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.pod.ifOk((e) => e.unwrap().removeListener(_valueChanged));
     _setValue();
@@ -196,11 +273,14 @@ final class SyncPodBuilderState<T extends Object>
     widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
   }
 
+  //
+  //
+  //
+
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue =
-          ResolvablePodBuilder.cacheManager.get(key.toString()) as Result<T>?;
+      final cachedValue = PodBuilderCacheManager.i.cacheManager.get(key.toString()) as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -210,17 +290,25 @@ final class SyncPodBuilderState<T extends Object>
     _value = widget.pod.map((e) => e.value);
   }
 
+  //
+  //
+  //
+
   void _cacheValue() {
     final key = widget.key;
     if (key == null) {
       return;
     }
-    ResolvablePodBuilder.cacheManager.cache(
+    PodBuilderCacheManager.i.cacheManager.cache(
       key.toString(),
       _value,
       cacheDuration: widget.cacheDuration,
     );
   }
+
+  //
+  //
+  //
 
   Timer? _debounceTimer;
 
@@ -243,17 +331,25 @@ final class SyncPodBuilderState<T extends Object>
     }
   }
 
+  //
+  //
+  //
+
   @override
   Widget build(BuildContext context) {
     return widget.builder(
       context,
-      PodBuilderValueSnapshot(
-        pod: widget.pod,
-        value: _value,
+      PodBuilderSnapshot(
+        pod: Some(widget.pod),
+        value: Some(_value),
         child: _staticChild,
       ),
     );
   }
+
+  //
+  //
+  //
 
   @override
   void dispose() {
@@ -270,40 +366,33 @@ final class SyncPodBuilderState<T extends Object>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodBuilderValueSnapshot<T extends Object>
-    extends OnValueSnapshot<T> {
-  final Result<ValueListenable<T>> pod;
-
-  const PodBuilderValueSnapshot({
-    required this.pod,
-    required super.value,
-    required super.child,
-  });
-}
-
-final class PodBuilderOptionSnapshot<T extends Object>
-    extends OnOptionSnapshot<T> {
+final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   final Option<Result<ValueListenable<T>>> pod;
 
-  const PodBuilderOptionSnapshot({
+  const PodBuilderSnapshot({
     required this.pod,
     required super.value,
     required super.child,
   });
 }
 
-typedef TOnValueBuilder<T extends Object, S extends OnValueSnapshot<T>> =
-    Widget Function(BuildContext context, S snapshot);
+typedef TOnOptionBuilder<T extends Object, TSnapshot extends OnOptionSnapshot<T>> = Widget Function(
+  BuildContext context,
+  TSnapshot snapshot,
+);
 
-class OnValueSnapshot<T extends Object> extends BuilderSnapshot {
-  final Result<T> value;
-  const OnValueSnapshot({required this.value, required super.child});
-}
+final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
+  final Option<Result<T>> _value;
+  const OnOptionSnapshot({
+    required Option<Result<T>> value,
+    required super.child,
+  }) : _value = value;
 
-typedef TOnOptionBuilder<T extends Object, S extends OnOptionSnapshot<T>> =
-    Widget Function(BuildContext context, S snapshot);
-
-class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
-  final Option<Result<T>> value;
-  const OnOptionSnapshot({required this.value, required super.child});
+  Option<Result<T>> get value {
+    final reduced = _value.reduce<T>();
+    if (reduced.isAsync()) {
+      return const None();
+    }
+    return reduced.sync().unwrap().value.swap();
+  }
 }

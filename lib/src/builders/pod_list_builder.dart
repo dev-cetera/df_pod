@@ -13,7 +13,6 @@
 import 'dart:async' show Timer, FutureOr;
 import 'package:df_log/df_log.dart' show Log;
 import 'package:df_safer_dart/df_safer_dart.dart';
-import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/widgets.dart';
 
@@ -41,16 +40,11 @@ class ResolvablePodListBuilder<T extends Object> extends StatelessWidget {
   //
 
   final Iterable<Resolvable<ValueListenable<T>>> podList;
-  final TOnOptionListBuilder<T, PodListBuilderOptionSnapshot<T>> builder;
+  final TOnOptionListBuilder<T, PodListBuilderSnapshot<T>> builder;
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
-  final Iterable<T>? fallback;
   final Widget? child;
-
-  @protected
-  static final cacheManager = CacheManager<Iterable<Object>>();
-
   //
   //
   //
@@ -63,7 +57,6 @@ class ResolvablePodListBuilder<T extends Object> extends StatelessWidget {
     this.debounceDuration,
     this.cacheDuration = Duration.zero,
     this.child,
-    this.fallback,
   });
 
   //
@@ -74,68 +67,24 @@ class ResolvablePodListBuilder<T extends Object> extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSync = podList.every((e) => e.isSync());
     if (isSync) {
-      final podList1 = podList.map((e) => e.unwrapSync().value);
       return SyncPodListBuilder(
         key: key,
-        podList: podList1,
-        builder: (context, snapshot) {
-          return builder(
-            context,
-            PodListBuilderOptionSnapshot(
-              podList: Some(podList1),
-              value: Some(snapshot.value),
-              child: child,
-            ),
-          );
-        },
+        podList: podList.map((e) => e.sync().unwrap()),
+        builder: builder,
         onDispose: onDispose,
-        cacheDuration: cacheDuration,
         debounceDuration: debounceDuration,
+        cacheDuration: cacheDuration,
         child: child,
       );
     } else {
-      final podList2 = podList.map((e) => e.asAsync().value);
-      return FutureBuilder(
-        future: () async {
-          return await Future.wait(
-            podList2.map(
-              (e) => () async {
-                return e;
-              }(),
-            ),
-          );
-        }(),
-        builder: (context, snapshot) {
-          final podList = snapshot.data;
-          if (snapshot.hasData && podList != null) {
-            return SyncPodListBuilder(
-              key: key,
-              podList: podList,
-              builder: (context, snapshot) {
-                return builder(
-                  context,
-                  PodListBuilderOptionSnapshot(
-                    podList: Some(podList),
-                    value: Some(snapshot.value),
-                    child: child,
-                  ),
-                );
-              },
-              onDispose: onDispose,
-              cacheDuration: cacheDuration,
-              debounceDuration: debounceDuration,
-              child: child,
-            );
-          } else {
-            final snapshot = PodListBuilderOptionSnapshot<T>(
-              podList: const None(),
-              value: const None(),
-              child: child,
-            );
-            final result = builder(context, snapshot);
-            return result;
-          }
-        },
+      return ForcedAsyncPodListBuilder(
+        key: key,
+        podList: podList,
+        builder: builder,
+        onDispose: onDispose,
+        debounceDuration: debounceDuration,
+        cacheDuration: cacheDuration,
+        child: child,
       );
     }
   }
@@ -143,13 +92,13 @@ class ResolvablePodListBuilder<T extends Object> extends StatelessWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodListBuilder<T extends Object> extends StatefulWidget {
+class SyncPodListBuilder<T extends Object> extends StatelessWidget {
   //
   //
   //
 
-  final Iterable<Result<ValueListenable<T>>> podList;
-  final TOnValueListBuilder<T, PodListBuilderValueSnapshot<T>> builder;
+  final Iterable<Sync<ValueListenable<T>>> podList;
+  final TOnOptionListBuilder<T, PodListBuilderSnapshot<T>> builder;
   final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
   final Duration? debounceDuration;
   final Duration? cacheDuration;
@@ -165,6 +114,122 @@ final class SyncPodListBuilder<T extends Object> extends StatefulWidget {
     required this.builder,
     this.onDispose,
     this.debounceDuration,
+    this.cacheDuration = Duration.zero,
+    this.child,
+  });
+
+  //
+  //
+  //
+
+  @override
+  Widget build(BuildContext context) {
+    return PodResultListBuilder(
+      key: key,
+      podList: podList.map((e) => e.unwrapSync().value),
+      builder: builder,
+      onDispose: onDispose,
+      cacheDuration: cacheDuration,
+      debounceDuration: debounceDuration,
+      child: child,
+    );
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+class ForcedAsyncPodListBuilder<T extends Object> extends StatelessWidget {
+  //
+  //
+  //
+
+  final Iterable<Resolvable<ValueListenable<T>>> podList;
+  final TOnOptionListBuilder<T, PodListBuilderSnapshot<T>> builder;
+  final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
+  final Duration? debounceDuration;
+  final Duration? cacheDuration;
+  final Widget? child;
+
+  //
+  //
+  //
+
+  const ForcedAsyncPodListBuilder({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.debounceDuration,
+    this.cacheDuration = Duration.zero,
+    this.child,
+  });
+
+  //
+  //
+  //
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: () async {
+        return await Future.wait(
+          podList.map((e) => e.toAsync().value).map(
+                (e) => () async {
+                  return e;
+                }(),
+              ),
+        );
+      }(),
+      builder: (context, snapshot) {
+        final podList = snapshot.data;
+        if (snapshot.hasData && podList != null) {
+          return PodResultListBuilder(
+            key: key,
+            podList: podList,
+            builder: builder,
+            onDispose: onDispose,
+            cacheDuration: cacheDuration,
+            debounceDuration: debounceDuration,
+            child: child,
+          );
+        } else {
+          final snapshot = PodListBuilderSnapshot<T>(
+            podList: const None(),
+            value: const None(),
+            child: child,
+          );
+          final result = builder(context, snapshot);
+          return result;
+        }
+      },
+    );
+  }
+}
+
+// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+final class PodResultListBuilder<T extends Object> extends StatefulWidget {
+  //
+  //
+  //
+
+  final Iterable<Result<ValueListenable<T>>> podList;
+  final TOnOptionListBuilder<T, PodListBuilderSnapshot<T>> builder;
+  final void Function(Iterable<ValueListenable<T>> podList)? onDispose;
+  final Duration? debounceDuration;
+  final Duration? cacheDuration;
+  final Widget? child;
+
+  //
+  //
+  //
+
+  const PodResultListBuilder({
+    super.key,
+    required this.podList,
+    required this.builder,
+    this.onDispose,
+    this.debounceDuration,
     required this.cacheDuration,
     this.child,
   });
@@ -174,19 +239,22 @@ final class SyncPodListBuilder<T extends Object> extends StatefulWidget {
   //
 
   @override
-  State<SyncPodListBuilder<T>> createState() => SyncPodListBuilderState();
+  State<PodResultListBuilder<T>> createState() => PodResultListBuilderState();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class SyncPodListBuilderState<T extends Object>
-    extends State<SyncPodListBuilder<T>> {
+final class PodResultListBuilderState<T extends Object> extends State<PodResultListBuilder<T>> {
   //
   //
   //
 
   late final Widget? _staticChild;
   late Iterable<Result<T>> _valueList;
+
+  //
+  //
+  //
 
   @override
   void initState() {
@@ -197,8 +265,12 @@ final class SyncPodListBuilderState<T extends Object>
     _addListenerToPods(widget.podList);
   }
 
+  //
+  //
+  //
+
   @override
-  void didUpdateWidget(SyncPodListBuilder<T> oldWidget) {
+  void didUpdateWidget(PodResultListBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _removeListenerFromPods(oldWidget.podList);
     _setValue();
@@ -206,12 +278,15 @@ final class SyncPodListBuilderState<T extends Object>
     _addListenerToPods(widget.podList);
   }
 
+  //
+  //
+  //
+
   void _setValue() {
     final key = widget.key;
     if (key != null) {
       final cachedValue =
-          ResolvablePodListBuilder.cacheManager.get(key.toString())
-              as Iterable<Result<T>>?;
+          PodBuilderCacheManager.i.cacheManager.get(key.toString()) as Iterable<Result<T>>?;
       if (cachedValue != null) {
         _valueList = cachedValue;
         return;
@@ -220,17 +295,25 @@ final class SyncPodListBuilderState<T extends Object>
     _valueList = widget.podList.map((e) => e.map((e) => e.value));
   }
 
+  //
+  //
+  //
+
   void _cacheValue() {
     final key = widget.key;
     if (key == null) {
       return;
     }
-    ResolvablePodListBuilder.cacheManager.cache(
+    PodBuilderCacheManager.i.cacheManager.cache(
       key.toString(),
       widget.podList.map((e) => e.map((e) => e.value)),
       cacheDuration: widget.cacheDuration,
     );
   }
+
+  //
+  //
+  //
 
   void _addListenerToPods(Iterable<Result<ValueListenable<T>>> pods) {
     for (final pod in pods) {
@@ -239,12 +322,20 @@ final class SyncPodListBuilderState<T extends Object>
     }
   }
 
+  //
+  //
+  //
+
   void _removeListenerFromPods(Iterable<Result<ValueListenable<T>>> pods) {
     for (final pod in pods) {
       if (pod.isErr()) continue;
       pod.unwrap().removeListener(_valueChanged);
     }
   }
+
+  //
+  //
+  //
 
   Timer? _debounceTimer;
 
@@ -267,17 +358,25 @@ final class SyncPodListBuilderState<T extends Object>
     }
   }
 
+  //
+  //
+  //
+
   @override
   Widget build(BuildContext context) {
     return widget.builder(
       context,
-      PodListBuilderValueSnapshot(
-        podList: widget.podList,
-        value: _valueList,
+      PodListBuilderSnapshot(
+        podList: Some(widget.podList),
+        value: Some(_valueList.map((e) => Some(e))),
         child: _staticChild,
       ),
     );
   }
+
+  //
+  //
+  //
 
   @override
   void dispose() {
@@ -298,44 +397,38 @@ final class SyncPodListBuilderState<T extends Object>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListBuilderValueSnapshot<T extends Object>
-    extends OnValueListSnapshot<T> {
-  final Iterable<Result<ValueListenable<T>>> podList;
-
-  const PodListBuilderValueSnapshot({
-    required this.podList,
-    required super.value,
-    required super.child,
-  });
-}
-
-final class PodListBuilderOptionSnapshot<T extends Object>
-    extends OnOptionListSnapshot<T> {
+final class PodListBuilderSnapshot<T extends Object> extends OnOptionListSnapshot<T> {
   final Option<Iterable<Result<ValueListenable<T>>>> podList;
 
-  const PodListBuilderOptionSnapshot({
+  const PodListBuilderSnapshot({
     required this.podList,
     required super.value,
     required super.child,
   });
 }
 
-typedef TOnValueListBuilder<
-  T extends Object,
-  S extends OnValueListSnapshot<T>
-> = Widget Function(BuildContext context, S snapshot);
-
-class OnValueListSnapshot<T extends Object> extends BuilderSnapshot {
-  final Iterable<Result<T>> value;
-  const OnValueListSnapshot({required this.value, required super.child});
-}
-
-typedef TOnOptionListBuilder<
-  T extends Object,
-  S extends OnOptionListSnapshot<T>
-> = Widget Function(BuildContext context, S snapshot);
+typedef TOnOptionListBuilder<T extends Object, TSnapshot extends OnOptionListSnapshot<T>> = Widget
+    Function(
+  BuildContext context,
+  TSnapshot snapshot,
+);
 
 class OnOptionListSnapshot<T extends Object> extends BuilderSnapshot {
-  final Option<Iterable<Result<T>>> value;
-  const OnOptionListSnapshot({required this.value, required super.child});
+  final Option<Iterable<Option<Result<T>>>> _value;
+  const OnOptionListSnapshot({
+    required Option<Iterable<Option<Result<T>>>> value,
+    required super.child,
+  }) : _value = value;
+
+  Option<Iterable<Option<Result<T>>>> get value {
+    return _value.map(
+      (e) => e.map((e) {
+        final reduced = e.reduce<T>();
+        if (reduced.isAsync()) {
+          return const None();
+        }
+        return reduced.sync().unwrap().value.swap();
+      }),
+    );
+  }
 }
