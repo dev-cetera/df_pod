@@ -4,7 +4,7 @@
 Dart & Flutter Packages by dev-cetera.com & contributors.
 
 [![pub](https://img.shields.io/pub/v/df_pod.svg)](https://pub.dev/packages/df_pod)
-[![tag](https://img.shields.io/badge/tag-v0.18.3-purple)](https://github.com/dev-cetera/df_pod/tree/v0.18.3)
+[![tag](https://img.shields.io/badge/tag-v0.18.4-purple)](https://github.com/dev-cetera/df_pod/tree/v0.18.4)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE)
 
 ---
@@ -184,8 +184,8 @@ final pSummaryMessage = pResultCount.reduce(
 PodListBuilder(
   podList: [pResultCount, pSummaryMessage],
   builder: (context, snapshot) {
-    final resultCount = pResultCount.getValue();
-    final message = pSummaryMessage.getValue();
+    final values = snapshot.value.map((e) => e.unwrap());
+    final [resultCount as int, summaryMessage as String] = values.toList();
     return Card(child: Text(message));
   },
 );
