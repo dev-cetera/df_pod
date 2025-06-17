@@ -208,7 +208,7 @@ PodListBuilder(
     if (!loggedIn) {
       return const Text('Please log in.');
     }
-    return Text('You have $count items in your cart. Total: \$total');
+    return Text('You have $count items in your cart. Total: \$$total');
   },
 );
 ```
@@ -340,4 +340,3 @@ If you're enjoying this package and find it valuable, consider showing your appr
 ## License
 
 This project is released under the [MIT License](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE). See [LICENSE](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE) for more information.
-
