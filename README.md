@@ -184,8 +184,8 @@ final pSummaryMessage = pResultCount.reduce(
 PodListBuilder(
   podList: [pResultCount, pSummaryMessage],
   builder: (context, snapshot) {
-    final values = snapshot.value.map((e) => e.unwrap());
-    final [resultCount as int, summaryMessage as String] = values.toList();
+    final resultCount = pResultCount.getValue();
+    final message = pSummaryMessage.getValue();
     return Card(child: Text(message));
   },
 );
