@@ -35,10 +35,10 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     };
     check();
     if (finisher.isCompleted) {
-      return Sync.value(Ok(value));
+      return Sync.okValue(value);
     } else {
       addStrongRefListener(strongRefListener: check);
-      return finisher.resolvable().map((e) {
+      return finisher.resolvable().then((e) {
         removeListener(check);
         return e;
       });
@@ -63,7 +63,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   }
 
   bool _set(T newValue, {bool notifyImmediately = true}) {
-    if (!isEquatable<T>() || newValue != value) {
+    if (!isDefinitelyComparableOrEquatable(newValue) || newValue != value) {
       value = newValue;
       if (notifyImmediately) {
         notifyListeners();

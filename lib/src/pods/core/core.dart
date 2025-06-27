@@ -13,11 +13,12 @@
 import 'dart:async';
 
 import 'package:df_safer_dart/df_safer_dart.dart';
-import 'package:df_type/df_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show WidgetsBinding;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../utils/_is_definitely_comparable_or_equatable.dart'
+    show isDefinitelyComparableOrEquatable;
 import '/src/_mixins/protected_pod_mixin.dart';
 import '/src/_src.g.dart';
 

@@ -10,7 +10,6 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_cleanup/df_cleanup.dart' show DisposeMixin, WillDisposeMixin;
 import 'package:df_log/df_log.dart' show Log;
 
 import 'package:flutter/foundation.dart';
@@ -20,7 +19,6 @@ import '/src/_src.g.dart';
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
-    with DisposeMixin, WillDisposeMixin
     implements ValueListenable<T> {
   /// A flag indicating whether the Pod has been disposed.
   bool _isDisposed = false;

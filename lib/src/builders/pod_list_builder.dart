@@ -126,7 +126,7 @@ class SyncPodListBuilder<T extends Object> extends StatelessWidget {
   Widget build(BuildContext context) {
     return PodResultListBuilder(
       key: key,
-      podList: podList.map((e) => e.unwrapSync().value),
+      podList: podList.map((e) => e.sync().unwrap().value),
       builder: builder,
       onDispose: onDispose,
       cacheDuration: cacheDuration,
@@ -173,9 +173,7 @@ class ForcedAsyncPodListBuilder<T extends Object> extends StatelessWidget {
     return FutureBuilder(
       future: () async {
         return await Future.wait(
-          podList
-              .map((e) => e.toAsync().value)
-              .map(
+          podList.map((e) => e.toAsync().value).map(
                 (e) => () async {
                   return e;
                 }(),
@@ -246,8 +244,7 @@ final class PodResultListBuilder<T extends Object> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodResultListBuilderState<T extends Object>
-    extends State<PodResultListBuilder<T>> {
+final class PodResultListBuilderState<T extends Object> extends State<PodResultListBuilder<T>> {
   //
   //
   //
@@ -289,8 +286,7 @@ final class PodResultListBuilderState<T extends Object>
     final key = widget.key;
     if (key != null) {
       final cachedValue =
-          PodBuilderCacheManager.i.cacheManager.get(key.toString())
-              as Iterable<Result<T>>?;
+          PodBuilderCacheManager.i.cacheManager.get(key.toString()) as Iterable<Result<T>>?;
       if (cachedValue != null) {
         _valueList = cachedValue;
         return;
@@ -401,8 +397,7 @@ final class PodResultListBuilderState<T extends Object>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodListBuilderSnapshot<T extends Object>
-    extends OnOptionListSnapshot<T> {
+final class PodListBuilderSnapshot<T extends Object> extends OnOptionListSnapshot<T> {
   final Option<Iterable<Result<ValueListenable<T>>>> podList;
 
   const PodListBuilderSnapshot({
@@ -412,10 +407,8 @@ final class PodListBuilderSnapshot<T extends Object>
   });
 }
 
-typedef TOnOptionListBuilder<
-  T extends Object,
-  TSnapshot extends OnOptionListSnapshot<T>
-> = Widget Function(BuildContext context, TSnapshot snapshot);
+typedef TOnOptionListBuilder<T extends Object, TSnapshot extends OnOptionListSnapshot<T>> = Widget
+    Function(BuildContext context, TSnapshot snapshot);
 
 class OnOptionListSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Iterable<Option<Result<T>>>> value;

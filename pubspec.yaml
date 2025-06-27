@@ -16,7 +16,7 @@ repository: https://github.com/robmllze/df_pod
 funding:
   - https://www.buymeacoffee.com/dev_cetera
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.18.5
+version: 0.18.6
 topics:
   - bloc
   - provider
@@ -35,14 +35,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  df_type: ^0.12.3
-  df_safer_dart: ^0.15.2
-  df_cleanup: ^0.4.3
-  df_debouncer: ^0.4.13
-  df_log: ^0.3.17
-  shared_preferences: ^2.5.3
+  df_debouncer: ^0.4.15
+  df_log: ^0.3.19
+  df_safer_dart: ^0.16.2
   equatable: ^2.0.7
   meta: ^1.16.0
+  shared_preferences: ^2.5.3
 
 ## -----------------------------------------------------------------------------
 

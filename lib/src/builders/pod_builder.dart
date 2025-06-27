@@ -190,8 +190,7 @@ class AsyncPodBuilder<T extends Object> extends StatelessWidget {
             PodBuilderSnapshot(
               pod: Option.from(pod),
               value: Option.from(
-                PodBuilderCacheManager.i.cacheManager.get(key?.toString())
-                    as Result<T>?,
+                PodBuilderCacheManager.i.cacheManager.get(key?.toString()) as Result<T>?,
               ),
               child: child,
             ),
@@ -240,8 +239,7 @@ final class PodResultBuilder<T extends Object> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodResultBuilderState<T extends Object>
-    extends State<PodResultBuilder<T>> {
+final class PodResultBuilderState<T extends Object> extends State<PodResultBuilder<T>> {
   //
   //
   //
@@ -259,7 +257,7 @@ final class PodResultBuilderState<T extends Object>
     _staticChild = widget.child;
     _setValue();
     _cacheValue();
-    widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
+    widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged));
   }
 
   //
@@ -269,10 +267,10 @@ final class PodResultBuilderState<T extends Object>
   @override
   void didUpdateWidget(PodResultBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.pod.ifOk((e) => e.unwrap().removeListener(_valueChanged));
+    oldWidget.pod.ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged));
     _setValue();
     _cacheValue();
-    widget.pod.ifOk((e) => e.unwrap().addListener(_valueChanged));
+    widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged));
   }
 
   //
@@ -282,9 +280,7 @@ final class PodResultBuilderState<T extends Object>
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue =
-          PodBuilderCacheManager.i.cacheManager.get(key.toString())
-              as Result<T>?;
+      final cachedValue = PodBuilderCacheManager.i.cacheManager.get(key.toString()) as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -380,10 +376,10 @@ final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   });
 }
 
-typedef TOnOptionBuilder<
-  T extends Object,
-  TSnapshot extends OnOptionSnapshot<T>
-> = Widget Function(BuildContext context, TSnapshot snapshot);
+typedef TOnOptionBuilder<T extends Object, TSnapshot extends OnOptionSnapshot<T>> = Widget Function(
+  BuildContext context,
+  TSnapshot snapshot,
+);
 
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;
