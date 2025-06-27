@@ -16,7 +16,7 @@ import '/src/_src.g.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-extension ValueListenableX<T extends Object> on ValueListenable<T> {
+extension ValueListenableExt<T extends Object> on ValueListenable<T> {
   /// Returns the Pod as a [ValueListenable].
   ValueListenable<T> asValueListenable() {
     return this;

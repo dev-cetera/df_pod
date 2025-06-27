@@ -388,12 +388,4 @@ typedef TOnOptionBuilder<
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;
   const OnOptionSnapshot({required this.value, required super.child});
-
-  Option<Result<R>> reduce<R extends Object>() {
-    final reduced = value.reduce<R>();
-    if (reduced.isAsync()) {
-      return const None();
-    }
-    return reduced.sync().unwrap().value.swap();
-  }
 }
