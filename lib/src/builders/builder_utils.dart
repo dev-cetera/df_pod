@@ -10,11 +10,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_debouncer/df_debouncer.dart' show CacheManager;
-import 'package:df_safer_dart/df_safer_dart.dart';
-import 'package:flutter/widgets.dart' show Widget;
-
-import '../pods/core/core.dart' show GenericPod;
+import '/_common.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -29,5 +25,4 @@ final class PodBuilderCacheManager {
   static final i = PodBuilderCacheManager._(CacheManager<Object>());
 }
 
-typedef TGlobalPod<T extends Object> =
-    Resolvable<GenericPod<Option<Result<T>>>>;
+typedef TGlobalPod<T extends Object> = Resolvable<GenericPod<Option<Result<T>>>>;

@@ -10,13 +10,7 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'dart:async' show Timer, FutureOr;
-import 'package:df_log/df_log.dart' show Log;
-import 'package:df_safer_dart/df_safer_dart.dart';
-import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:flutter/widgets.dart';
-
-import '/src/_src.g.dart';
+import '/_common.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -66,6 +60,7 @@ class ResolvablePodBuilder<T extends Object> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UNSAFE:
     if (pod.isSync()) {
       return SyncPodBuilder(
         key: key,
@@ -190,8 +185,7 @@ class AsyncPodBuilder<T extends Object> extends StatelessWidget {
             PodBuilderSnapshot(
               pod: Option.from(pod),
               value: Option.from(
-                PodBuilderCacheManager.i.cacheManager.get(key?.toString())
-                    as Result<T>?,
+                PodBuilderCacheManager.i.cacheManager.get(key?.toString()) as Result<T>?,
               ),
               child: child,
             ),
@@ -240,8 +234,7 @@ final class PodResultBuilder<T extends Object> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodResultBuilderState<T extends Object>
-    extends State<PodResultBuilder<T>> {
+final class PodResultBuilderState<T extends Object> extends State<PodResultBuilder<T>> {
   //
   //
   //
@@ -259,7 +252,8 @@ final class PodResultBuilderState<T extends Object>
     _staticChild = widget.child;
     _setValue();
     _cacheValue();
-    widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged));
+    UNSAFE:
+    widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged)).end();
   }
 
   //
@@ -269,10 +263,13 @@ final class PodResultBuilderState<T extends Object>
   @override
   void didUpdateWidget(PodResultBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.pod.ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged));
-    _setValue();
-    _cacheValue();
-    widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged));
+    UNSAFE:
+    {
+      oldWidget.pod.ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged)).end();
+      _setValue();
+      _cacheValue();
+      widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged)).end();
+    }
   }
 
   //
@@ -282,9 +279,7 @@ final class PodResultBuilderState<T extends Object>
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue =
-          PodBuilderCacheManager.i.cacheManager.get(key.toString())
-              as Result<T>?;
+      final cachedValue = PodBuilderCacheManager.i.cacheManager.get(key.toString()) as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -358,6 +353,7 @@ final class PodResultBuilderState<T extends Object>
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    UNSAFE:
     if (widget.pod.isOk()) {
       widget.pod.unwrap().removeListener(_valueChanged);
       widget.onDispose?.call(widget.pod.unwrap());
@@ -380,10 +376,8 @@ final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   });
 }
 
-typedef TOnOptionBuilder<
-  T extends Object,
-  TSnapshot extends OnOptionSnapshot<T>
-> = Widget Function(BuildContext context, TSnapshot snapshot);
+typedef TOnOptionBuilder<T extends Object, TSnapshot extends OnOptionSnapshot<T>> = Widget Function(
+    BuildContext context, TSnapshot snapshot);
 
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;

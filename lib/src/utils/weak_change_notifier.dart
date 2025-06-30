@@ -10,8 +10,9 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import 'package:df_log/df_log.dart' show Log;
-import 'package:flutter/foundation.dart';
+import 'package:df_safer_dart/_common.dart';
+
+import '/_common.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -98,7 +99,9 @@ mixin class WeakChangeNotifier implements Listenable {
   ///   }
   /// }
   /// ```
-  void addStrongRefListener({required VoidCallback strongRefListener}) {
+  void addStrongRefListener({
+    @mustBeStrongRefOrError required VoidCallback strongRefListener,
+  }) {
     assert(!_isDisposed, 'A $runtimeType was used after being disposed.');
 
     // Per the Listenable contract, addListener should be callable with the same
@@ -116,9 +119,8 @@ mixin class WeakChangeNotifier implements Listenable {
   /// Use [addStrongRefListener] instead, as this method's name can be misleading
   /// about the weak reference behavior.
   @protected
-  @Deprecated('Use addStrongRefListener to make the contract explicit.')
   @override
-  void addListener(VoidCallback listener) {
+  void addListener(@mustBeStrongRefOrError VoidCallback listener) {
     addStrongRefListener(strongRefListener: listener);
   }
 

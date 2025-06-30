@@ -30,7 +30,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     final finisher = SafeCompleter<T>();
     final check = () {
       if (test(value)) {
-        finisher.complete(value);
+        finisher.complete(value).end();
       }
     };
     check();

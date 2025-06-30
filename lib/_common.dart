@@ -10,19 +10,17 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //.title~
 
-import '/_common.dart';
+export 'dart:async' show Timer, FutureOr;
+export 'dart:convert';
+export 'dart:ui' show VoidCallback;
 
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+export 'package:df_debouncer/df_debouncer.dart';
+export 'package:df_log/df_log.dart';
+export 'package:df_safer_dart/df_safer_dart.dart';
 
-@visibleForTesting
-final class PodFinalizerWrapper<T extends Object> {
-  final WeakReference<PodNotifier<T>> _pod;
+export 'package:flutter/foundation.dart';
+export 'package:flutter/widgets.dart';
 
-  static final _finalizer = Finalizer<DisposablePod<dynamic>?>(
-    (pod) => pod?.dispose(),
-  );
+export 'package:meta/meta.dart';
 
-  PodFinalizerWrapper(PodNotifier<T> pod) : _pod = WeakReference(pod) {
-    _finalizer.attach(this, _pod.target);
-  }
-}
+export '/src/_src.g.dart';

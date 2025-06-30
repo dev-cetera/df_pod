@@ -25,8 +25,7 @@ part of 'core.dart';
 ///
 /// Note that when this pod disposes via [dispose], it will not dispose the Pods
 /// provided by [responder]. Explicit disposal is needed.
-base class ReducerPod<T extends Object> extends PodNotifier<T>
-    with GenericPod<T> {
+base class ReducerPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
   //
   //
   //
@@ -46,7 +45,10 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
   factory ReducerPod.single(Option<ValueListenable<T>> Function() responder) {
     return ReducerPod(
       responder: () => [responder()],
-      reducer: (values) => values.first.transf<T>().unwrap(),
+      reducer: (values) {
+        UNSAFE:
+        return values.first.transf<T>().unwrap();
+      },
     );
   }
 
@@ -69,6 +71,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
   late VoidCallback? _refresh = () {
     final option = _getValue();
     if (option.isSome()) {
+      UNSAFE:
       _set(option.unwrap());
     }
   };
@@ -91,6 +94,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
     for (var n = 0; n < values.length; n++) {
       final option = values[n];
       if (option.isNone()) continue;
+      UNSAFE:
       final value = option.unwrap();
       _listenables.add(value);
       value.addListener(_refresh!);

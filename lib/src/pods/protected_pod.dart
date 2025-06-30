@@ -12,7 +12,7 @@
 
 import '/src/_mixins/protected_pod_mixin.dart' show ProtectedPodMixin;
 
-import 'core/core.dart';
+import '/_common.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
@@ -25,7 +25,6 @@ import 'core/core.dart';
 ///
 /// Extends [RootPod] and uses [ProtectedPodMixin] to encapsulate and manage
 /// the protection of these critical methods.
-base class ProtectedPod<T extends Object> extends RootPod<T>
-    with ProtectedPodMixin<T> {
+base class ProtectedPod<T extends Object> extends RootPod<T> with ProtectedPodMixin<T> {
   ProtectedPod(super.value);
 }

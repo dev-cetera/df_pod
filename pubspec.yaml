@@ -16,7 +16,7 @@ repository: https://github.com/robmllze/df_pod
 funding:
   - https://www.buymeacoffee.com/dev_cetera
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.18.8
+version: 0.18.9
 topics:
   - bloc
   - provider
