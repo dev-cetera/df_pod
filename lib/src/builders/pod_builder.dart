@@ -185,7 +185,8 @@ class AsyncPodBuilder<T extends Object> extends StatelessWidget {
             PodBuilderSnapshot(
               pod: Option.from(pod),
               value: Option.from(
-                PodBuilderCacheManager.i.cacheManager.get(key?.toString()) as Result<T>?,
+                PodBuilderCacheManager.i.cacheManager.get(key?.toString())
+                    as Result<T>?,
               ),
               child: child,
             ),
@@ -234,7 +235,8 @@ final class PodResultBuilder<T extends Object> extends StatefulWidget {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class PodResultBuilderState<T extends Object> extends State<PodResultBuilder<T>> {
+final class PodResultBuilderState<T extends Object>
+    extends State<PodResultBuilder<T>> {
   //
   //
   //
@@ -265,10 +267,14 @@ final class PodResultBuilderState<T extends Object> extends State<PodResultBuild
     super.didUpdateWidget(oldWidget);
     UNSAFE:
     {
-      oldWidget.pod.ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged)).end();
+      oldWidget.pod
+          .ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged))
+          .end();
       _setValue();
       _cacheValue();
-      widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged)).end();
+      widget.pod
+          .ifOk((self, ok) => ok.unwrap().addListener(_valueChanged))
+          .end();
     }
   }
 
@@ -279,7 +285,9 @@ final class PodResultBuilderState<T extends Object> extends State<PodResultBuild
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue = PodBuilderCacheManager.i.cacheManager.get(key.toString()) as Result<T>?;
+      final cachedValue =
+          PodBuilderCacheManager.i.cacheManager.get(key.toString())
+              as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -376,8 +384,10 @@ final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   });
 }
 
-typedef TOnOptionBuilder<T extends Object, TSnapshot extends OnOptionSnapshot<T>> = Widget Function(
-    BuildContext context, TSnapshot snapshot);
+typedef TOnOptionBuilder<
+  T extends Object,
+  TSnapshot extends OnOptionSnapshot<T>
+> = Widget Function(BuildContext context, TSnapshot snapshot);
 
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;
