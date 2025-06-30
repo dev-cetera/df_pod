@@ -1,5 +1,5 @@
 <a href="https://www.buymeacoffee.com/dev_cetera" target="_blank"><img align="right" src="https://cdn.buymeacoffee.com/buttons/default-orange.png" height="48"></a>
-<a href="https://discord.gg/gEQ8y2nfyX" target="_blank"><img align="right" src="https://raw.githubusercontent.com/dev-cetera/resources/refs/heads/main/assets/discord_icon/discord_icon.svg" height="48"></a>
+<a href="https://discord.gg/gEQ8y2nfyX" target="_blank"><img align="right" src="https://raw.githubusercontent.com/dev-cetera/.github/refs/heads/main/assets/icons/discord_icon/discord_icon.svg" height="48"></a>
 
 Dart & Flutter Packages by dev-cetera.com & contributors.
 
@@ -210,7 +210,7 @@ PodListBuilder(
     if (!loggedIn) {
       return const Text('Please log in.');
     }
-    return Text('You have $count items in your cart. Total: \$$total');
+    return Text('You have $count items in your cart. Total: \$total');
   },
 );
 ```
@@ -342,3 +342,4 @@ If you're enjoying this package and find it valuable, consider showing your appr
 ## 🧑‍⚖️ License
 
 This project is released under the [MIT License](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE). See [LICENSE](https://raw.githubusercontent.com/dev-cetera/df_pod/main/LICENSE) for more information.
+
