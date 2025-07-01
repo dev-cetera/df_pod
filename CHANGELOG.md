@@ -2,8 +2,9 @@
 
 ## [0.18.9]
 
-- Released @ 6/2025 (UTC)
+- Released @ 7/2025 (UTC)
 - Refector and cleaning
+- Update dependencies
 
 ## [0.18.8]
 
