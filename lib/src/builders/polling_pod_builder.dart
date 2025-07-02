@@ -14,7 +14,8 @@ import '/_common.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-class PollingPodBuilder<T extends Object> extends ResolvablePollingPodBuilder<T> {
+class PollingPodBuilder<T extends Object>
+    extends ResolvablePollingPodBuilder<T> {
   PollingPodBuilder({
     super.key,
     // ignore: no_future_outcome_type_or_error
@@ -63,7 +64,8 @@ class ResolvablePollingPodBuilder<T extends Object> extends StatefulWidget {
   //
 
   @override
-  State<ResolvablePollingPodBuilder<T>> createState() => _ResolvablePollingPodBuilderState<T>();
+  State<ResolvablePollingPodBuilder<T>> createState() =>
+      _ResolvablePollingPodBuilderState<T>();
 }
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -87,7 +89,8 @@ final class _ResolvablePollingPodBuilderState<T extends Object>
   @override
   void didUpdateWidget(ResolvablePollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller || oldWidget.interval != widget.interval) {
+    if (oldWidget.podPoller != widget.podPoller ||
+        oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }
   }
@@ -137,7 +140,8 @@ final class _ResolvablePollingPodBuilderState<T extends Object>
         PodBuilderSnapshot<T>(
           pod: const None(),
           value: Option.from(
-            PodBuilderCacheManager.i.cacheManager.get(widget.key?.toString()) as Result<T>?,
+            PodBuilderCacheManager.i.cacheManager.get(widget.key?.toString())
+                as Result<T>?,
           ),
           child: _staticChild,
         ),
