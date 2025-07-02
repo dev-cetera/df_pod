@@ -18,7 +18,7 @@ funding:
 - https://www.patreon.com/c/RobertMollentze
 - https://github.com/sponsors/robmllze
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.18.10
+version: 0.18.11
 topics:
   - bloc
   - provider
