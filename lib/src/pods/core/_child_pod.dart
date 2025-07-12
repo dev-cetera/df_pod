@@ -1,9 +1,10 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
-// source code is governed by an MIT-style license described in the LICENSE
-// file located in this project's root directory.
+// Copyright © dev-cetera.com & contributors.
+//
+// The use of this source code is governed by an MIT-style license described in
+// the LICENSE file located in this project's root directory.
 //
 // See: https://opensource.org/license/mit
 //
@@ -14,8 +15,7 @@ part of 'core.dart';
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-final class ChildPod<TParent extends Object, TChild extends Object>
-    extends PodNotifier<TChild>
+final class ChildPod<TParent extends Object, TChild extends Object> extends PodNotifier<TChild>
     with GenericPod<TChild>, ProtectedPodMixin<TChild> {
   //
   //
@@ -36,8 +36,8 @@ final class ChildPod<TParent extends Object, TChild extends Object>
   ChildPod({
     required TPodsResponderFn<TParent> responder,
     required TValuesReducerFn<TChild, TParent> reducer,
-  }) : _reducer = reducer,
-       _responder = responder {
+  })  : _reducer = reducer,
+        _responder = responder {
     _parents = responder();
     value = reducer(parents.map((p) => p.value).toList());
     _initializeParents(parents);
@@ -108,7 +108,6 @@ final class ChildPod<TParent extends Object, TChild extends Object>
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TValuesReducerFn<TChild, TParentList> =
-    TChild Function(List<TParentList> parentValues);
+typedef TValuesReducerFn<TChild, TParentList> = TChild Function(List<TParentList> parentValues);
 
 typedef TPodsResponderFn<T extends Object> = Iterable<GenericPod<T>> Function();

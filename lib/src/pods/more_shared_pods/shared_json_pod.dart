@@ -1,9 +1,10 @@
 //.title
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Dart/Flutter (DF) Packages by dev-cetera.com & contributors. The use of this
-// source code is governed by an MIT-style license described in the LICENSE
-// file located in this project's root directory.
+// Copyright © dev-cetera.com & contributors.
+//
+// The use of this source code is governed by an MIT-style license described in
+// the LICENSE file located in this project's root directory.
 //
 // See: https://opensource.org/license/mit
 //
@@ -23,9 +24,8 @@ final class SharedJsonPodCreator {
     final finalInitialValue = initialValue ?? const {};
     return TSharedJsonPod.create(
       key,
-      fromValue: (rawValue) => rawValue != null
-          ? jsonDecode(rawValue) as Map<String, Object>
-          : finalInitialValue,
+      fromValue: (rawValue) =>
+          rawValue != null ? jsonDecode(rawValue) as Map<String, Object> : finalInitialValue,
       toValue: (value) => jsonEncode(value),
       initialValue: finalInitialValue,
     );
@@ -38,9 +38,8 @@ final class SharedJsonPodCreator {
     final finalInitialValue = initialValue ?? const {};
     return TSharedProtectedJsonPod.create(
       key,
-      fromValue: (rawValue) => rawValue != null
-          ? jsonDecode(rawValue) as Map<String, Object>
-          : finalInitialValue,
+      fromValue: (rawValue) =>
+          rawValue != null ? jsonDecode(rawValue) as Map<String, Object> : finalInitialValue,
       toValue: (value) => jsonEncode(value),
       initialValue: finalInitialValue,
     );
@@ -50,5 +49,4 @@ final class SharedJsonPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedJsonPod = SharedPod<Map<String, Object>, String>;
-typedef TSharedProtectedJsonPod =
-    SharedProtectedPod<Map<String, Object>, String>;
+typedef TSharedProtectedJsonPod = SharedProtectedPod<Map<String, Object>, String>;
