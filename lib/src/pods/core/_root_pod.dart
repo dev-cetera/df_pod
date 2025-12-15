@@ -33,9 +33,18 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
 
   RootPod(this.value);
 
+  RootPod.fromStream(Stream<T> stream, {required T initialValue})
+      : value = initialValue {
+    final subscription = stream.listen(_set);
+    onAfterDispose = () {
+      Future.value(1);
+      unawaited(subscription.cancel());
+    };
+  }
+
   /// Returns the current value of the Pod and calls [refresh]
   T get updateValue {
-    this.refresh();
+    refresh();
     return value;
   }
 

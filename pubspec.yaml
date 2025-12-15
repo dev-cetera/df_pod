@@ -13,13 +13,15 @@
 
 name: df_pod
 homepage: https://dev-cetera.com/
-repository: https://github.com/robmllze/df_pod
 funding:
 - https://www.buymeacoffee.com/dev_cetera
-- https://www.patreon.com/c/RobertMollentze
-- https://github.com/sponsors/robmllze
+- https://www.patreon.com/c/robelator
+- https://github.com/sponsors/robelator
+- https://www.patreon.com/c/robelator
+- https://github.com/sponsors/robelator
+- https://www.buymeacoffee.com/dev_cetera
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.18.11
+version: 0.18.12
 topics:
   - bloc
   - provider
@@ -40,16 +42,16 @@ dependencies:
 
   equatable: ^2.0.7
   meta: ^1.16.0
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.5.4
 
   df_debouncer: ^0.4.16
-  df_log: ^0.3.20
-  df_safer_dart: ^0.17.3
+  df_log: ^0.3.30
+  df_safer_dart: ^0.17.8
 
 ## -----------------------------------------------------------------------------
 
 dev_dependencies:
   flutter_lints: ^6.0.0
-  custom_lint: ^0.7.5
+  custom_lint: ^0.7.6
   df_safer_dart_lints: ^0.3.3
 

@@ -22,7 +22,7 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
 
   /// Whether this [Pod] has been disposed of or not.
   @nonVirtual
-  bool get isDisposed => this._isDisposed;
+  bool get isDisposed => _isDisposed;
 
   /// ❌ Do not use this method directly. Use [addStrongRefListener] instead.
   @override
@@ -46,6 +46,9 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
     }
   }
 
+  @protected
+  void Function()? onAfterDispose;
+
   /// Dipsoses this [ValueListenable] and sets [isDisposed] to `true`.
   /// Successive calls to this method will be ignored.
   @override
@@ -53,7 +56,12 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
   void dispose() {
     if (!_isDisposed) {
       super.dispose();
-      this._isDisposed = true;
+      _isDisposed = true;
+      try {
+        onAfterDispose?.call();
+      } catch (e) {
+        Log.err(e);
+      }
     } else {
       Log.alert('Tried to dispose a Pod again!', {#df_pod});
     }

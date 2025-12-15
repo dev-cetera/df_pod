@@ -1,12 +1,7 @@
 name: df_pod_example
 homepage: https://dev-cetera.com/
-repository: https://github.com/robmllze/df_pod
-funding:
-- https://www.buymeacoffee.com/dev_cetera
-- https://www.patreon.com/c/RobertMollentze
-- https://github.com/sponsors/robmllze
-publish_to: 'none'
-version: 1.0.0+1
+publish_to: none
+version: 0.1.0
 environment:
   sdk: ">=3.5.0 <4.0.0"
 dependencies:

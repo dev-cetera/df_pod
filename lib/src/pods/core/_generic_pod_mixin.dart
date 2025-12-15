@@ -103,7 +103,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   /// Disposes all children before disposing `this`.
   @override
   void dispose() {
-    this.disposeChildren();
+    disposeChildren();
     super.dispose();
   }
 
