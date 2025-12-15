@@ -26,7 +26,8 @@ import '/_common.dart';
 ///
 /// Extends [SharedPod] and uses [ProtectedPodMixin] to encapsulate and manage
 /// the protection of these critical methods.
-base class SharedProtectedPod<A extends Object, B extends Object> extends SharedPod<A, B>
+base class SharedProtectedPod<A extends Object, B extends Object>
+    extends SharedPod<A, B>
     with ProtectedPodMixin {
   //
   //
@@ -45,20 +46,20 @@ base class SharedProtectedPod<A extends Object, B extends Object> extends Shared
   //
 
   /// Creates and initializes a [SharedProtectedPod] by loading its value from storage.
-  static Async<SharedProtectedPod<A, B>> create<A extends Object, B extends Object>(
+  static Async<SharedProtectedPod<A, B>>
+  create<A extends Object, B extends Object>(
     String key, {
     required A Function(B? rawValue) fromValue,
     required B Function(A value) toValue,
     required A initialValue,
-  }) =>
-      Async(() async {
-        final instance = SharedProtectedPod<A, B>(
-          key,
-          fromValue: fromValue,
-          toValue: toValue,
-          initialValue: initialValue,
-        );
-        await instance.refresh();
-        return instance;
-      });
+  }) => Async(() async {
+    final instance = SharedProtectedPod<A, B>(
+      key,
+      fromValue: fromValue,
+      toValue: toValue,
+      initialValue: initialValue,
+    );
+    await instance.refresh();
+    return instance;
+  });
 }

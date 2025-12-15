@@ -286,8 +286,9 @@ final class PodResultBuilderState<T extends Object>
   void _setValue() {
     final key = widget.key;
     if (key != null) {
-      final cachedValue = PodBuilderCacheManager.i.cacheManager
-          .get(key.toString()) as Result<T>?;
+      final cachedValue =
+          PodBuilderCacheManager.i.cacheManager.get(key.toString())
+              as Result<T>?;
       if (cachedValue != null) {
         _value = cachedValue;
         return;
@@ -384,12 +385,10 @@ final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   });
 }
 
-typedef TOnOptionBuilder<T extends Object,
-        TSnapshot extends OnOptionSnapshot<T>>
-    = Widget Function(
-  BuildContext context,
-  TSnapshot snapshot,
-);
+typedef TOnOptionBuilder<
+  T extends Object,
+  TSnapshot extends OnOptionSnapshot<T>
+> = Widget Function(BuildContext context, TSnapshot snapshot);
 
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;

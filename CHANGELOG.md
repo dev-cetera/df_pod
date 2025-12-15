@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.18.12]
+
+- Released @ 12/2025 (UTC)
+- Add fromStream constructor for Pod
+
 ## [0.18.11]
 
 - Released @ 7/2025 (UTC)

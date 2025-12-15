@@ -52,6 +52,8 @@ final class PodReducer1 {
 
 typedef TResponderFn1<P1 extends Object> = (GenericPod<P1> p1,) Function();
 
-typedef TNullableReducerFn1<C extends Object, P1 extends Object> = C Function(GenericPod<P1> p1);
+typedef TNullableReducerFn1<C extends Object, P1 extends Object> =
+    C Function(GenericPod<P1> p1);
 
-typedef TReducerFn1<C extends Object, P1 extends Object> = C Function(GenericPod<P1> p1);
+typedef TReducerFn1<C extends Object, P1 extends Object> =
+    C Function(GenericPod<P1> p1);

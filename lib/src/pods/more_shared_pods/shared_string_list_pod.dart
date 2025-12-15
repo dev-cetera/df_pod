@@ -47,4 +47,5 @@ final class SharedStringListPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedStringListPod = SharedPod<List<String>, List<String>>;
-typedef TSharedProtectedStringListPod = SharedProtectedPod<List<String>, List<String>>;
+typedef TSharedProtectedStringListPod =
+    SharedProtectedPod<List<String>, List<String>>;
