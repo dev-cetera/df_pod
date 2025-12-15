@@ -37,7 +37,6 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
     : value = initialValue {
     final subscription = stream.listen(_set);
     onAfterDispose = () {
-      Future.value(1);
       unawaited(subscription.cancel());
     };
   }
