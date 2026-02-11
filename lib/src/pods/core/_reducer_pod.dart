@@ -92,17 +92,29 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
     for (final listenable in _listenables) {
       listenable.removeListener(_refresh!);
     }
+    _listenables.clear();
     final values = responder().toList();
+    final newListenables = <ValueListenable<Object>>[];
     for (var n = 0; n < values.length; n++) {
       final option = values[n];
       if (option.isNone()) continue;
       UNSAFE:
       final value = option.unwrap();
-      _listenables.add(value);
+      newListenables.add(value);
       value.addListener(_refresh!);
     }
-    final valuesToReduce = values.map((e) => e.map((e) => e.value)).toList();
-    return reducer(valuesToReduce);
+    try {
+      final valuesToReduce = values.map((e) => e.map((e) => e.value)).toList();
+      final result = reducer(valuesToReduce);
+      _listenables.addAll(newListenables);
+      return result;
+    } catch (e) {
+      // Clean up listeners if reducer throws to prevent memory leaks
+      for (final listenable in newListenables) {
+        listenable.removeListener(_refresh!);
+      }
+      rethrow;
+    }
   }
 
   //
@@ -111,10 +123,13 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
 
   @override
   void dispose() {
-    super.dispose();
-    for (final listenable in _listenables) {
-      listenable.removeListener(_refresh!);
-    }
+    final refresh = _refresh;
     _refresh = null;
+    super.dispose();
+    if (refresh != null) {
+      for (final listenable in _listenables) {
+        listenable.removeListener(refresh);
+      }
+    }
   }
 }

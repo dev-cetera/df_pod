@@ -49,7 +49,7 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
   @protected
   void Function()? onAfterDispose;
 
-  /// Dipsoses this [ValueListenable] and sets [isDisposed] to `true`.
+  /// Disposes this [ValueListenable] and sets [isDisposed] to `true`.
   /// Successive calls to this method will be ignored.
   @override
   @mustCallSuper

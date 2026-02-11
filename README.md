@@ -308,6 +308,52 @@ analyzer:
     invalid_override_of_non_virtual_member: error
 ```
 
+## ℹ️ Integration with Services
+
+`df_pod` works seamlessly with [df_flutter_services](https://pub.dev/packages/df_flutter_services) which provides `ObservedDataStreamService` - a service that automatically updates a Pod when its stream emits:
+
+```dart
+import 'package:df_flutter_services/df_flutter_services.dart';
+
+// A service that streams user data and exposes it via pData
+final class UserService extends ObservedDataStreamService<User> {
+  @override
+  Stream<Result<User>> provideInputStream() => myUserStream();
+
+  @override
+  TServiceResolvables<Result<User>> provideOnPushToStreamListeners() => [
+    ...super.provideOnPushToStreamListeners(),
+  ];
+}
+
+// Register with DI
+DI.global.register<UserService>(
+  UserService(),
+  onRegister: (e) => e.init(),
+  onUnregister: ServiceMixin.unregister,
+);
+
+// Use in widgets
+PodBuilder(
+  pod: userService.pData,  // Pod<Option<Result<User>>>
+  builder: (context, _) {
+    final value = userService.pData.getValue();
+    return value.fold(
+      ifNone: () => CircularProgressIndicator(),
+      ifSome: (result) => result.fold(
+        ifOk: (user) => Text(user.name),
+        ifErr: (error) => Text('Error'),
+      ),
+    );
+  },
+)
+```
+
+## ℹ️ Related Packages
+
+- [df_di](https://pub.dev/packages/df_di) - Dependency injection and base Service classes
+- [df_flutter_services](https://pub.dev/packages/df_flutter_services) - Service lifecycle with Pods
+- [df_safer_dart](https://pub.dev/packages/df_safer_dart) - Option, Result, Resolvable types
 <!-- END _README_CONTENT -->
 
 ---
