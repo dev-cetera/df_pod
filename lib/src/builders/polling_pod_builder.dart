@@ -103,8 +103,10 @@ final class _ResolvablePollingPodBuilderState<T extends Object>
   }
 
   void _startPolling() {
+    final interval = widget.interval;
+    if (interval == null) return;
     _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(widget.interval!, (_) {
+    _pollingTimer = Timer.periodic(interval, (_) {
       if (_check()) {
         _pollingTimer?.cancel();
       }

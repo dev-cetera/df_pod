@@ -125,11 +125,11 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
   void dispose() {
     final refresh = _refresh;
     _refresh = null;
-    super.dispose();
     if (refresh != null) {
       for (final listenable in _listenables) {
         listenable.removeListener(refresh);
       }
     }
+    super.dispose();
   }
 }

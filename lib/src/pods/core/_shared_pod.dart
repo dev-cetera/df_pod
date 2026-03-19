@@ -110,7 +110,7 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   Future<void> refresh({bool notifyImmediately = true}) async {
     _sharedPreferences ??= await SharedPreferences.getInstance();
     final v = _sharedPreferences!.get(key);
-    final newValue = fromValue(v as B?);
+    final newValue = fromValue(v is B ? v : null);
     _set(newValue, notifyImmediately: notifyImmediately);
   }
 }
