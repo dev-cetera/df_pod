@@ -48,8 +48,11 @@ void main() {
       );
 
       expect(capturedValue.isSome(), isTrue);
-      expect(capturedValue.unwrap().isOk(), isTrue);
-      expect(capturedValue.unwrap().unwrap(), 7);
+      UNSAFE:
+      {
+        expect(capturedValue.unwrap().isOk(), isTrue);
+        expect(capturedValue.unwrap().unwrap(), 7);
+      }
       expect(capturedPod.isSome(), isTrue);
     });
 
@@ -71,12 +74,13 @@ void main() {
       );
 
       expect(builds.first.isNone(), isTrue,
-          reason: 'before the future resolves, value should be None');
+          reason: 'before the future resolves, value should be None',);
 
       completer.complete(Pod<int>(99));
       await tester.pump();
 
       expect(builds.last.isSome(), isTrue);
+      UNSAFE:
       expect(builds.last.unwrap().unwrap(), 99);
     });
 
@@ -243,11 +247,11 @@ void main() {
       await tester.pumpWidget(make(podA));
       await tester.pumpWidget(make(podB));
       expect(disposeCalls, 0,
-          reason: 'pod swap is didUpdateWidget, not dispose');
+          reason: 'pod swap is didUpdateWidget, not dispose',);
 
       await tester.pumpWidget(_wrap(const SizedBox.shrink()));
       expect(disposeCalls, 1,
-          reason: 'onDispose fires when the widget is removed');
+          reason: 'onDispose fires when the widget is removed',);
     });
   });
 

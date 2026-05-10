@@ -451,7 +451,7 @@ void main() {
       final sum = PodReducer2.reduce<int, int, int>(() {
         responderCalls++;
         return (pa, pb);
-      }, (a, b) => a.getValue() + b.getValue());
+      }, (a, b) => a.getValue() + b.getValue(),);
       // Construction does one refresh.
       final initialCalls = responderCalls;
       expect(sum.getValue(), 3);

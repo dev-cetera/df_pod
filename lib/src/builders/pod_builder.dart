@@ -253,7 +253,7 @@ final class PodResultBuilderState<T extends Object>
   void initState() {
     super.initState();
     _staticChild = widget.child;
-    _setValue();
+    _setValue(useCache: true);
     _cacheValue();
     UNSAFE:
     widget.pod.ifOk((self, ok) => ok.unwrap().addListener(_valueChanged)).end();
@@ -271,7 +271,7 @@ final class PodResultBuilderState<T extends Object>
       oldWidget.pod
           .ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged))
           .end();
-      _setValue();
+      _setValue(useCache: true);
       _cacheValue();
       widget.pod
           .ifOk((self, ok) => ok.unwrap().addListener(_valueChanged))
@@ -283,17 +283,24 @@ final class PodResultBuilderState<T extends Object>
   //
   //
 
-  void _setValue() {
-    final key = widget.key;
-    if (key != null) {
-      final cached = PodBuilderCacheManager.i.cacheManager.get(key.toString());
-      final cachedValue = cached is Result<T> ? cached : null;
-      if (cachedValue != null) {
-        _value = cachedValue;
-        return;
+  /// Reads `_value` from either the cache (when [useCache] is `true` and a
+  /// keyed entry exists) or the pod's current value. Cache reads are only
+  /// safe during initial mount / pod swap — using the cache when the pod
+  /// has just fired would shadow the live value forever and was a real bug
+  /// fixed in v0.18.18.
+  void _setValue({bool useCache = false}) {
+    if (useCache) {
+      final key = widget.key;
+      if (key != null) {
+        final cached =
+            PodBuilderCacheManager.i.cacheManager.get(key.toString());
+        final cachedValue = cached is Result<T> ? cached : null;
+        if (cachedValue != null) {
+          _value = cachedValue;
+          return;
+        }
       }
     }
-
     _value = widget.pod.map((e) => e.value);
   }
 

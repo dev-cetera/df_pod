@@ -5,11 +5,6 @@
 - Released @ 5/2026 (UTC)
 - Fix issues with Claude
 
-## [0.18.16]
-
-- Released @ 4/2026 (UTC)
-- **Feature**: `PodCollectionBuilder` — new builder widget that observes a source pod plus a dynamic list of inner pods (computed by a supplied selector). Rebuilds when the source fires *or* any pod currently in the inner list fires, and manages subscription attach/detach automatically as the inner list changes by identity. Replaces the hand-rolled "track every pod in a list manually" pattern that previously required `addStrongRefListener` + bookkeeping lists + manual sync/unsubscribe. Accepts any `Listenable` — uses `addStrongRefListener` automatically for `WeakChangeNotifier` pods, falls back to `addListener` for plain listenables.
-
 ## [0.18.14]
 
 - Released @ 2/2026 (UTC)

@@ -249,7 +249,7 @@ final class PodResultListBuilderState<T extends Object>
   void initState() {
     super.initState();
     _staticChild = widget.child;
-    _setValue();
+    _setValue(useCache: true);
     _cacheValue();
     _addListenerToPods(widget.podList);
   }
@@ -262,7 +262,7 @@ final class PodResultListBuilderState<T extends Object>
   void didUpdateWidget(PodResultListBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     _removeListenerFromPods(oldWidget.podList);
-    _setValue();
+    _setValue(useCache: true);
     _cacheValue();
     _addListenerToPods(widget.podList);
   }
@@ -271,14 +271,19 @@ final class PodResultListBuilderState<T extends Object>
   //
   //
 
-  void _setValue() {
-    final key = widget.key;
-    if (key != null) {
-      final cached = PodBuilderCacheManager.i.cacheManager.get(key.toString());
-      final cachedValue = cached is Iterable<Result<T>> ? cached : null;
-      if (cachedValue != null) {
-        _valueList = cachedValue;
-        return;
+  /// See `PodResultBuilderState._setValue` — same shadowing-bug fix applies
+  /// here. Live pod fires must read from the pods, not from the cache.
+  void _setValue({bool useCache = false}) {
+    if (useCache) {
+      final key = widget.key;
+      if (key != null) {
+        final cached =
+            PodBuilderCacheManager.i.cacheManager.get(key.toString());
+        final cachedValue = cached is Iterable<Result<T>> ? cached : null;
+        if (cachedValue != null) {
+          _valueList = cachedValue;
+          return;
+        }
       }
     }
     _valueList = widget.podList.map((e) => e.map((e) => e.value));
