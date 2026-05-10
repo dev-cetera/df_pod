@@ -62,48 +62,53 @@ void main() {
       expect(calls, 5, reason: 'no de-duplication per Listenable contract');
     });
 
-    test('removeListener removes only one occurrence of a duplicated listener',
-        () {
-      final pod = Pod<int>(0);
-      var calls = 0;
-      final tracker = () => calls++;
-      pod.addStrongRefListener(strongRefListener: tracker);
-      pod.addStrongRefListener(strongRefListener: tracker);
-      pod.addStrongRefListener(strongRefListener: tracker);
+    test(
+      'removeListener removes only one occurrence of a duplicated listener',
+      () {
+        final pod = Pod<int>(0);
+        var calls = 0;
+        final tracker = () => calls++;
+        pod.addStrongRefListener(strongRefListener: tracker);
+        pod.addStrongRefListener(strongRefListener: tracker);
+        pod.addStrongRefListener(strongRefListener: tracker);
 
-      pod.removeListener(tracker);
-      pod.set(1);
-      expect(calls, 2);
-    });
+        pod.removeListener(tracker);
+        pod.set(1);
+        expect(calls, 2);
+      },
+    );
 
-    test('listener that adds 100 NEW listeners during notify does not break', () {
-      final pod = Pod<int>(0);
-      var firstFires = 0;
-      var laterFires = 0;
-      final added = <VoidCallback>[];
-      late final VoidCallback first;
-      first = () {
-        firstFires++;
-        if (firstFires == 1) {
-          for (var i = 0; i < 100; i++) {
-            final l = () => laterFires++;
-            added.add(l);
-            pod.addStrongRefListener(strongRefListener: l);
+    test(
+      'listener that adds 100 NEW listeners during notify does not break',
+      () {
+        final pod = Pod<int>(0);
+        var firstFires = 0;
+        var laterFires = 0;
+        final added = <VoidCallback>[];
+        late final VoidCallback first;
+        first = () {
+          firstFires++;
+          if (firstFires == 1) {
+            for (var i = 0; i < 100; i++) {
+              final l = () => laterFires++;
+              added.add(l);
+              pod.addStrongRefListener(strongRefListener: l);
+            }
           }
-        }
-      };
-      pod.addStrongRefListener(strongRefListener: first);
+        };
+        pod.addStrongRefListener(strongRefListener: first);
 
-      pod.set(1);
-      expect(firstFires, 1);
-      // The 100 new listeners should NOT fire on the current notify cycle.
-      expect(laterFires, 0);
+        pod.set(1);
+        expect(firstFires, 1);
+        // The 100 new listeners should NOT fire on the current notify cycle.
+        expect(laterFires, 0);
 
-      pod.set(2);
-      expect(firstFires, 2);
-      // Now they should all fire.
-      expect(laterFires, 100);
-    });
+        pod.set(2);
+        expect(firstFires, 2);
+        // Now they should all fire.
+        expect(laterFires, 100);
+      },
+    );
 
     test(
       'listener that removes 50 OTHER listeners mid-notify keeps the rest firing',
@@ -354,7 +359,8 @@ void main() {
         expect(
           pod.getValue(),
           {'fb': 1},
-          reason: 'expected fallback for corrupted value: ${corrupt.length > 20 ? "${corrupt.substring(0, 20)}…" : corrupt}',
+          reason:
+              'expected fallback for corrupted value: ${corrupt.length > 20 ? "${corrupt.substring(0, 20)}…" : corrupt}',
         );
       }
     });

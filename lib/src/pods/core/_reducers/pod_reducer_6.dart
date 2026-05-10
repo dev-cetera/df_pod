@@ -39,7 +39,8 @@ final class PodReducer6 {
       GenericPod<P4>,
       GenericPod<P5>,
       GenericPod<P6>,
-    ) cached;
+    )
+    cached;
     return ChildPod<Object, C>(
       responder: () {
         cached = responder();

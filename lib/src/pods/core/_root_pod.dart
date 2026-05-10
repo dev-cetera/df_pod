@@ -44,7 +44,8 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
   }) : value = initialValue {
     final subscription = stream.listen(
       _set,
-      onError: onError ??
+      onError:
+          onError ??
           (Object error, StackTrace stack) {
             Log.err(error, {#df_pod});
           },

@@ -9,7 +9,6 @@
 //
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-
 import 'dart:async';
 import 'dart:ui' show VoidCallback;
 
@@ -275,15 +274,17 @@ void main() {
   });
 
   group('refresh() lifecycle', () {
-    test('refresh() before dispose does not throw on the scheduled tick',
-        () async {
-      final pod = Pod<int>(0);
-      pod.refresh();
-      pod.dispose();
-      // Drain the Future.delayed(Duration.zero) the refresh enqueued.
-      await Future<void>.delayed(Duration.zero);
-      // No assert/throw — the post-dispose tick is a no-op.
-    });
+    test(
+      'refresh() before dispose does not throw on the scheduled tick',
+      () async {
+        final pod = Pod<int>(0);
+        pod.refresh();
+        pod.dispose();
+        // Drain the Future.delayed(Duration.zero) the refresh enqueued.
+        await Future<void>.delayed(Duration.zero);
+        // No assert/throw — the post-dispose tick is a no-op.
+      },
+    );
   });
 
   group('ChildPod (map)', () {
@@ -300,19 +301,19 @@ void main() {
       final pb = Pod<String>('world');
       final pSum = ReducerPod<String>(
         responder: () => [Some(pa), Some(pb)],
-        reducer: (vs) => Some(
-          '${vs[0].unwrapOr("")} ${vs[1].unwrapOr("")}',
-        ),
+        reducer: (vs) => Some('${vs[0].unwrapOr("")} ${vs[1].unwrapOr("")}'),
       );
       expect(pSum.getValue(), 'hello world');
     });
 
-    test('ReducerPod<int>.single initializes without LateInitializationError',
-        () {
-      final source = Pod<int>(42);
-      final mirror = ReducerPod<int>.single(() => Some(source));
-      expect(mirror.getValue(), 42);
-    });
+    test(
+      'ReducerPod<int>.single initializes without LateInitializationError',
+      () {
+        final source = Pod<int>(42);
+        final mirror = ReducerPod<int>.single(() => Some(source));
+        expect(mirror.getValue(), 42);
+      },
+    );
 
     test('ReducerPod<int> propagates parent updates after initial value', () {
       final pa = Pod<int>(1);
@@ -344,8 +345,11 @@ void main() {
 
       controller.add(2);
       await Future<void>.delayed(Duration.zero);
-      expect(pod.getValue(), 2,
-          reason: 'pod still processes values after a stream error',);
+      expect(
+        pod.getValue(),
+        2,
+        reason: 'pod still processes values after a stream error',
+      );
 
       await controller.close();
       pod.dispose();
@@ -374,8 +378,11 @@ void main() {
       expect(testCallCount, 3);
 
       pod.set(6); // pod fires, but the cond listener is gone
-      expect(testCallCount, 3,
-          reason: 'cond listener was removed when condition was first met',);
+      expect(
+        testCallCount,
+        3,
+        reason: 'cond listener was removed when condition was first met',
+      );
     });
   });
 
@@ -441,13 +448,10 @@ void main() {
       final pa = Pod<int>(1);
       final pb = Pod<int>(2);
       var responderCalls = 0;
-      final sum = PodReducer2.reduce<int, int, int>(
-        () {
-          responderCalls++;
-          return (pa, pb);
-        },
-        (a, b) => a.getValue() + b.getValue(),
-      );
+      final sum = PodReducer2.reduce<int, int, int>(() {
+        responderCalls++;
+        return (pa, pb);
+      }, (a, b) => a.getValue() + b.getValue());
       // Construction does one refresh.
       final initialCalls = responderCalls;
       expect(sum.getValue(), 3);

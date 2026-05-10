@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.18.17]
+
+- Released @ 5/2026 (UTC)
+- Fix issues with Claude
+
 ## [0.18.16]
 
 - Released @ 4/2026 (UTC)

@@ -30,19 +30,14 @@ final class PodReducer4 {
     TResponderFn4<P1, P2, P3, P4> responder,
     TReducerFn4<C, P1, P2, P3, P4> reducer,
   ) {
-    late (
-      GenericPod<P1>,
-      GenericPod<P2>,
-      GenericPod<P3>,
-      GenericPod<P4>,
-    ) cached;
+    late (GenericPod<P1>, GenericPod<P2>, GenericPod<P3>, GenericPod<P4>)
+    cached;
     return ChildPod<Object, C>(
       responder: () {
         cached = responder();
         return [cached.$1, cached.$2, cached.$3, cached.$4];
       },
-      reducer: (_) =>
-          reducer(cached.$1, cached.$2, cached.$3, cached.$4),
+      reducer: (_) => reducer(cached.$1, cached.$2, cached.$3, cached.$4),
     );
   }
 }

@@ -62,8 +62,9 @@ void main() {
       expect(find.text('2'), findsOneWidget);
     });
 
-    testWidgets('does NOT rebuild when pod set to equal int value',
-        (tester) async {
+    testWidgets('does NOT rebuild when pod set to equal int value', (
+      tester,
+    ) async {
       final pod = Pod<int>(1);
       var buildCount = 0;
 
@@ -86,8 +87,9 @@ void main() {
       expect(buildCount, 1); // no rebuild
     });
 
-    testWidgets('does rebuild when pod set to equal List (no short-circuit)',
-        (tester) async {
+    testWidgets('does rebuild when pod set to equal List (no short-circuit)', (
+      tester,
+    ) async {
       final pod = Pod<List<int>>([1, 2]);
       var buildCount = 0;
 
@@ -148,17 +150,17 @@ void main() {
       var buildCount = 0;
 
       Widget make(Pod<int> p) => Directionality(
-            textDirection: TextDirection.ltr,
-            child: PodBuilder(
-              pod: p,
-              builder: (context, snapshot) {
-                buildCount++;
-                UNSAFE:
-                final value = snapshot.value.unwrap().unwrap();
-                return Text('$value');
-              },
-            ),
-          );
+        textDirection: TextDirection.ltr,
+        child: PodBuilder(
+          pod: p,
+          builder: (context, snapshot) {
+            buildCount++;
+            UNSAFE:
+            final value = snapshot.value.unwrap().unwrap();
+            return Text('$value');
+          },
+        ),
+      );
 
       await tester.pumpWidget(make(podA));
       expect(buildCount, 1);

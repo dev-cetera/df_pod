@@ -58,8 +58,7 @@ final class SharedJsonPodCreator {
     final finalInitialValue = initialValue ?? const {};
     return TSharedJsonPod.create(
       key,
-      fromValue: (rawValue) =>
-          _decodeOrFallback(rawValue, finalInitialValue),
+      fromValue: (rawValue) => _decodeOrFallback(rawValue, finalInitialValue),
       toValue: (value) => jsonEncode(value),
       initialValue: finalInitialValue,
     );
@@ -72,8 +71,7 @@ final class SharedJsonPodCreator {
     final finalInitialValue = initialValue ?? const {};
     return TSharedProtectedJsonPod.create(
       key,
-      fromValue: (rawValue) =>
-          _decodeOrFallback(rawValue, finalInitialValue),
+      fromValue: (rawValue) => _decodeOrFallback(rawValue, finalInitialValue),
       toValue: (value) => jsonEncode(value),
       initialValue: finalInitialValue,
     );

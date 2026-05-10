@@ -67,7 +67,6 @@ void main() {
       inner.set('b');
       await tester.pump();
       expect(buildCount, 2);
-
     });
 
     testWidgets(

@@ -92,8 +92,7 @@ void main() {
       expect(calls, 1);
     });
 
-    test('removing every other listener triggers in-place compaction path',
-        () {
+    test('removing every other listener triggers in-place compaction path', () {
       final pod = Pod<int>(0);
       final ls = <VoidCallback>[];
       var calls = 0;
@@ -113,23 +112,25 @@ void main() {
       expect(calls, 4);
     });
 
-    test('removing a few listeners triggers in-place (not shrink) compaction',
-        () {
-      // Goal: leave newLength * 2 > capacity so the in-place branch runs.
-      final pod = Pod<int>(0);
-      final ls = <VoidCallback>[];
-      var calls = 0;
-      for (var i = 0; i < 8; i++) {
-        final l = () => calls++;
-        ls.add(l);
-        pod.addStrongRefListener(strongRefListener: l);
-      }
-      // Remove 1 — 7 remain (7 * 2 = 14 > 8 capacity), in-place branch.
-      pod.removeListener(ls[3]);
+    test(
+      'removing a few listeners triggers in-place (not shrink) compaction',
+      () {
+        // Goal: leave newLength * 2 > capacity so the in-place branch runs.
+        final pod = Pod<int>(0);
+        final ls = <VoidCallback>[];
+        var calls = 0;
+        for (var i = 0; i < 8; i++) {
+          final l = () => calls++;
+          ls.add(l);
+          pod.addStrongRefListener(strongRefListener: l);
+        }
+        // Remove 1 — 7 remain (7 * 2 = 14 > 8 capacity), in-place branch.
+        pod.removeListener(ls[3]);
 
-      pod.set(1);
-      expect(calls, 7);
-    });
+        pod.set(1);
+        expect(calls, 7);
+      },
+    );
   });
 
   group('Reentrant remove during notify', () {
@@ -268,54 +269,53 @@ void main() {
   });
 
   group('Reentrant add during notify', () {
-    test('listener that adds a sibling listener — sibling fires next cycle',
-        () {
-      final pod = Pod<int>(0);
-      var firstCalls = 0;
-      var siblingCalls = 0;
-      VoidCallback? sibling;
-      late final VoidCallback first;
-      first = () {
-        firstCalls++;
-        if (sibling == null) {
-          sibling = () => siblingCalls++;
-          pod.addStrongRefListener(strongRefListener: sibling!);
-        }
-      };
-      pod.addStrongRefListener(strongRefListener: first);
-
-      pod.set(1);
-      expect(firstCalls, 1);
-      expect(siblingCalls, 0);
-
-      pod.set(2);
-      expect(firstCalls, 2);
-      expect(siblingCalls, 1);
-    });
-
     test(
-      'add-then-remove-self in the same callback leaves zero listeners',
+      'listener that adds a sibling listener — sibling fires next cycle',
       () {
         final pod = Pod<int>(0);
-        var calls = 0;
-        VoidCallback? added;
-        late final VoidCallback selfModifier;
-        selfModifier = () {
-          calls++;
-          added = () {};
-          pod.addStrongRefListener(strongRefListener: added!);
-          pod.removeListener(selfModifier);
+        var firstCalls = 0;
+        var siblingCalls = 0;
+        VoidCallback? sibling;
+        late final VoidCallback first;
+        first = () {
+          firstCalls++;
+          if (sibling == null) {
+            sibling = () => siblingCalls++;
+            pod.addStrongRefListener(strongRefListener: sibling!);
+          }
         };
-        pod.addStrongRefListener(strongRefListener: selfModifier);
+        pod.addStrongRefListener(strongRefListener: first);
 
         pod.set(1);
-        expect(calls, 1);
+        expect(firstCalls, 1);
+        expect(siblingCalls, 0);
 
         pod.set(2);
-        // selfModifier was removed; only `added` remains, which is a no-op.
-        expect(calls, 1);
+        expect(firstCalls, 2);
+        expect(siblingCalls, 1);
       },
     );
+
+    test('add-then-remove-self in the same callback leaves zero listeners', () {
+      final pod = Pod<int>(0);
+      var calls = 0;
+      VoidCallback? added;
+      late final VoidCallback selfModifier;
+      selfModifier = () {
+        calls++;
+        added = () {};
+        pod.addStrongRefListener(strongRefListener: added!);
+        pod.removeListener(selfModifier);
+      };
+      pod.addStrongRefListener(strongRefListener: selfModifier);
+
+      pod.set(1);
+      expect(calls, 1);
+
+      pod.set(2);
+      // selfModifier was removed; only `added` remains, which is a no-op.
+      expect(calls, 1);
+    });
   });
 
   group('Throwing listeners', () {
@@ -377,8 +377,7 @@ void main() {
   });
 
   group('Nested notifyListeners (cascading pods)', () {
-    test('parent pod listener triggers child pod set; both notify cleanly',
-        () {
+    test('parent pod listener triggers child pod set; both notify cleanly', () {
       final parent = Pod<int>(0);
       final child = Pod<int>(0);
       var childListenerCalls = 0;
@@ -445,32 +444,34 @@ void main() {
       expect(calls, 1, reason: 'churn must not corrupt permanent state');
     });
 
-    test('compaction after every-other reentrant remove leaves count correct',
-        () {
-      final pod = Pod<int>(0);
-      final ls = <VoidCallback>[];
-      var fires = 0;
-      for (var i = 0; i < 10; i++) {
-        late final VoidCallback l;
-        if (i % 2 == 0) {
-          l = () {
-            fires++;
-            pod.removeListener(l);
-          };
-        } else {
-          l = () => fires++;
+    test(
+      'compaction after every-other reentrant remove leaves count correct',
+      () {
+        final pod = Pod<int>(0);
+        final ls = <VoidCallback>[];
+        var fires = 0;
+        for (var i = 0; i < 10; i++) {
+          late final VoidCallback l;
+          if (i % 2 == 0) {
+            l = () {
+              fires++;
+              pod.removeListener(l);
+            };
+          } else {
+            l = () => fires++;
+          }
+          ls.add(l);
+          pod.addStrongRefListener(strongRefListener: l);
         }
-        ls.add(l);
-        pod.addStrongRefListener(strongRefListener: l);
-      }
 
-      pod.set(1);
-      expect(fires, 10);
+        pod.set(1);
+        expect(fires, 10);
 
-      pod.set(2);
-      // Even-index listeners removed themselves; only 5 remain.
-      expect(fires - 10, 5);
-    });
+        pod.set(2);
+        // Even-index listeners removed themselves; only 5 remain.
+        expect(fires - 10, 5);
+      },
+    );
   });
 
   group('addSingleExecutionListener behaviour', () {
