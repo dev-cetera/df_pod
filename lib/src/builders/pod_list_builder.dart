@@ -277,8 +277,9 @@ final class PodResultListBuilderState<T extends Object>
     if (useCache) {
       final key = widget.key;
       if (key != null) {
-        final cached =
-            PodBuilderCacheManager.i.cacheManager.get(key.toString());
+        final cached = PodBuilderCacheManager.i.cacheManager.get(
+          key.toString(),
+        );
         final cachedValue = cached is Iterable<Result<T>> ? cached : null;
         if (cachedValue != null) {
           _valueList = cachedValue;

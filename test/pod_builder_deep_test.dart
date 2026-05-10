@@ -22,10 +22,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Widget _wrap(Widget child) => Directionality(
-      textDirection: TextDirection.ltr,
-      child: child,
-    );
+Widget _wrap(Widget child) =>
+    Directionality(textDirection: TextDirection.ltr, child: child);
 
 void main() {
   group('PodBuilder snapshot shape', () {
@@ -56,8 +54,9 @@ void main() {
       expect(capturedPod.isSome(), isTrue);
     });
 
-    testWidgets('async pod yields None until the future completes',
-        (tester) async {
+    testWidgets('async pod yields None until the future completes', (
+      tester,
+    ) async {
       final completer = Completer<Pod<int>>();
       final builds = <Option<Result<int>>>[];
 
@@ -73,8 +72,11 @@ void main() {
         ),
       );
 
-      expect(builds.first.isNone(), isTrue,
-          reason: 'before the future resolves, value should be None',);
+      expect(
+        builds.first.isNone(),
+        isTrue,
+        reason: 'before the future resolves, value should be None',
+      );
 
       completer.complete(Pod<int>(99));
       await tester.pump();
@@ -84,8 +86,9 @@ void main() {
       expect(builds.last.unwrap().unwrap(), 99);
     });
 
-    testWidgets('async pod with rejected future leaves snapshot as None',
-        (tester) async {
+    testWidgets('async pod with rejected future leaves snapshot as None', (
+      tester,
+    ) async {
       final completer = Completer<Pod<int>>();
       final builds = <Option<Result<int>>>[];
 
@@ -116,8 +119,9 @@ void main() {
   });
 
   group('debounceDuration', () {
-    testWidgets('debounce coalesces rapid sets into one rebuild',
-        (tester) async {
+    testWidgets('debounce coalesces rapid sets into one rebuild', (
+      tester,
+    ) async {
       final pod = Pod<int>(0);
       var buildCount = 0;
 
@@ -152,8 +156,9 @@ void main() {
       );
     });
 
-    testWidgets('disposing during a pending debounce cancels the timer',
-        (tester) async {
+    testWidgets('disposing during a pending debounce cancels the timer', (
+      tester,
+    ) async {
       final pod = Pod<int>(0);
       var buildCount = 0;
 
@@ -211,8 +216,9 @@ void main() {
   });
 
   group('onDispose callback', () {
-    testWidgets('onDispose receives the pod when widget tears down',
-        (tester) async {
+    testWidgets('onDispose receives the pod when widget tears down', (
+      tester,
+    ) async {
       final pod = Pod<int>(0);
       ValueListenable<int>? disposedWith;
 
@@ -230,34 +236,40 @@ void main() {
       expect(identical(disposedWith, pod), isTrue);
     });
 
-    testWidgets('onDispose is NOT called when pod is swapped',
-        (tester) async {
+    testWidgets('onDispose is NOT called when pod is swapped', (tester) async {
       final podA = Pod<int>(0);
       final podB = Pod<int>(0);
       var disposeCalls = 0;
 
       Widget make(Pod<int> p) => _wrap(
-            PodBuilder<int>(
-              pod: p,
-              onDispose: (_) => disposeCalls++,
-              builder: (context, _) => const SizedBox.shrink(),
-            ),
-          );
+        PodBuilder<int>(
+          pod: p,
+          onDispose: (_) => disposeCalls++,
+          builder: (context, _) => const SizedBox.shrink(),
+        ),
+      );
 
       await tester.pumpWidget(make(podA));
       await tester.pumpWidget(make(podB));
-      expect(disposeCalls, 0,
-          reason: 'pod swap is didUpdateWidget, not dispose',);
+      expect(
+        disposeCalls,
+        0,
+        reason: 'pod swap is didUpdateWidget, not dispose',
+      );
 
       await tester.pumpWidget(_wrap(const SizedBox.shrink()));
-      expect(disposeCalls, 1,
-          reason: 'onDispose fires when the widget is removed',);
+      expect(
+        disposeCalls,
+        1,
+        reason: 'onDispose fires when the widget is removed',
+      );
     });
   });
 
   group('PodBuilder pod-swap edge cases', () {
-    testWidgets('swapping to the same pod instance does not double-attach',
-        (tester) async {
+    testWidgets('swapping to the same pod instance does not double-attach', (
+      tester,
+    ) async {
       // Re-attaching a listener while it is still attached would cause it to
       // fire twice on every set. We probe by checking the per-set rebuild
       // count.
@@ -305,23 +317,24 @@ void main() {
       );
     });
 
-    testWidgets('rapidly swapping pods routes events to the latest only',
-        (tester) async {
+    testWidgets('rapidly swapping pods routes events to the latest only', (
+      tester,
+    ) async {
       final podA = Pod<int>(0);
       final podB = Pod<int>(100);
       final podC = Pod<int>(200);
       var lastBuiltValue = -1;
 
       Widget make(Pod<int> p) => _wrap(
-            PodBuilder<int>(
-              pod: p,
-              builder: (context, snapshot) {
-                UNSAFE:
-                lastBuiltValue = snapshot.value.unwrap().unwrap();
-                return const SizedBox.shrink();
-              },
-            ),
-          );
+        PodBuilder<int>(
+          pod: p,
+          builder: (context, snapshot) {
+            UNSAFE:
+            lastBuiltValue = snapshot.value.unwrap().unwrap();
+            return const SizedBox.shrink();
+          },
+        ),
+      );
 
       await tester.pumpWidget(make(podA));
       expect(lastBuiltValue, 0);
@@ -343,24 +356,23 @@ void main() {
   });
 
   group('PodBuilder cache (key + cacheDuration)', () {
-    testWidgets('cache survives a same-key remount within TTL',
-        (tester) async {
+    testWidgets('cache survives a same-key remount within TTL', (tester) async {
       final podA = Pod<int>(111);
       const key = ValueKey('cache_test');
       var buildSnapshot = -1;
 
       Widget make(Pod<int> p) => _wrap(
-            PodBuilder<int>(
-              key: key,
-              pod: p,
-              cacheDuration: const Duration(seconds: 30),
-              builder: (context, snapshot) {
-                UNSAFE:
-                buildSnapshot = snapshot.value.unwrap().unwrap();
-                return const SizedBox.shrink();
-              },
-            ),
-          );
+        PodBuilder<int>(
+          key: key,
+          pod: p,
+          cacheDuration: const Duration(seconds: 30),
+          builder: (context, snapshot) {
+            UNSAFE:
+            buildSnapshot = snapshot.value.unwrap().unwrap();
+            return const SizedBox.shrink();
+          },
+        ),
+      );
 
       await tester.pumpWidget(make(podA));
       expect(buildSnapshot, 111);
@@ -388,17 +400,17 @@ void main() {
       final pod = Pod<int>(50);
 
       Widget make(Key k) => _wrap(
-            PodBuilder<int>(
-              key: k,
-              pod: pod,
-              cacheDuration: const Duration(seconds: 30),
-              builder: (context, snapshot) {
-                UNSAFE:
-                final v = snapshot.value.unwrap().unwrap();
-                return Text('$v');
-              },
-            ),
-          );
+        PodBuilder<int>(
+          key: k,
+          pod: pod,
+          cacheDuration: const Duration(seconds: 30),
+          builder: (context, snapshot) {
+            UNSAFE:
+            final v = snapshot.value.unwrap().unwrap();
+            return Text('$v');
+          },
+        ),
+      );
 
       await tester.pumpWidget(make(const ValueKey('a')));
       expect(find.text('50'), findsOneWidget);

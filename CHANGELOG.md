@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.19.0]
+
+- Released @ 5/2026 (UTC)
+- Fix caching issue with builders
+
 ## [0.18.17]
 
 - Released @ 5/2026 (UTC)
