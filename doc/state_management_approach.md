@@ -317,43 +317,74 @@ final pDynamicReducer = ReducerPod<int>(
 
 Flutter widget that rebuilds when a Pod changes.
 
+`snapshot.value` is `Option<Result<T>>` — the outer `Option` represents the
+loading state for async pods (`None` while pending), and the inner `Result`
+represents success/failure. For a fully synchronous pod with no caching, the
+outer wrappers are always `Some(Ok(...))` and you unwrap twice to reach the
+underlying value.
+
 ```dart
-// Basic usage
-PodBuilder(
+// Basic usage — sync pod, double-unwrap the snapshot
+PodBuilder<int>(
   pod: pCounter,
   builder: (context, snapshot) {
-    return Text('Count: ${snapshot.value}');
+    final count = snapshot.value.unwrap().unwrap();
+    return Text('Count: $count');
   },
 )
 
-// With Result handling
-PodBuilder<Option<Result<User>>>(
-  pod: g.pCurrentUser,
+// Async pod — fold the wrappers to handle loading/error/success
+PodBuilder<User>(
+  pod: fetchUser(), // Future<Pod<User>>
   builder: (context, snapshot) {
-    final value = snapshot.value;
-    return value.fold(
-      ifNone: () => CircularProgressIndicator(),
-      ifSome: (result) => result.fold(
-        ifOk: (user) => Text(user.name),
-        ifErr: (error) => Text('Error: ${error.error}'),
-      ),
-    );
+    final option = snapshot.value;
+    if (option.isNone()) return const CircularProgressIndicator();
+    final result = option.unwrap();
+    if (result.isErr()) {
+      return Text('Error: ${result.err().unwrap().error}');
+    }
+    return Text('Hello ${result.unwrap().name}');
   },
 )
 
 // With debouncing (useful for rapid updates)
-PodBuilder(
+PodBuilder<String>(
   pod: pSearchQuery,
-  debounceDuration: Duration(milliseconds: 300),
-  builder: (context, _) => SearchResults(query: pSearchQuery.getValue()),
+  debounceDuration: const Duration(milliseconds: 300),
+  builder: (context, snapshot) {
+    final query = snapshot.value.unwrap().unwrap();
+    return SearchResults(query: query);
+  },
 )
 
-// With caching
-PodBuilder(
-  key: ValueKey('user-profile'),
+// With caching — a stable Key is required so the cache lookup hits
+PodBuilder<User>(
+  key: const ValueKey('user-profile'),
   pod: pUser,
-  cacheDuration: Duration(minutes: 5),
-  builder: (context, _) => UserProfile(user: pUser.getValue()),
+  cacheDuration: const Duration(minutes: 5),
+  builder: (context, snapshot) {
+    final user = snapshot.value.unwrap().unwrap();
+    return UserProfile(user: user);
+  },
+)
+```
+
+For pods that arrive wrapped in `Resolvable<Pod<T>>` (typical when accessing
+state from `df_di` via `untilSuper`), use `ResolvablePodBuilder` directly —
+it handles the Sync/Async resolution internally:
+
+```dart
+ResolvablePodBuilder<User>(
+  pod: g.pCurrentUser, // Resolvable<Pod<User>>
+  builder: (context, snapshot) {
+    final option = snapshot.value;
+    if (option.isNone()) return const CircularProgressIndicator();
+    final result = option.unwrap();
+    return result.fold(
+      ifOk: (user) => UserProfile(user: user),
+      ifErr: (error) => ErrorDisplay(error: error),
+    );
+  },
 )
 ```
 
@@ -995,21 +1026,16 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ResolvablePodBuilder(
-        resolvablePod: g.pCurrentUser,
-        builder: (context, pod) {
-          return PodBuilder(
-            pod: pod,
-            builder: (context, _) {
-              final value = pod.getValue();
-              return value.fold(
-                ifNone: () => Center(child: CircularProgressIndicator()),
-                ifSome: (result) => result.fold(
-                  ifOk: (user) => UserProfile(user: user),
-                  ifErr: (error) => ErrorDisplay(error: error),
-                ),
-              );
-            },
+      body: ResolvablePodBuilder<ModelUser>(
+        pod: g.pCurrentUser,
+        builder: (context, snapshot) {
+          final option = snapshot.value;
+          if (option.isNone()) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return option.unwrap().fold(
+            ifOk: (user) => UserProfile(user: user),
+            ifErr: (error) => ErrorDisplay(error: error),
           );
         },
       ),
@@ -1128,11 +1154,13 @@ if (user.isSome() && user.unwrap().isOk()) {
 
 ### df_pod
 
-1. **ReducerPod Listener Cleanup**: If `reducer()` throws an exception, listeners may not be properly cleaned up. Wrap reducer logic in try-catch for safety.
+1. **Weak Reference Listener GC**: Anonymous callbacks passed to `addStrongRefListener` will be garbage collected immediately. Always store callback references in fields. The `@mustBeStrongRefOrError` lint (from `df_safer_dart_lints`) flags violations.
 
-2. **Weak Reference Listener GC**: Anonymous callbacks passed to `addStrongRefListener` will be garbage collected immediately. Always store callback references in fields.
+2. **`addSingleExecutionListener` and self-removing listeners**: As of v0.18.17 the `_compactListeners` double-count bug is fixed, so listeners that remove themselves during notification (including the one-shot helper) work correctly. Earlier versions threw `RangeError` and silently dropped other listeners — upgrade if you observed either.
 
-3. **ChildPod Dirty Flag**: In rare edge cases with async operations, rapid updates could bypass the dirty flag debouncing.
+3. **`SharedPod` write ordering**: `set` / `delete` / `refresh` are serialized through an internal write queue, so concurrent calls commit to storage in call order. The future returned by each call resolves only after that operation persists.
+
+4. **`ReducerPod` listener cleanup**: Already handled — if the reducer throws, the listener subscriptions added during that pass are removed before the exception propagates. No action required by callers.
 
 ### df_di
 

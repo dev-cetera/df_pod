@@ -27,11 +27,18 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   //
 
   /// Returns the value of the Pod when the [test] returns `true`.
+  ///
+  /// The internal listener self-removes the moment [test] succeeds, so
+  /// dropping the returned [Resolvable] without awaiting it does not leak
+  /// a listener — earlier versions only removed the listener inside the
+  /// `then` callback, which never ran when the caller discarded the result.
   Resolvable<T> cond(bool Function(T value) test) {
     final finisher = SafeCompleter<T>();
-    final check = () {
+    late final VoidCallback check;
+    check = () {
       if (test(value)) {
         finisher.complete(value).end();
+        removeListener(check);
       }
     };
     check();
@@ -39,10 +46,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
       return Sync.okValue(value);
     } else {
       addStrongRefListener(strongRefListener: check);
-      return finisher.resolvable().then((e) {
-        removeListener(check);
-        return e;
-      });
+      return finisher.resolvable();
     }
   }
 
@@ -108,13 +112,17 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   }
 
   /// Disposes and removes all children.
+  ///
+  /// Note: [ChildPod.dispose] already walks `_parents` and calls
+  /// `parent._removeChild(this)`, which mutates `_children` from underneath
+  /// us — that's why we iterate a snapshot. Calling `_removeChild` again
+  /// here would be a no-op (the child has already been pulled from the set
+  /// and its listener removed), so the loop body just disposes.
   @protected
   void disposeChildren() {
-    // Copy the set to prevent concurrent modification issues during iteration.
     final copy = Set.of(_children);
     for (final child in copy) {
       child.dispose();
-      _removeChild(child);
     }
   }
 }

@@ -155,14 +155,16 @@ mixin class WeakChangeNotifier implements Listenable {
   /// Discards any resources used by the object. After this is called, the
   /// object is not in a usable state and should be discarded.
   ///
+  /// Calling [dispose] from inside a listener of this notifier is supported:
+  /// the in-flight [notifyListeners] iteration sees [_isDisposed] flip to
+  /// true and breaks out of its loop, so listeners scheduled later in the
+  /// same dispatch do not fire. This was previously a debug-only assertion
+  /// that crashed in production with a `RangeError` on the next index access.
+  ///
   /// This method should only be called by the object's owner.
   @mustCallSuper
   void dispose() {
     assert(!_isDisposed, 'This $runtimeType has already been disposed.');
-    assert(
-      _notificationCallStackDepth == 0,
-      'The "dispose()" method on $this was called during a call to "notifyListeners()".',
-    );
     _isDisposed = true;
     _listeners = _emptyListeners;
     _count = 0;
@@ -189,6 +191,11 @@ mixin class WeakChangeNotifier implements Listenable {
 
     final end = _count;
     for (var i = 0; i < end; i++) {
+      // A listener may have called [dispose] on this notifier — production
+      // builds skip the assert in [dispose] and replace [_listeners] with the
+      // empty sentinel, so the next index access would throw RangeError.
+      // Guard the iteration so dispose-during-notify is graceful.
+      if (_isDisposed) break;
       final listenerRef = _listeners[i];
       try {
         // Also check if the listener was garbage collected mid-loop.
@@ -209,7 +216,7 @@ mixin class WeakChangeNotifier implements Listenable {
 
     _notificationCallStackDepth--;
 
-    if (_notificationCallStackDepth == 0) {
+    if (_notificationCallStackDepth == 0 && !_isDisposed) {
       // We really remove the listeners when all notifications are done.
       _compactListeners();
     }
@@ -260,8 +267,15 @@ mixin class WeakChangeNotifier implements Listenable {
   /// This is called after notifications are complete.
   void _compactListeners() {
     // First, scan for any garbage-collected listeners and mark them for removal.
+    // We must distinguish between (a) a slot already nulled by a reentrant
+    // [removeListener] during notification — those were already counted at the
+    // point of removal — and (b) a slot still holding a [WeakReference] whose
+    // target has been GC'd. Only (b) needs to be counted here; otherwise the
+    // counter double-increments and `newLength` underflows, dropping live
+    // listeners (or throwing RangeError when newLength becomes negative).
     for (var i = 0; i < _count; i++) {
-      if (_listeners[i]?.target == null) {
+      final ref = _listeners[i];
+      if (ref != null && ref.target == null) {
         _listeners[i] = null;
         _reentrantlyRemovedListeners++;
       }

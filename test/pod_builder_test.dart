@@ -24,6 +24,7 @@ void main() {
           child: PodBuilder(
             pod: pod,
             builder: (context, snapshot) {
+              UNSAFE:
               final value = snapshot.value.unwrap().unwrap();
               return Text('$value');
             },
@@ -45,6 +46,7 @@ void main() {
             pod: pod,
             builder: (context, snapshot) {
               buildCount++;
+              UNSAFE:
               final value = snapshot.value.unwrap().unwrap();
               return Text('$value');
             },
@@ -151,6 +153,7 @@ void main() {
               pod: p,
               builder: (context, snapshot) {
                 buildCount++;
+                UNSAFE:
                 final value = snapshot.value.unwrap().unwrap();
                 return Text('$value');
               },

@@ -31,43 +31,25 @@ final class PodReducer5 {
     TResponderFn5<P1, P2, P3, P4, P5> responder,
     TReducerFn5<C, P1, P2, P3, P4, P5> reducer,
   ) {
+    late (
+      GenericPod<P1>,
+      GenericPod<P2>,
+      GenericPod<P3>,
+      GenericPod<P4>,
+      GenericPod<P5>,
+    ) cached;
     return ChildPod<Object, C>(
-      responder: () => _toList(responder),
-      reducer: (_) => _reduce(responder, reducer),
-    );
-  }
-
-  /// Converts the response from the responder function into a list of Pods.
-  static List<GenericPod<Object>> _toList<
-    P1 extends Object,
-    P2 extends Object,
-    P3 extends Object,
-    P4 extends Object,
-    P5 extends Object
-  >(TResponderFn5<P1, P2, P3, P4, P5> responder) {
-    final response = responder.call();
-    return [response.$1, response.$2, response.$3, response.$4, response.$5];
-  }
-
-  /// Reduces the values from 5 Pods using the provided reducer function.
-  static C _reduce<
-    C extends Object,
-    P1 extends Object,
-    P2 extends Object,
-    P3 extends Object,
-    P4 extends Object,
-    P5 extends Object
-  >(
-    TResponderFn5<P1, P2, P3, P4, P5> responder,
-    TReducerFn5<C, P1, P2, P3, P4, P5> reducer,
-  ) {
-    final response = responder();
-    return reducer(
-      response.$1,
-      response.$2,
-      response.$3,
-      response.$4,
-      response.$5,
+      responder: () {
+        cached = responder();
+        return [cached.$1, cached.$2, cached.$3, cached.$4, cached.$5];
+      },
+      reducer: (_) => reducer(
+        cached.$1,
+        cached.$2,
+        cached.$3,
+        cached.$4,
+        cached.$5,
+      ),
     );
   }
 }

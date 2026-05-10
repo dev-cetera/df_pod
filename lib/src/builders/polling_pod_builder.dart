@@ -90,7 +90,11 @@ final class _ResolvablePollingPodBuilderState<T extends Object>
   @override
   void didUpdateWidget(ResolvablePollingPodBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.podPoller != widget.podPoller ||
+    // Use `identical` for the poller closure: function `==` is identity, so
+    // an inline `() => ...` produces a new object on every parent rebuild
+    // and would tear the timer down and back up unnecessarily. Callers that
+    // truly want a different poller should pass a different reference.
+    if (!identical(oldWidget.podPoller, widget.podPoller) ||
         oldWidget.interval != widget.interval) {
       _maybeStartPolling();
     }

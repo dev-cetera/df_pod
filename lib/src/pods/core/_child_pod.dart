@@ -68,7 +68,9 @@ final class ChildPod<TParent extends Object, TChild extends Object>
   bool _isDirty = false;
 
   late final VoidCallback _refresh = () {
-    // Already scheduled for a refresh.
+    // Re-entrance guard: prevent a listener fired during _set below from
+    // recursively invoking us within the same call. The body is fully
+    // synchronous, so the flag is only ever true while we are mid-refresh.
     if (_isDirty) return;
     _isDirty = true;
 

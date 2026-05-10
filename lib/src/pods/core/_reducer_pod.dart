@@ -63,18 +63,38 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
   late T value;
 
   ReducerPod({required this.responder, required this.reducer}) {
-    _refresh!();
+    // First-pass: subscribe to parents AND compute the initial value, then
+    // initialize `value` directly. Going through `_set` here would crash on a
+    // [LateInitializationError] for any [Comparable]/[num]/[bool]/[Enum] T,
+    // because `_set`'s equality short-circuit reads `value` before it has been
+    // assigned. Subsequent fires go through `_refresh` -> `_set` normally.
+    final initial = _getValue();
+    if (initial.isSome()) {
+      UNSAFE:
+      value = initial.unwrap();
+    }
   }
 
   //
   //
   //
 
+  bool _isDirty = false;
+
   late VoidCallback? _refresh = () {
-    final option = _getValue();
-    if (option.isSome()) {
-      UNSAFE:
-      _set(option.unwrap());
+    // Re-entrance guard: a listener fired during `_set` below could cascade
+    // back into us. The body is fully synchronous, so the flag is only ever
+    // true while we are mid-refresh. Mirrors the guard in `ChildPod._refresh`.
+    if (_isDirty) return;
+    _isDirty = true;
+    try {
+      final option = _getValue();
+      if (option.isSome()) {
+        UNSAFE:
+        _set(option.unwrap());
+      }
+    } finally {
+      _isDirty = false;
     }
   };
 

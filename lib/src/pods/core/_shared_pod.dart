@@ -22,6 +22,12 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
 
   SharedPreferences? _sharedPreferences;
 
+  /// Serializes all writes (set/delete/refresh) for this key. Without this,
+  /// concurrent calls can interleave their `setString`/`remove` and `_set`
+  /// steps and leave the in-memory pod value out of sync with storage when
+  /// the underlying preferences backend resolves writes out of order.
+  Future<void> _writeQueue = Future<void>.value();
+
   //
   //
   //
@@ -69,37 +75,41 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   //
 
   @override
-  Future<void> set(A newValue, {bool notifyImmediately = true}) async {
-    final v = toValue(newValue);
-    _sharedPreferences ??= await SharedPreferences.getInstance();
-    switch (v) {
-      case final String s:
-        await _sharedPreferences!.setString(key, s);
-      case final bool b:
-        await _sharedPreferences!.setBool(key, b);
-      case final int i:
-        await _sharedPreferences!.setInt(key, i);
-      case final double d:
-        await _sharedPreferences!.setDouble(key, d);
-      case final Iterable<String> list:
-        await _sharedPreferences!.setStringList(key, list.toList());
-      default:
-        throw Err(
-          'SharedPod only supports storing String, int, bool, double, and Iterable<String>. '
-          'The provided value type is ${v.runtimeType}.',
-        );
-    }
-    _set(newValue, notifyImmediately: notifyImmediately);
+  Future<void> set(A newValue, {bool notifyImmediately = true}) {
+    return _enqueue(() async {
+      final v = toValue(newValue);
+      _sharedPreferences ??= await SharedPreferences.getInstance();
+      switch (v) {
+        case final String s:
+          await _sharedPreferences!.setString(key, s);
+        case final bool b:
+          await _sharedPreferences!.setBool(key, b);
+        case final int i:
+          await _sharedPreferences!.setInt(key, i);
+        case final double d:
+          await _sharedPreferences!.setDouble(key, d);
+        case final Iterable<String> list:
+          await _sharedPreferences!.setStringList(key, list.toList());
+        default:
+          throw Err(
+            'SharedPod only supports storing String, int, bool, double, and Iterable<String>. '
+            'The provided value type is ${v.runtimeType}.',
+          );
+      }
+      _set(newValue, notifyImmediately: notifyImmediately);
+    });
   }
 
   //
   //
   //
 
-  Future<void> delete({bool notifyImmediately = true}) async {
-    _sharedPreferences ??= await SharedPreferences.getInstance();
-    await _sharedPreferences!.remove(key);
-    _set(initialValue, notifyImmediately: notifyImmediately);
+  Future<void> delete({bool notifyImmediately = true}) {
+    return _enqueue(() async {
+      _sharedPreferences ??= await SharedPreferences.getInstance();
+      await _sharedPreferences!.remove(key);
+      _set(initialValue, notifyImmediately: notifyImmediately);
+    });
   }
 
   //
@@ -107,10 +117,27 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   //
 
   @override
-  Future<void> refresh({bool notifyImmediately = true}) async {
-    _sharedPreferences ??= await SharedPreferences.getInstance();
-    final v = _sharedPreferences!.get(key);
-    final newValue = fromValue(v is B ? v : null);
-    _set(newValue, notifyImmediately: notifyImmediately);
+  Future<void> refresh({bool notifyImmediately = true}) {
+    return _enqueue(() async {
+      _sharedPreferences ??= await SharedPreferences.getInstance();
+      final v = _sharedPreferences!.get(key);
+      final newValue = fromValue(v is B ? v : null);
+      _set(newValue, notifyImmediately: notifyImmediately);
+    });
+  }
+
+  /// Chains [task] onto [_writeQueue] so concurrent writes commit in call
+  /// order. The returned future completes for this specific task; an error
+  /// in one task does not abort subsequent ones (the queue absorbs it).
+  /// Tasks that resolve after [dispose] become no-ops — without this guard
+  /// the trailing [_set] would hit the disposed-pod assertion in
+  /// [WeakChangeNotifier.notifyListeners].
+  Future<void> _enqueue(Future<void> Function() task) {
+    final result = _writeQueue.then((_) async {
+      if (isDisposed) return;
+      await task();
+    });
+    _writeQueue = result.catchError((Object _) {});
+    return result;
   }
 }

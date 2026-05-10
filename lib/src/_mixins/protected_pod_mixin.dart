@@ -34,6 +34,13 @@ base mixin ProtectedPodMixin<T extends Object> on DisposablePod<T> {
   /// ❌ Do not add listeners to this Pod directly.
   @protected
   @override
+  void addStrongRefListener({required VoidCallback strongRefListener}) {
+    super.addStrongRefListener(strongRefListener: strongRefListener);
+  }
+
+  /// ❌ Do not add listeners to this Pod directly.
+  @protected
+  @override
   void addSingleExecutionListener(VoidCallback listener) {
     super.addSingleExecutionListener(listener);
   }

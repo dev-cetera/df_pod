@@ -167,17 +167,7 @@ class ForcedAsyncPodListBuilder<T extends Object> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: () async {
-        return await Future.wait(
-          podList
-              .map((e) => e.toAsync().value)
-              .map(
-                (e) => () async {
-                  return e;
-                }(),
-              ),
-        );
-      }(),
+      future: Future.wait(podList.map((e) => e.toAsync().value)),
       builder: (context, snapshot) {
         final podList = snapshot.data;
         if (snapshot.hasData && podList != null) {

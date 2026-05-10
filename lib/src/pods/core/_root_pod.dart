@@ -33,9 +33,22 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
 
   RootPod(this.value);
 
-  RootPod.fromStream(Stream<T> stream, {required T initialValue})
-    : value = initialValue {
-    final subscription = stream.listen(_set);
+  /// Creates a [RootPod] whose value tracks [stream]. Errors emitted by the
+  /// stream are passed to [onError]; if [onError] is not supplied they are
+  /// logged via `df_log` so they do not propagate to the zone's uncaught
+  /// handler. The subscription is cancelled on [dispose].
+  RootPod.fromStream(
+    Stream<T> stream, {
+    required T initialValue,
+    void Function(Object error, StackTrace stack)? onError,
+  }) : value = initialValue {
+    final subscription = stream.listen(
+      _set,
+      onError: onError ??
+          (Object error, StackTrace stack) {
+            Log.err(error, {#df_pod});
+          },
+    );
     onAfterDispose = () {
       unawaited(subscription.cancel());
     };
@@ -65,7 +78,12 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
   }
 
   /// Triggers [notifyListeners] after a zero-duration delay.
+  ///
+  /// Safe to call right before [dispose]; the scheduled tick is a no-op once
+  /// [isDisposed] flips true.
   void refresh() {
-    Future.delayed(Duration.zero, notifyListeners);
+    Future.delayed(Duration.zero, () {
+      if (!isDisposed) notifyListeners();
+    });
   }
 }
