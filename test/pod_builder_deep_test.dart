@@ -77,11 +77,20 @@ void main() {
         isTrue,
         reason: 'before the future resolves, value should be None',
       );
+      expect(
+        builds.first.isNone(),
+        isTrue,
+        reason: 'before the future resolves, value should be None',
+      );
 
       completer.complete(Pod<int>(99));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(builds.last.isSome(), isTrue);
+      expect(
+        builds.last.isSome(),
+        isTrue,
+        reason: 'after the future resolves, the last build must have a value',
+      );
       UNSAFE:
       expect(builds.last.unwrap().unwrap(), 99);
     });
@@ -358,7 +367,8 @@ void main() {
   group('PodBuilder cache (key + cacheDuration)', () {
     testWidgets('cache survives a same-key remount within TTL', (tester) async {
       final podA = Pod<int>(111);
-      const key = ValueKey('cache_test');
+      const key = ValueKey('cache_test_ttl');
+      const ttl = Duration(milliseconds: 200);
       var buildSnapshot = -1;
 
       Widget make(Pod<int> p) => _wrap(
@@ -377,7 +387,6 @@ void main() {
       await tester.pumpWidget(make(podA));
       expect(buildSnapshot, 111);
 
-      // Tear down.
       await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
       // Re-mount with a DIFFERENT pod but the SAME key — the cache should
@@ -390,14 +399,21 @@ void main() {
         reason: 'first build after remount serves the cached value',
       );
 
-      // After podB fires once, the value updates.
+      // After podB fires once, the live value wins (cache shadowing was the
+      // bug fixed in pass 4).
       podB.set(333);
       await tester.pump();
       expect(buildSnapshot, 333);
+
+      // Drain the cache TTL timer before the test ends.
+      await tester.pumpWidget(_wrap(const SizedBox.shrink()));
+      await tester.pump(ttl + const Duration(milliseconds: 50));
     });
 
-    testWidgets('cache miss for a different key', (tester) async {
+    testWidgets('cache miss for a different key — live pod value wins',
+        (tester) async {
       final pod = Pod<int>(50);
+      const ttl = Duration(milliseconds: 200);
 
       Widget make(Key k) => _wrap(
         PodBuilder<int>(
@@ -412,17 +428,24 @@ void main() {
         ),
       );
 
-      await tester.pumpWidget(make(const ValueKey('a')));
+      await tester.pumpWidget(make(const ValueKey('cache_a')));
       expect(find.text('50'), findsOneWidget);
 
       pod.set(60);
       await tester.pump();
-      expect(find.text('60'), findsOneWidget);
+      expect(
+        find.text('60'),
+        findsOneWidget,
+        reason: 'live pod fire must reach the UI even with a key + cache',
+      );
 
       // Different key — cache lookup misses; first build uses pod's current
-      // value (60), not the previous keyed cache.
-      await tester.pumpWidget(make(const ValueKey('b')));
+      // value (60).
+      await tester.pumpWidget(make(const ValueKey('cache_b')));
       expect(find.text('60'), findsOneWidget);
+
+      await tester.pumpWidget(_wrap(const SizedBox.shrink()));
+      await tester.pump(ttl + const Duration(milliseconds: 50));
     });
   });
 }
