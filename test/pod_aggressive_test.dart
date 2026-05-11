@@ -446,6 +446,7 @@ void main() {
         reducer: (vs) {
           var total = 0;
           for (final v in vs) {
+            UNSAFE:
             if (v.isSome()) total += v.unwrap() as int;
           }
           return Some(total);
