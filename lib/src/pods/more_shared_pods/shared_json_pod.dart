@@ -45,7 +45,7 @@ final class SharedJsonPodCreator {
       Log.alert(
         'SharedJsonPod: discarded malformed JSON for key, falling back to '
         'initialValue',
-        {#df_pod},
+        tags: {#df_pod},
       );
       return fallback;
     }
@@ -81,5 +81,5 @@ final class SharedJsonPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedJsonPod = SharedPod<Map<String, Object>, String>;
-typedef TSharedProtectedJsonPod =
-    SharedProtectedPod<Map<String, Object>, String>;
+typedef TSharedProtectedJsonPod
+    = SharedProtectedPod<Map<String, Object>, String>;

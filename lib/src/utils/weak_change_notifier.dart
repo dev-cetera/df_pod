@@ -327,7 +327,7 @@ mixin class WeakChangeNotifier implements Listenable {
         if (kDebugMode && !_isDisposed) {
           Log.alert(
             'A listener has been garbage collected. This is often desired, but ensure it was not due to a programming error where the listener was not held with a strong reference.',
-            {#df_pod},
+            tags: {#df_pod},
           );
         }
       });

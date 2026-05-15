@@ -33,7 +33,7 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
     if (!_isDisposed) {
       super.addListener(listener);
     } else {
-      Log.alert('Tried to add a listener to a disposed Pod!', {#df_pod});
+      Log.alert('Tried to add a listener to a disposed Pod!', tags: {#df_pod});
     }
   }
 
@@ -42,7 +42,10 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
     if (!_isDisposed) {
       super.removeListener(listener);
     } else {
-      Log.alert('Tried to remove a listener from a disposed Pod!', {#df_pod});
+      Log.alert(
+        'Tried to remove a listener from a disposed Pod!',
+        tags: {#df_pod},
+      );
     }
   }
 
@@ -63,7 +66,7 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
         Log.err(e);
       }
     } else {
-      Log.alert('Tried to dispose a Pod again!', {#df_pod});
+      Log.alert('Tried to dispose a Pod again!', tags: {#df_pod});
     }
   }
 }

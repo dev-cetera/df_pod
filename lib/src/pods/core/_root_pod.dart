@@ -47,7 +47,7 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
       onError:
           onError ??
           (Object error, StackTrace stack) {
-            Log.err(error, {#df_pod});
+            Log.err(error, tags: {#df_pod});
           },
     );
     onAfterDispose = () {

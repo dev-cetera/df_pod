@@ -374,7 +374,10 @@ final class PodResultBuilderState<T extends Object>
       widget.pod.unwrap().removeListener(_valueChanged);
       widget.onDispose?.call(widget.pod.unwrap());
     } else {
-      Log.err('Tried to dispose Err<ValueListenable<T>>!', {#df_pod});
+      Log.err(
+        'Tried to dispose Err<ValueListenable<T>>!',
+        tags: {#df_pod},
+      );
     }
     super.dispose();
   }
@@ -392,10 +395,9 @@ final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   });
 }
 
-typedef TOnOptionBuilder<
-  T extends Object,
-  TSnapshot extends OnOptionSnapshot<T>
-> = Widget Function(BuildContext context, TSnapshot snapshot);
+typedef TOnOptionBuilder<T extends Object,
+        TSnapshot extends OnOptionSnapshot<T>>
+    = Widget Function(BuildContext context, TSnapshot snapshot);
 
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;

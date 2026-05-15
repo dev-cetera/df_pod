@@ -381,7 +381,10 @@ final class PodResultListBuilderState<T extends Object>
     final temp = <ValueListenable<T>>[];
     for (final pod in widget.podList) {
       if (pod.isErr()) {
-        Log.err('Tried to dispose Err<ValueListenable<T>>!', {#df_pod});
+        Log.err(
+          'Tried to dispose Err<ValueListenable<T>>!',
+          tags: {#df_pod},
+        );
         continue;
       }
       UNSAFE:
@@ -408,10 +411,9 @@ final class PodListBuilderSnapshot<T extends Object>
   });
 }
 
-typedef TOnOptionListBuilder<
-  T extends Object,
-  TSnapshot extends OnOptionListSnapshot<T>
-> = Widget Function(BuildContext context, TSnapshot snapshot);
+typedef TOnOptionListBuilder<T extends Object,
+        TSnapshot extends OnOptionListSnapshot<T>>
+    = Widget Function(BuildContext context, TSnapshot snapshot);
 
 class OnOptionListSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Iterable<Option<Result<T>>>> value;
