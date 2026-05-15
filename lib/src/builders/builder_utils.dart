@@ -21,9 +21,30 @@ class BuilderSnapshot {
 }
 
 final class PodBuilderCacheManager {
-  final CacheManager<Object> cacheManager;
-  PodBuilderCacheManager._(this.cacheManager);
+  final CacheManager<Object> _inner;
+  final _expirations = <String, DateTime>{};
+  PodBuilderCacheManager._(this._inner);
+
   static final i = PodBuilderCacheManager._(CacheManager<Object>());
+
+  void cache(String key, Object value, {Duration? cacheDuration}) {
+    _inner.cache(key, value);
+    if (cacheDuration != null) {
+      _expirations[key] = DateTime.now().add(cacheDuration);
+    } else {
+      _expirations.remove(key);
+    }
+  }
+
+  Object? get(String? key) {
+    if (key == null) return null;
+    final expiration = _expirations[key];
+    if (expiration != null && expiration.isBefore(DateTime.now())) {
+      _expirations.remove(key);
+      return null;
+    }
+    return _inner.get(key);
+  }
 }
 
 typedef TGlobalPod<T extends Object> =

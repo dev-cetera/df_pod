@@ -147,7 +147,7 @@ final class _ResolvablePollingPodBuilderState<T extends Object>
         PodBuilderSnapshot<T>(
           pod: const None(),
           value: Option.from(
-            PodBuilderCacheManager.i.cacheManager.get(widget.key?.toString())
+            PodBuilderCacheManager.i.get(widget.key?.toString())
                 as Result<T>?,
           ),
           child: _staticChild,

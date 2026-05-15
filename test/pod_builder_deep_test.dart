@@ -368,7 +368,6 @@ void main() {
     testWidgets('cache survives a same-key remount within TTL', (tester) async {
       final podA = Pod<int>(111);
       const key = ValueKey('cache_test_ttl');
-      const ttl = Duration(milliseconds: 200);
       var buildSnapshot = -1;
 
       Widget make(Pod<int> p) => _wrap(
@@ -404,17 +403,12 @@ void main() {
       podB.set(333);
       await tester.pump();
       expect(buildSnapshot, 333);
-
-      // Drain the cache TTL timer before the test ends.
-      await tester.pumpWidget(_wrap(const SizedBox.shrink()));
-      await tester.pump(ttl + const Duration(milliseconds: 50));
     });
 
     testWidgets('cache miss for a different key — live pod value wins', (
       tester,
     ) async {
       final pod = Pod<int>(50);
-      const ttl = Duration(milliseconds: 200);
 
       Widget make(Key k) => _wrap(
         PodBuilder<int>(
@@ -444,9 +438,36 @@ void main() {
       // value (60).
       await tester.pumpWidget(make(const ValueKey('cache_b')));
       expect(find.text('60'), findsOneWidget);
+    });
+
+    testWidgets('cache with zero cacheDuration never caches',
+        (tester) async {
+      const key = ValueKey('zero_cache_test');
+      var buildSnapshot = -1;
+
+      Widget make(Pod<int> p) => _wrap(
+        PodBuilder<int>(
+          key: key,
+          pod: p,
+          cacheDuration: Duration.zero,
+          builder: (context, snapshot) {
+            UNSAFE:
+            buildSnapshot = snapshot.value.unwrap().unwrap();
+            return const SizedBox.shrink();
+          },
+        ),
+      );
+
+      final podA = Pod<int>(111);
+      await tester.pumpWidget(make(podA));
+      expect(buildSnapshot, 111);
 
       await tester.pumpWidget(_wrap(const SizedBox.shrink()));
-      await tester.pump(ttl + const Duration(milliseconds: 50));
+
+      final podB = Pod<int>(222);
+      await tester.pumpWidget(make(podB));
+      // Zero cacheDuration means no caching — fresh value always.
+      expect(buildSnapshot, 222);
     });
   });
 }
