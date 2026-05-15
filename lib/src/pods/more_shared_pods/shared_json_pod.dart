@@ -81,5 +81,5 @@ final class SharedJsonPodCreator {
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TSharedJsonPod = SharedPod<Map<String, Object>, String>;
-typedef TSharedProtectedJsonPod
-    = SharedProtectedPod<Map<String, Object>, String>;
+typedef TSharedProtectedJsonPod =
+    SharedProtectedPod<Map<String, Object>, String>;

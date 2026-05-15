@@ -410,8 +410,9 @@ void main() {
       await tester.pump(ttl + const Duration(milliseconds: 50));
     });
 
-    testWidgets('cache miss for a different key — live pod value wins',
-        (tester) async {
+    testWidgets('cache miss for a different key — live pod value wins', (
+      tester,
+    ) async {
       final pod = Pod<int>(50);
       const ttl = Duration(milliseconds: 200);
 

@@ -448,13 +448,10 @@ void main() {
       final pa = Pod<int>(1);
       final pb = Pod<int>(2);
       var responderCalls = 0;
-      final sum = PodReducer2.reduce<int, int, int>(
-        () {
-          responderCalls++;
-          return (pa, pb);
-        },
-        (a, b) => a.getValue() + b.getValue(),
-      );
+      final sum = PodReducer2.reduce<int, int, int>(() {
+        responderCalls++;
+        return (pa, pb);
+      }, (a, b) => a.getValue() + b.getValue());
       // Construction does one refresh.
       final initialCalls = responderCalls;
       expect(sum.getValue(), 3);

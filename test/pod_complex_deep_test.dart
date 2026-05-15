@@ -23,10 +23,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Widget _wrap(Widget child) => Directionality(
-      textDirection: TextDirection.ltr,
-      child: child,
-    );
+Widget _wrap(Widget child) =>
+    Directionality(textDirection: TextDirection.ltr, child: child);
 
 void main() {
   // ───────────────────────────────────────────────────────────────────────
@@ -132,50 +130,49 @@ void main() {
       expect(pod.getValue(), '2|10');
     });
 
-    test('chain disposal: dispose root unsubscribes child from all parents',
-        () {
-      final root = Pod<int>(1);
-      final extra = Pod<int>(100);
-      final pod = ChildPod<int, int>(
-        responder: () => [root, extra],
-        reducer: (vs) => vs[0] + vs[1],
-      );
-      expect(pod.getValue(), 101);
-
-      root.dispose(); // triggers disposeChildren — pod is disposed.
-      expect(pod.isDisposed, isTrue);
-
-      // After disposal, firing `extra` (still alive) must not blow up.
-      extra.set(200);
-      // No exception expected.
-    });
-
     test(
-      'reducer that throws on first call propagates the error and does not '
-      'leave dangling listeners',
+      'chain disposal: dispose root unsubscribes child from all parents',
       () {
-        final a = Pod<int>(1);
-        final b = Pod<int>(2);
-        var thrown = false;
-        expect(
-          () => ChildPod<int, int>(
-            responder: () => [a, b],
-            reducer: (vs) {
-              if (!thrown) {
-                thrown = true;
-                throw StateError('reducer boom');
-              }
-              return vs.fold(0, (x, y) => x + y);
-            },
-          ),
-          throwsStateError,
+        final root = Pod<int>(1);
+        final extra = Pod<int>(100);
+        final pod = ChildPod<int, int>(
+          responder: () => [root, extra],
+          reducer: (vs) => vs[0] + vs[1],
         );
+        expect(pod.getValue(), 101);
 
-        // Firing parents must not crash even though a child was attempted.
-        a.set(99);
-        b.set(99);
+        root.dispose(); // triggers disposeChildren — pod is disposed.
+        expect(pod.isDisposed, isTrue);
+
+        // After disposal, firing `extra` (still alive) must not blow up.
+        extra.set(200);
+        // No exception expected.
       },
     );
+
+    test('reducer that throws on first call propagates the error and does not '
+        'leave dangling listeners', () {
+      final a = Pod<int>(1);
+      final b = Pod<int>(2);
+      var thrown = false;
+      expect(
+        () => ChildPod<int, int>(
+          responder: () => [a, b],
+          reducer: (vs) {
+            if (!thrown) {
+              thrown = true;
+              throw StateError('reducer boom');
+            }
+            return vs.fold(0, (x, y) => x + y);
+          },
+        ),
+        throwsStateError,
+      );
+
+      // Firing parents must not crash even though a child was attempted.
+      a.set(99);
+      b.set(99);
+    });
   });
 
   // ───────────────────────────────────────────────────────────────────────
@@ -215,8 +212,9 @@ void main() {
       },
     );
 
-    testWidgets('inner pod entering the list mid-flight starts firing',
-        (tester) async {
+    testWidgets('inner pod entering the list mid-flight starts firing', (
+      tester,
+    ) async {
       final source = Pod<int>(0);
       final newcomer = Pod<int>(0);
       final inners = <Pod<int>>[];
@@ -306,8 +304,9 @@ void main() {
       },
     );
 
-    testWidgets('large dynamic inner list (100 pods) churns cleanly',
-        (tester) async {
+    testWidgets('large dynamic inner list (100 pods) churns cleanly', (
+      tester,
+    ) async {
       final source = Pod<int>(0);
       final pods = List.generate(100, (_) => Pod<int>(0));
       var buildCount = 0;
@@ -340,8 +339,9 @@ void main() {
   // PodResultListBuilder — cache shadowing + listener swap
   // ───────────────────────────────────────────────────────────────────────
   group('PodListBuilder cache + lifecycle', () {
-    testWidgets('live updates win over cache for keyed list builder',
-        (tester) async {
+    testWidgets('live updates win over cache for keyed list builder', (
+      tester,
+    ) async {
       // Same shadowing-bug regression as PodResultBuilder, applied to lists.
       final p1 = Pod<int>(1);
       final p2 = Pod<int>(2);
@@ -386,22 +386,21 @@ void main() {
       await tester.pump(ttl + const Duration(milliseconds: 50));
     });
 
-    testWidgets('swapping the pod list detaches old listeners',
-        (tester) async {
+    testWidgets('swapping the pod list detaches old listeners', (tester) async {
       final p1 = Pod<int>(1);
       final p2 = Pod<int>(2);
       final p3 = Pod<int>(3);
       var buildCount = 0;
 
       Widget make(List<Pod<int>> pods) => _wrap(
-            PodListBuilder<int>(
-              podList: pods,
-              builder: (context, _) {
-                buildCount++;
-                return const SizedBox.shrink();
-              },
-            ),
-          );
+        PodListBuilder<int>(
+          podList: pods,
+          builder: (context, _) {
+            buildCount++;
+            return const SizedBox.shrink();
+          },
+        ),
+      );
 
       await tester.pumpWidget(make([p1, p2]));
       expect(buildCount, 1);
@@ -444,8 +443,9 @@ void main() {
       // No exception.
     });
 
-    testWidgets('onDispose receives the full pod list once on teardown',
-        (tester) async {
+    testWidgets('onDispose receives the full pod list once on teardown', (
+      tester,
+    ) async {
       final p1 = Pod<int>(1);
       final p2 = Pod<int>(2);
       Iterable<ValueListenable<int>>? receivedOnDispose;
