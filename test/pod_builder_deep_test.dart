@@ -440,8 +440,7 @@ void main() {
       expect(find.text('60'), findsOneWidget);
     });
 
-    testWidgets('cache with zero cacheDuration never caches',
-        (tester) async {
+    testWidgets('cache with zero cacheDuration never caches', (tester) async {
       const key = ValueKey('zero_cache_test');
       var buildSnapshot = -1;
 

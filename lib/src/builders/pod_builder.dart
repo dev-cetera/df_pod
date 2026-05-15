@@ -181,9 +181,7 @@ class AsyncPodBuilder<T extends Object> extends StatelessWidget {
             child: child,
           );
         } else {
-          final cached = PodBuilderCacheManager.i.get(
-            key?.toString(),
-          );
+          final cached = PodBuilderCacheManager.i.get(key?.toString());
           return builder(
             context,
             PodBuilderSnapshot(
@@ -292,9 +290,7 @@ final class PodResultBuilderState<T extends Object>
     if (useCache) {
       final key = widget.key;
       if (key != null) {
-        final cached = PodBuilderCacheManager.i.get(
-          key.toString(),
-        );
+        final cached = PodBuilderCacheManager.i.get(key.toString());
         final cachedValue = cached is Result<T> ? cached : null;
         if (cachedValue != null) {
           _value = cachedValue;

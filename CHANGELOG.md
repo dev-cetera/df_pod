@@ -4,6 +4,7 @@
 
 - Released @ 5/2026 (UTC)
 - Update dependencies
+- AI updates
 
 ## [0.19.0]
 
