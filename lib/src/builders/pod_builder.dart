@@ -269,7 +269,14 @@ final class PodResultBuilderState<T extends Object>
       oldWidget.pod
           .ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged))
           .end();
-      _setValue(useCache: true);
+      // When the pod identity changes under the same widget key, the cache
+      // still holds the previous pod's value. Reading from the cache here
+      // would shadow the new pod's live value until the new pod first fires.
+      final podIdentityChanged = !identical(
+        oldWidget.pod.isOk() ? oldWidget.pod.unwrap() : null,
+        widget.pod.isOk() ? widget.pod.unwrap() : null,
+      );
+      _setValue(useCache: !podIdentityChanged);
       _cacheValue();
       widget.pod
           .ifOk((self, ok) => ok.unwrap().addListener(_valueChanged))

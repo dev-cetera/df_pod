@@ -28,16 +28,16 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
 
   /// Returns the value of the Pod when the [test] returns `true`.
   ///
-  /// The internal listener self-removes the moment [test] succeeds, so
-  /// dropping the returned [Resolvable] without awaiting it does not leak
-  /// a listener — earlier versions only removed the listener inside the
-  /// `then` callback, which never ran when the caller discarded the result.
+  /// The internal listener is held strongly via [pinListener] so dropping
+  /// the returned [Resolvable] without awaiting it cannot cause the
+  /// listener to be garbage collected before [test] succeeds.
   Resolvable<T> cond(bool Function(T value) test) {
     final finisher = SafeCompleter<T>();
     late final VoidCallback check;
     check = () {
       if (test(value)) {
         finisher.complete(value).end();
+        unpinListener(check);
         removeListener(check);
       }
     };
@@ -45,6 +45,7 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     if (finisher.isCompleted) {
       return Sync.okValue(value);
     } else {
+      pinListener(check);
       addStrongRefListener(strongRefListener: check);
       return finisher.resolvable();
     }
@@ -54,6 +55,10 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
 
   void _addChild(ChildPod<Object, Object> child) {
     if (!_children.contains(child)) {
+      // Intentionally NOT guarded with `isDisposed` — the assert in
+      // [addStrongRefListener] is the canonical signal that the caller is
+      // operating on a disposed pod and must be allowed to fire so
+      // `.map()` / `.reduce()` on a disposed parent fails loudly in debug.
       // ignore: invalid_use_of_visible_for_testing_member
       addStrongRefListener(strongRefListener: child._refresh);
       _children.add(child);

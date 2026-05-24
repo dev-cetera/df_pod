@@ -278,14 +278,17 @@ final class PodResultListBuilderState<T extends Object>
       final key = widget.key;
       if (key != null) {
         final cached = PodBuilderCacheManager.i.get(key.toString());
-        final cachedValue = cached is Iterable<Result<T>> ? cached : null;
+        final cachedValue = cached is List<Result<T>> ? cached : null;
         if (cachedValue != null) {
           _valueList = cachedValue;
           return;
         }
       }
     }
-    _valueList = widget.podList.map((e) => e.map((e) => e.value));
+    // Snapshot to a List so the cached value is frozen at write time.
+    // A lazy MappedIterable would re-read `pod.value` on every iteration,
+    // defeating the cache and letting later pod fires bleed through.
+    _valueList = widget.podList.map((e) => e.map((e) => e.value)).toList();
   }
 
   //
@@ -299,7 +302,8 @@ final class PodResultListBuilderState<T extends Object>
     }
     PodBuilderCacheManager.i.cache(
       key.toString(),
-      widget.podList.map((e) => e.map((e) => e.value)),
+      // Materialise to a List — see _setValue for why.
+      widget.podList.map((e) => e.map((e) => e.value)).toList(),
       cacheDuration: widget.cacheDuration,
     );
   }

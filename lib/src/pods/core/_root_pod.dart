@@ -37,18 +37,28 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
   /// stream are passed to [onError]; if [onError] is not supplied they are
   /// logged via `df_log` so they do not propagate to the zone's uncaught
   /// handler. The subscription is cancelled on [dispose].
+  ///
+  /// In-flight events that arrive after [dispose] (the async [StreamSubscription.cancel]
+  /// hasn't propagated yet) are dropped instead of hitting the disposed-pod
+  /// assertion in [WeakChangeNotifier.notifyListeners].
   RootPod.fromStream(
     Stream<T> stream, {
     required T initialValue,
     void Function(Object error, StackTrace stack)? onError,
   }) : value = initialValue {
     final subscription = stream.listen(
-      _set,
-      onError:
-          onError ??
-          (Object error, StackTrace stack) {
-            Log.err(error, tags: {#df_pod});
-          },
+      (v) {
+        if (isDisposed) return;
+        _set(v);
+      },
+      onError: (Object error, StackTrace stack) {
+        if (isDisposed) return;
+        if (onError != null) {
+          onError(error, stack);
+        } else {
+          Log.err(error, tags: {#df_pod});
+        }
+      },
     );
     onAfterDispose = () {
       unawaited(subscription.cancel());

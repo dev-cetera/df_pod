@@ -54,20 +54,48 @@ mixin class WeakChangeNotifier implements Listenable {
   @protected
   bool get hasListeners => _count > 0;
 
+  /// Strong references for listeners that have no other owner (one-shot
+  /// closures from [addSingleExecutionListener], waiters from `cond()`, etc.).
+  /// Without this, a closure whose only owner is its own activation record
+  /// is racing the GC against the next [notifyListeners] call. Cleared on
+  /// [dispose].
+  final Set<VoidCallback> _pinnedListeners = <VoidCallback>{};
+
+  /// Holds [listener] alive until [unpinListener] is called or this notifier
+  /// is disposed. Intended for callers that pass [addStrongRefListener] a
+  /// closure they themselves do not retain — most commonly, library-internal
+  /// helpers like [addSingleExecutionListener] or `GenericPodMixin.cond`.
+  @protected
+  void pinListener(VoidCallback listener) {
+    _pinnedListeners.add(listener);
+  }
+
+  /// Releases the strong reference taken by [pinListener]. Safe to call when
+  /// no pin exists.
+  @protected
+  void unpinListener(VoidCallback listener) {
+    _pinnedListeners.remove(listener);
+  }
+
   /// Registers a listener that will be called only once when the object
   /// notifies its listeners. After the listener is called, it is automatically
   /// removed.
+  ///
+  /// The temporary wrapper is [pinListener]-ed for its full lifetime so the
+  /// GC cannot collect it before [notifyListeners] fires — previously the
+  /// `late final` local was the only thing keeping the closure alive, and
+  /// the notifier itself only stored a [WeakReference].
   void addSingleExecutionListener(VoidCallback listener) {
-    // This is a special case that requires a strong reference to the temporary
-    // wrapper closure. We hold it until it's called.
     late final VoidCallback tempListener;
     tempListener = () {
       try {
         listener();
       } finally {
+        unpinListener(tempListener);
         removeListener(tempListener);
       }
     };
+    pinListener(tempListener);
     addStrongRefListener(strongRefListener: tempListener);
   }
 
@@ -168,6 +196,7 @@ mixin class WeakChangeNotifier implements Listenable {
     _isDisposed = true;
     _listeners = _emptyListeners;
     _count = 0;
+    _pinnedListeners.clear();
     _detachAllFinalizers();
   }
 

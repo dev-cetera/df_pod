@@ -71,29 +71,28 @@ final class ChildPod<TParent extends Object, TChild extends Object>
     // Re-entrance guard: prevent a listener fired during _set below from
     // recursively invoking us within the same call. The body is fully
     // synchronous, so the flag is only ever true while we are mid-refresh.
+    // `try/finally` ensures an exception in _responder/_reducer/_set does not
+    // leave _isDirty stuck at true (which would silently freeze this child
+    // for the rest of its life).
     if (_isDirty) return;
     _isDirty = true;
+    try {
+      final newParents = _responder();
 
-    // Get the new parents.
-    final newParents = _responder();
+      final oldParentsSet = _parents.nonNulls.toSet();
+      final newParentsSet = newParents.nonNulls.toSet();
+      for (final oldParent in oldParentsSet.difference(newParentsSet)) {
+        oldParent._removeChild(this);
+      }
 
-    // Unsubscribe from any Pods that are no longer parents.
-    final oldParentsSet = _parents.nonNulls.toSet();
-    final newParentsSet = newParents.nonNulls.toSet();
-    for (final oldParent in oldParentsSet.difference(newParentsSet)) {
-      oldParent._removeChild(this);
+      _initializeParents(newParents);
+      _parents = newParents;
+
+      final newValue = _reducer(newParents.map((p) => p.value).toList());
+      _set(newValue);
+    } finally {
+      _isDirty = false;
     }
-
-    // Subscribe to new parents.
-    _initializeParents(newParents);
-    _parents = newParents;
-
-    // Recalculate the value
-    final newValue = _reducer(newParents.map((p) => p.value).toList());
-    _set(newValue);
-
-    // Reset the flag.
-    _isDirty = false;
   };
 
   //

@@ -20,48 +20,99 @@ Widget _wrap(Widget child) =>
 
 void main() {
   group('Caching (verification)', () {
-    testWidgets('non-zero cacheDuration preserves value across same-key remount', (
-      tester,
-    ) async {
-      final key = ValueKey('cache-verify-${DateTime.now().microsecondsSinceEpoch}');
+    testWidgets(
+      'non-zero cacheDuration preserves value across fresh same-key remount',
+      (tester) async {
+        final key = ValueKey(
+          'cache-verify-${DateTime.now().microsecondsSinceEpoch}',
+        );
 
-      final podA = Pod<int>(42);
-      await tester.pumpWidget(
-        _wrap(
-          PodBuilder<int>(
-            key: key,
-            pod: podA,
-            cacheDuration: const Duration(seconds: 10),
-            builder: (_, __) => const SizedBox.shrink(),
+        final podA = Pod<int>(42);
+        await tester.pumpWidget(
+          _wrap(
+            PodBuilder<int>(
+              key: key,
+              pod: podA,
+              cacheDuration: const Duration(seconds: 10),
+              builder: (_, __) => const SizedBox.shrink(),
+            ),
           ),
-        ),
-      );
-      // First mount writes _value=Ok(42) to the cache under key.toString().
+        );
+        // Unmount before remounting so the new build is a fresh initState
+        // (where useCache:true applies). A pod-swap on the same widget now
+        // correctly bypasses the cache — see the pod-swap test below.
+        await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
-      // Remount with a DIFFERENT pod under the SAME key. Cache should win.
-      final podB = Pod<int>(999);
-      late int observed;
-      await tester.pumpWidget(
-        _wrap(
-          PodBuilder<int>(
-            key: key,
-            pod: podB,
-            cacheDuration: const Duration(seconds: 10),
-            builder: (_, snap) {
-              observed = snap.value.unwrap().unwrap();
-              return const SizedBox.shrink();
-            },
+        final podB = Pod<int>(999);
+        late int observed;
+        await tester.pumpWidget(
+          _wrap(
+            PodBuilder<int>(
+              key: key,
+              pod: podB,
+              cacheDuration: const Duration(seconds: 10),
+              builder: (_, snap) {
+                UNSAFE:
+                observed = snap.value.unwrap().unwrap();
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(
-        observed,
-        42,
-        reason:
-            'cache should have returned the previous pod value, not the new pod value',
-      );
-    });
+        expect(
+          observed,
+          42,
+          reason: 'fresh remount serves the cached value initially',
+        );
+      },
+    );
+
+    testWidgets(
+      'pod-swap on the same widget (didUpdateWidget) bypasses cache and uses live pod',
+      (tester) async {
+        final key = ValueKey(
+          'swap-verify-${DateTime.now().microsecondsSinceEpoch}',
+        );
+
+        final podA = Pod<int>(42);
+        await tester.pumpWidget(
+          _wrap(
+            PodBuilder<int>(
+              key: key,
+              pod: podA,
+              cacheDuration: const Duration(seconds: 10),
+              builder: (_, __) => const SizedBox.shrink(),
+            ),
+          ),
+        );
+
+        final podB = Pod<int>(999);
+        late int observed;
+        await tester.pumpWidget(
+          _wrap(
+            PodBuilder<int>(
+              key: key,
+              pod: podB,
+              cacheDuration: const Duration(seconds: 10),
+              builder: (_, snap) {
+                UNSAFE:
+                observed = snap.value.unwrap().unwrap();
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+
+        expect(
+          observed,
+          999,
+          reason:
+              'pod identity changed under same key — cache must NOT shadow '
+              'the new pod\'s live value',
+        );
+      },
+    );
 
     testWidgets(
       'default cacheDuration (Duration.zero) does not preserve across remount',
@@ -89,6 +140,7 @@ void main() {
               key: key,
               pod: podB,
               builder: (_, snap) {
+                UNSAFE:
                 observed = snap.value.unwrap().unwrap();
                 return const SizedBox.shrink();
               },

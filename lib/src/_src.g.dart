@@ -25,5 +25,6 @@ export './pods/more_shared_pods/shared_string_list_pod.dart';
 export './pods/more_shared_pods/shared_string_pod.dart';
 export './pods/protected_pod.dart';
 export './pods/shared_protected_pod.dart';
+export './utils/pod_finalizer_wrapper.dart';
 export 'utils/value_listenable_ext.dart';
 export './utils/weak_change_notifier.dart';

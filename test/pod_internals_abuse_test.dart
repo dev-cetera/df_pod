@@ -25,11 +25,6 @@
 //   5. PodBuilderCacheManager — TTL, key collisions, eviction.
 
 import 'package:df_pod/df_pod.dart';
-// `PodFinalizerWrapper` lives in an underscore-prefixed source file that the
-// generated barrel skips. It is annotated `@visibleForTesting`, so importing
-// directly from the implementation path is the intended access pattern.
-// ignore: implementation_imports
-import 'package:df_pod/src/utils/_pod_finalizer_wrapper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
