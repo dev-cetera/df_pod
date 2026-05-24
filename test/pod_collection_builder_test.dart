@@ -168,16 +168,16 @@ void main() {
       var buildCount = 0;
 
       Widget make(Listenable s) => Directionality(
-        textDirection: TextDirection.ltr,
-        child: PodCollectionBuilder(
-          source: s,
-          innerPods: () => const [],
-          builder: (_) {
-            buildCount++;
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+            textDirection: TextDirection.ltr,
+            child: PodCollectionBuilder(
+              source: s,
+              innerPods: () => const [],
+              builder: (_) {
+                buildCount++;
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       await tester.pumpWidget(make(sourceA));
       expect(buildCount, 1);

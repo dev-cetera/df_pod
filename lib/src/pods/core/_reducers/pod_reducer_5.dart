@@ -21,13 +21,12 @@ final class PodReducer5 {
 
   /// Reduces 5 Pods into a [ChildPod].
   static ChildPod<Object, C> reduce<
-    C extends Object,
-    P1 extends Object,
-    P2 extends Object,
-    P3 extends Object,
-    P4 extends Object,
-    P5 extends Object
-  >(
+      C extends Object,
+      P1 extends Object,
+      P2 extends Object,
+      P3 extends Object,
+      P4 extends Object,
+      P5 extends Object>(
     TResponderFn5<P1, P2, P3, P4, P5> responder,
     TReducerFn5<C, P1, P2, P3, P4, P5> reducer,
   ) {
@@ -37,8 +36,7 @@ final class PodReducer5 {
       GenericPod<P3>,
       GenericPod<P4>,
       GenericPod<P5>,
-    )
-    cached;
+    ) cached;
     return ChildPod<Object, C>(
       responder: () {
         cached = responder();
@@ -52,34 +50,23 @@ final class PodReducer5 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn5<
-  P1 extends Object,
-  P2 extends Object,
-  P3 extends Object,
-  P4 extends Object,
-  P5 extends Object
-> =
-    (
-      GenericPod<P1> p1,
-      GenericPod<P2> p2,
-      GenericPod<P3> p3,
-      GenericPod<P4> p4,
-      GenericPod<P5> p5,
-    )
-    Function();
+typedef TResponderFn5<P1 extends Object, P2 extends Object, P3 extends Object,
+        P4 extends Object, P5 extends Object>
+    = (
+  GenericPod<P1> p1,
+  GenericPod<P2> p2,
+  GenericPod<P3> p3,
+  GenericPod<P4> p4,
+  GenericPod<P5> p5,
+)
+        Function();
 
-typedef TReducerFn5<
-  C extends Object,
-  P1 extends Object,
-  P2 extends Object,
-  P3 extends Object,
-  P4 extends Object,
-  P5 extends Object
-> =
-    C Function(
-      GenericPod<P1> p1,
-      GenericPod<P2> p2,
-      GenericPod<P3> p3,
-      GenericPod<P4> p4,
-      GenericPod<P5> p5,
-    );
+typedef TReducerFn5<C extends Object, P1 extends Object, P2 extends Object,
+        P3 extends Object, P4 extends Object, P5 extends Object>
+    = C Function(
+  GenericPod<P1> p1,
+  GenericPod<P2> p2,
+  GenericPod<P3> p3,
+  GenericPod<P4> p4,
+  GenericPod<P5> p5,
+);

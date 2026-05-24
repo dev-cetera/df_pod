@@ -21,11 +21,10 @@ final class PodReducer2 {
 
   /// Reduces 2 Pods into a [ChildPod]. See `PodReducer1.reduce` — the same
   /// single-invocation guarantee applies here.
-  static ChildPod<Object, C> reduce<
-    C extends Object,
-    P1 extends Object,
-    P2 extends Object
-  >(TResponderFn2<P1, P2> responder, TNullableReducerFn2<C, P1, P2> reducer) {
+  static ChildPod<Object, C>
+      reduce<C extends Object, P1 extends Object, P2 extends Object>(
+          TResponderFn2<P1, P2> responder,
+          TNullableReducerFn2<C, P1, P2> reducer,) {
     late (GenericPod<P1>, GenericPod<P2>) cached;
     return ChildPod<Object, C>(
       responder: () {
@@ -39,14 +38,12 @@ final class PodReducer2 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn2<P1 extends Object, P2 extends Object> =
-    (GenericPod<P1> p1, GenericPod<P2> p2) Function();
+typedef TResponderFn2<P1 extends Object, P2 extends Object>
+    = (GenericPod<P1> p1, GenericPod<P2> p2) Function();
 
-typedef TNullableReducerFn2<
-  C extends Object,
-  P1 extends Object,
-  P2 extends Object
-> = C Function(GenericPod<P1> p1, GenericPod<P2> p2);
+typedef TNullableReducerFn2<C extends Object, P1 extends Object,
+        P2 extends Object>
+    = C Function(GenericPod<P1> p1, GenericPod<P2> p2);
 
-typedef TReducerFn2<C extends Object, P1 extends Object, P2 extends Object> =
-    C Function(GenericPod<P1> p1, GenericPod<P2> p2);
+typedef TReducerFn2<C extends Object, P1 extends Object, P2 extends Object> = C
+    Function(GenericPod<P1> p1, GenericPod<P2> p2);

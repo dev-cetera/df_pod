@@ -107,8 +107,7 @@ void main() {
         expect(
           observed,
           999,
-          reason:
-              'pod identity changed under same key — cache must NOT shadow '
+          reason: 'pod identity changed under same key — cache must NOT shadow '
               'the new pod\'s live value',
         );
       },

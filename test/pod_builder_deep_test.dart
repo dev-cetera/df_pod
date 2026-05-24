@@ -251,12 +251,12 @@ void main() {
       var disposeCalls = 0;
 
       Widget make(Pod<int> p) => _wrap(
-        PodBuilder<int>(
-          pod: p,
-          onDispose: (_) => disposeCalls++,
-          builder: (context, _) => const SizedBox.shrink(),
-        ),
-      );
+            PodBuilder<int>(
+              pod: p,
+              onDispose: (_) => disposeCalls++,
+              builder: (context, _) => const SizedBox.shrink(),
+            ),
+          );
 
       await tester.pumpWidget(make(podA));
       await tester.pumpWidget(make(podB));
@@ -335,15 +335,15 @@ void main() {
       var lastBuiltValue = -1;
 
       Widget make(Pod<int> p) => _wrap(
-        PodBuilder<int>(
-          pod: p,
-          builder: (context, snapshot) {
-            UNSAFE:
-            lastBuiltValue = snapshot.value.unwrap().unwrap();
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+            PodBuilder<int>(
+              pod: p,
+              builder: (context, snapshot) {
+                UNSAFE:
+                lastBuiltValue = snapshot.value.unwrap().unwrap();
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       await tester.pumpWidget(make(podA));
       expect(lastBuiltValue, 0);
@@ -371,17 +371,17 @@ void main() {
       var buildSnapshot = -1;
 
       Widget make(Pod<int> p) => _wrap(
-        PodBuilder<int>(
-          key: key,
-          pod: p,
-          cacheDuration: const Duration(seconds: 30),
-          builder: (context, snapshot) {
-            UNSAFE:
-            buildSnapshot = snapshot.value.unwrap().unwrap();
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+            PodBuilder<int>(
+              key: key,
+              pod: p,
+              cacheDuration: const Duration(seconds: 30),
+              builder: (context, snapshot) {
+                UNSAFE:
+                buildSnapshot = snapshot.value.unwrap().unwrap();
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       await tester.pumpWidget(make(podA));
       expect(buildSnapshot, 111);
@@ -411,17 +411,17 @@ void main() {
       final pod = Pod<int>(50);
 
       Widget make(Key k) => _wrap(
-        PodBuilder<int>(
-          key: k,
-          pod: pod,
-          cacheDuration: const Duration(seconds: 30),
-          builder: (context, snapshot) {
-            UNSAFE:
-            final v = snapshot.value.unwrap().unwrap();
-            return Text('$v');
-          },
-        ),
-      );
+            PodBuilder<int>(
+              key: k,
+              pod: pod,
+              cacheDuration: const Duration(seconds: 30),
+              builder: (context, snapshot) {
+                UNSAFE:
+                final v = snapshot.value.unwrap().unwrap();
+                return Text('$v');
+              },
+            ),
+          );
 
       await tester.pumpWidget(make(const ValueKey('cache_a')));
       expect(find.text('50'), findsOneWidget);
@@ -445,17 +445,17 @@ void main() {
       var buildSnapshot = -1;
 
       Widget make(Pod<int> p) => _wrap(
-        PodBuilder<int>(
-          key: key,
-          pod: p,
-          cacheDuration: Duration.zero,
-          builder: (context, snapshot) {
-            UNSAFE:
-            buildSnapshot = snapshot.value.unwrap().unwrap();
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+            PodBuilder<int>(
+              key: key,
+              pod: p,
+              cacheDuration: Duration.zero,
+              builder: (context, snapshot) {
+                UNSAFE:
+                buildSnapshot = snapshot.value.unwrap().unwrap();
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       final podA = Pod<int>(111);
       await tester.pumpWidget(make(podA));

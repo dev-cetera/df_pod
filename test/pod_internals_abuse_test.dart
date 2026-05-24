@@ -71,22 +71,28 @@ void main() {
       final c5 = root.map((v) => v + 5);
 
       root.set(10);
-      expect([
-        c1.getValue(),
-        c2.getValue(),
-        c3.getValue(),
-        c4.getValue(),
-        c5.getValue(),
-      ], [11, 12, 13, 14, 15],);
+      expect(
+        [
+          c1.getValue(),
+          c2.getValue(),
+          c3.getValue(),
+          c4.getValue(),
+          c5.getValue(),
+        ],
+        [11, 12, 13, 14, 15],
+      );
 
       root.set(20);
-      expect([
-        c1.getValue(),
-        c2.getValue(),
-        c3.getValue(),
-        c4.getValue(),
-        c5.getValue(),
-      ], [21, 22, 23, 24, 25],);
+      expect(
+        [
+          c1.getValue(),
+          c2.getValue(),
+          c3.getValue(),
+          c4.getValue(),
+          c5.getValue(),
+        ],
+        [21, 22, 23, 24, 25],
+      );
     });
 
     test(
@@ -370,15 +376,8 @@ void main() {
 
     test('PodReducer6 — concat in declaration order', () {
       final parts = List.generate(6, (i) => Pod<String>('p$i'));
-      final joined = PodReducer6.reduce<
-        String,
-        String,
-        String,
-        String,
-        String,
-        String,
-        String
-      >(
+      final joined = PodReducer6.reduce<String, String, String, String, String,
+          String, String>(
         () => (parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]),
         (a, b, c, d, e, f) => [
           a.getValue(),
@@ -526,7 +525,8 @@ void main() {
       expect(pod.exposedHasListeners, isFalse);
     });
 
-    test('notifyListeners with zero listeners is an early return (no crash)', () {
+    test('notifyListeners with zero listeners is an early return (no crash)',
+        () {
       final pod = _ExposedNotifier();
       // Should not throw even with no listeners.
       pod.exposedNotifyListeners();
@@ -845,8 +845,7 @@ void main() {
         expect(
           mgr.get(k),
           isNull,
-          reason:
-              'stale value must NOT resurrect after first expired read; '
+          reason: 'stale value must NOT resurrect after first expired read; '
               'this guards a real wrapper/inner desync bug',
         );
 

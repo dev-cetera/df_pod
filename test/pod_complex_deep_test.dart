@@ -150,7 +150,8 @@ void main() {
       },
     );
 
-    test('reducer that throws on first call propagates the error and does not '
+    test(
+        'reducer that throws on first call propagates the error and does not '
         'leave dangling listeners', () {
       final a = Pod<int>(1);
       final b = Pod<int>(2);
@@ -393,14 +394,14 @@ void main() {
       var buildCount = 0;
 
       Widget make(List<Pod<int>> pods) => _wrap(
-        PodListBuilder<int>(
-          podList: pods,
-          builder: (context, _) {
-            buildCount++;
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+            PodListBuilder<int>(
+              podList: pods,
+              builder: (context, _) {
+                buildCount++;
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       await tester.pumpWidget(make([p1, p2]));
       expect(buildCount, 1);

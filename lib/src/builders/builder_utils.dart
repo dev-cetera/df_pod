@@ -74,5 +74,5 @@ final class PodBuilderCacheManager {
   }
 }
 
-typedef TGlobalPod<T extends Object> =
-    Resolvable<GenericPod<Option<Result<T>>>>;
+typedef TGlobalPod<T extends Object>
+    = Resolvable<GenericPod<Option<Result<T>>>>;

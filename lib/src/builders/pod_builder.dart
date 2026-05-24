@@ -395,10 +395,9 @@ final class PodBuilderSnapshot<T extends Object> extends OnOptionSnapshot<T> {
   });
 }
 
-typedef TOnOptionBuilder<
-  T extends Object,
-  TSnapshot extends OnOptionSnapshot<T>
-> = Widget Function(BuildContext context, TSnapshot snapshot);
+typedef TOnOptionBuilder<T extends Object,
+        TSnapshot extends OnOptionSnapshot<T>>
+    = Widget Function(BuildContext context, TSnapshot snapshot);
 
 final class OnOptionSnapshot<T extends Object> extends BuilderSnapshot {
   final Option<Result<T>> value;

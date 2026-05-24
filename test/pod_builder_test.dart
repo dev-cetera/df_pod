@@ -150,17 +150,17 @@ void main() {
       var buildCount = 0;
 
       Widget make(Pod<int> p) => Directionality(
-        textDirection: TextDirection.ltr,
-        child: PodBuilder(
-          pod: p,
-          builder: (context, snapshot) {
-            buildCount++;
-            UNSAFE:
-            final value = snapshot.value.unwrap().unwrap();
-            return Text('$value');
-          },
-        ),
-      );
+            textDirection: TextDirection.ltr,
+            child: PodBuilder(
+              pod: p,
+              builder: (context, snapshot) {
+                buildCount++;
+                UNSAFE:
+                final value = snapshot.value.unwrap().unwrap();
+                return Text('$value');
+              },
+            ),
+          );
 
       await tester.pumpWidget(make(podA));
       expect(buildCount, 1);

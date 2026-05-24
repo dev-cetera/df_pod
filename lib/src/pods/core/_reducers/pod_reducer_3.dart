@@ -20,12 +20,9 @@ final class PodReducer3 {
   PodReducer3._();
 
   /// Reduces 3 Pods into a [ChildPod].
-  static ChildPod<Object, C> reduce<
-    C extends Object,
-    P1 extends Object,
-    P2 extends Object,
-    P3 extends Object
-  >(TResponderFn3<P1, P2, P3> responder, TReducerFn3<C, P1, P2, P3> reducer) {
+  static ChildPod<Object, C> reduce<C extends Object, P1 extends Object,
+          P2 extends Object, P3 extends Object>(
+      TResponderFn3<P1, P2, P3> responder, TReducerFn3<C, P1, P2, P3> reducer,) {
     late (GenericPod<P1>, GenericPod<P2>, GenericPod<P3>) cached;
     return ChildPod<Object, C>(
       responder: () {
@@ -39,12 +36,9 @@ final class PodReducer3 {
 
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
-typedef TResponderFn3<P1 extends Object, P2 extends Object, P3 extends Object> =
-    (GenericPod<P1> p1, GenericPod<P2> p2, GenericPod<P3> p3) Function();
+typedef TResponderFn3<P1 extends Object, P2 extends Object, P3 extends Object>
+    = (GenericPod<P1> p1, GenericPod<P2> p2, GenericPod<P3> p3) Function();
 
-typedef TReducerFn3<
-  C extends Object,
-  P1 extends Object,
-  P2 extends Object,
-  P3 extends Object
-> = C Function(GenericPod<P1> p1, GenericPod<P2> p2, GenericPod<P3> p3);
+typedef TReducerFn3<C extends Object, P1 extends Object, P2 extends Object,
+        P3 extends Object>
+    = C Function(GenericPod<P1> p1, GenericPod<P2> p2, GenericPod<P3> p3);

@@ -293,15 +293,15 @@ void main() {
       var builds = 0;
 
       Widget build(Pod<int> source) => _wrap(
-        PodCollectionBuilder(
-          source: source,
-          innerPods: () => [inner],
-          builder: (_) {
-            builds++;
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+            PodCollectionBuilder(
+              source: source,
+              innerPods: () => [inner],
+              builder: (_) {
+                builds++;
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       await tester.pumpWidget(build(sourceA));
       final initial = builds;
@@ -429,12 +429,12 @@ void main() {
       }
 
       Widget build(Duration interval) => _wrap(
-        PollingPodBuilder<int>(
-          podPoller: poller,
-          interval: interval,
-          builder: (_, __) => const SizedBox.shrink(),
-        ),
-      );
+            PollingPodBuilder<int>(
+              podPoller: poller,
+              interval: interval,
+              builder: (_, __) => const SizedBox.shrink(),
+            ),
+          );
 
       await tester.pumpWidget(build(const Duration(milliseconds: 50)));
       // initState fires poller once.
@@ -553,7 +553,8 @@ void main() {
   // RootPod misc — updateValue, refresh-after-dispose, onAfterDispose throw
   // ───────────────────────────────────────────────────────────────────────────
   group('RootPod misc', () {
-    test('updateValue getter schedules a refresh and returns current value', () {
+    test('updateValue getter schedules a refresh and returns current value',
+        () {
       final pod = Pod<int>(7);
       // updateValue returns the current value and schedules refresh().
       expect(pod.updateValue, 7);

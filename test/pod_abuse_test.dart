@@ -738,7 +738,8 @@ void main() {
       vn.dispose();
     });
 
-    test('asValueListenable returns the same instance (identity preserved)', () {
+    test('asValueListenable returns the same instance (identity preserved)',
+        () {
       final pod = Pod<int>(1);
       expect(identical(pod.asValueListenable(), pod), isTrue);
     });
@@ -828,7 +829,8 @@ void main() {
       expect(pod.getValue(), _Color.b);
     });
 
-    test('SharedEnumPod falls back to initialValue for unknown names', () async {
+    test('SharedEnumPod falls back to initialValue for unknown names',
+        () async {
       SharedPreferences.setMockInitialValues(<String, Object>{
         'abuse_enum_unknown': 'not_an_option',
       });
@@ -895,7 +897,8 @@ void main() {
 
         // Storage still got written even though the pod skipped _set.
         final prefs = await SharedPreferences.getInstance();
-        expect(prefs.getString('abuse_dispose_pending'), anyOf(isNull, 'hello'));
+        expect(
+            prefs.getString('abuse_dispose_pending'), anyOf(isNull, 'hello'),);
       },
     );
   });
@@ -908,22 +911,23 @@ void main() {
       'cache entry from a previous pod with the same key is overwritten '
       'by the new pod on mount',
       (tester) async {
-        final key = ValueKey('abuse_cache_${DateTime.now().microsecondsSinceEpoch}');
+        final key =
+            ValueKey('abuse_cache_${DateTime.now().microsecondsSinceEpoch}');
         final podA = Pod<int>(111);
         var seen = -1;
 
         Widget make(Pod<int> p) => _wrap(
-          PodBuilder<int>(
-            key: key,
-            pod: p,
-            cacheDuration: const Duration(seconds: 30),
-            builder: (_, snapshot) {
-              UNSAFE:
-              seen = snapshot.value.unwrap().unwrap();
-              return const SizedBox.shrink();
-            },
-          ),
-        );
+              PodBuilder<int>(
+                key: key,
+                pod: p,
+                cacheDuration: const Duration(seconds: 30),
+                builder: (_, snapshot) {
+                  UNSAFE:
+                  seen = snapshot.value.unwrap().unwrap();
+                  return const SizedBox.shrink();
+                },
+              ),
+            );
 
         await tester.pumpWidget(make(podA));
         expect(seen, 111);
@@ -1041,7 +1045,8 @@ void main() {
       expect(c2.getValue(), 107);
     });
 
-    test('map() called on a disposed pod throws via the disposed assertion', () {
+    test('map() called on a disposed pod throws via the disposed assertion',
+        () {
       final pod = Pod<int>(1);
       pod.dispose();
       // map() registers a listener on the parent, which is the disposed pod.

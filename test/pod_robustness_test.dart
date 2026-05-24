@@ -24,7 +24,8 @@ Widget _wrap(Widget child) =>
 
 void main() {
   group('ChildPod._refresh exception handling', () {
-    test('throwing reducer leaves _isDirty cleared — subsequent fires work', () {
+    test('throwing reducer leaves _isDirty cleared — subsequent fires work',
+        () {
       final parent = Pod<int>(0);
       var shouldThrow = true;
       var goodEvaluations = 0;
@@ -199,17 +200,17 @@ void main() {
         late int observed;
 
         Widget make(Pod<int> p) => _wrap(
-          PodBuilder<int>(
-            key: key,
-            pod: p,
-            cacheDuration: const Duration(seconds: 30),
-            builder: (_, snap) {
-              UNSAFE:
-              observed = snap.value.unwrap().unwrap();
-              return const SizedBox.shrink();
-            },
-          ),
-        );
+              PodBuilder<int>(
+                key: key,
+                pod: p,
+                cacheDuration: const Duration(seconds: 30),
+                builder: (_, snap) {
+                  UNSAFE:
+                  observed = snap.value.unwrap().unwrap();
+                  return const SizedBox.shrink();
+                },
+              ),
+            );
 
         await tester.pumpWidget(make(podA));
         expect(observed, 42);
@@ -238,23 +239,20 @@ void main() {
       late List<Result<int>> observed;
 
       Widget make() => _wrap(
-        PodListBuilder<int>(
-          key: key,
-          podList: [p1, p2],
-          cacheDuration: const Duration(seconds: 30),
-          builder: (_, snap) {
-            UNSAFE:
-            observed = snap.value
-                .unwrap()
-                .map((opt) {
+            PodListBuilder<int>(
+              key: key,
+              podList: [p1, p2],
+              cacheDuration: const Duration(seconds: 30),
+              builder: (_, snap) {
+                UNSAFE:
+                observed = snap.value.unwrap().map((opt) {
                   UNSAFE:
                   return opt.unwrap();
-                })
-                .toList();
-            return const SizedBox.shrink();
-          },
-        ),
-      );
+                }).toList();
+                return const SizedBox.shrink();
+              },
+            ),
+          );
 
       await tester.pumpWidget(make());
       UNSAFE:
@@ -280,13 +278,10 @@ void main() {
             cacheDuration: const Duration(seconds: 30),
             builder: (_, snap) {
               UNSAFE:
-              observed2 = snap.value
-                  .unwrap()
-                  .map((opt) {
-                    UNSAFE:
-                    return opt.unwrap();
-                  })
-                  .toList();
+              observed2 = snap.value.unwrap().map((opt) {
+                UNSAFE:
+                return opt.unwrap();
+              }).toList();
               return const SizedBox.shrink();
             },
           ),
