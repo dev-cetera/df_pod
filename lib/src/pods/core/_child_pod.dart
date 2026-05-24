@@ -111,6 +111,7 @@ final class ChildPod<TParent extends Object, TChild extends Object>
 // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
 typedef TValuesReducerFn<TChild, TParentList> = TChild Function(
-    List<TParentList> parentValues,);
+  List<TParentList> parentValues,
+);
 
 typedef TPodsResponderFn<T extends Object> = Iterable<GenericPod<T>> Function();

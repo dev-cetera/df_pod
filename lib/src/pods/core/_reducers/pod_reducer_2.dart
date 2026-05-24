@@ -23,8 +23,9 @@ final class PodReducer2 {
   /// single-invocation guarantee applies here.
   static ChildPod<Object, C>
       reduce<C extends Object, P1 extends Object, P2 extends Object>(
-          TResponderFn2<P1, P2> responder,
-          TNullableReducerFn2<C, P1, P2> reducer,) {
+    TResponderFn2<P1, P2> responder,
+    TNullableReducerFn2<C, P1, P2> reducer,
+  ) {
     late (GenericPod<P1>, GenericPod<P2>) cached;
     return ChildPod<Object, C>(
       responder: () {

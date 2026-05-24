@@ -898,7 +898,9 @@ void main() {
         // Storage still got written even though the pod skipped _set.
         final prefs = await SharedPreferences.getInstance();
         expect(
-            prefs.getString('abuse_dispose_pending'), anyOf(isNull, 'hello'),);
+          prefs.getString('abuse_dispose_pending'),
+          anyOf(isNull, 'hello'),
+        );
       },
     );
   });
