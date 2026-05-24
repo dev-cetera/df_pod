@@ -203,9 +203,10 @@ void main() {
     test('addStrongRefListener after dispose is a silent orphan', () {
       final pod = Pod<int>(0);
       pod.dispose();
+      final listener = () {};
       // In debug this asserts; we wrap the assertion error path.
       expect(
-        () => pod.addStrongRefListener(strongRefListener: () {}),
+        () => pod.addStrongRefListener(strongRefListener: listener),
         throwsA(isA<AssertionError>()),
       );
     });

@@ -40,7 +40,11 @@ final class PodBuilderCacheManager {
     if (key == null) return null;
     final expiration = _expirations[key];
     if (expiration != null && expiration.isBefore(DateTime.now())) {
+      // Evict from BOTH maps. Skipping the inner cache here used to leave the
+      // value alive — the next get() would find no expiration record and
+      // resurrect the stale value via `_inner.get(key)`.
       _expirations.remove(key);
+      _inner.remove(key);
       return null;
     }
     return _inner.get(key);

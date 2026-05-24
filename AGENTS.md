@@ -1,12 +1,29 @@
-# CLAUDE.md
+# CLAUDE.md — df_pod
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Role in the state-management stack
+
+`df_pod` is the **reactive-containers layer** of a four-package Flutter state-management stack. The full stack lives next to this package in `/Users/robmllze/Projects/flutter/dev_cetera/df_packages/packages/`:
+
+| Package | Path | Role |
+| --- | --- | --- |
+| `df_safer_dart` | `../df_safer_dart` | Foundation: `Option<T>`, `Result<T>`, `Resolvable<T>`, `Outcome<T>`, `UNSAFE`, `SafeCompleter`, `TaskSequencer` |
+| `df_di` | `../df_di` | DI container hierarchy (`DI.root`/`global`/`session`/`user`), `Service`/`ServiceMixin`, `StreamServiceMixin`, `PollingStreamServiceMixin` |
+| `df_pod` *(this)* | `.` | `Pod<T>` / `RootPod<T>`, `ChildPod`, `ReducerPod`, `SharedPod`, `WeakChangeNotifier`, `PodBuilder` / `PodListBuilder` / `PodCollectionBuilder` / `PollingPodBuilder` |
+| `df_flutter_services` | `../df_flutter_services` | `ObservedService`, `ObservedDataStreamService`, `HandleServiceLifecycleStateMixin` (Flutter app-lifecycle glue) |
+
+`pubspec_overrides.yaml` pins all siblings to local paths. Edits take effect without publishing.
+
+### State-management guide
+
+For the cross-package architecture (how Pods live on services, how DI scopes hold them, how Flutter lifecycle integrates, the `G` singleton pattern, login/logout flow, UI patterns, common pitfalls) read **`doc/state_management_approach.md`**. The same file is mirrored in every package of the stack (`df_safer_dart`, `df_di`, `df_pod`, `df_flutter_services`) — keep the copies in sync when editing.
+
 ## About this package
 
-`df_pod` is a Flutter state-management package built around **Pods** — `ValueListenable<T>` containers with monadic safety (`Option`/`Result` from `df_safer_dart`), automatic memory management via weak-reference listeners, and composable derived state. It is published to pub.dev and developed inside the `compledo` monorepo at `packages/df_pod/` (its own git repo, independent of the parent project's `CLAUDE.md`).
+`df_pod` is built around **Pods** — `ValueListenable<T>` containers with monadic safety (`Option`/`Result` from `df_safer_dart`), automatic memory management via weak-reference listeners, and composable derived state. It is published to pub.dev and developed inside the `compledo` monorepo at `packages/df_pod/` (its own git repo, independent of the parent project's `CLAUDE.md`).
 
-`README.md` is the user-facing API tour with runnable examples — read it first when an API is unfamiliar. `state_management_approach.md` is the longer architectural narrative covering how `df_pod` integrates with `df_di` / `df_flutter_services` / `df_safer_dart` (only relevant when working on that integration).
+`README.md` is the user-facing API tour with runnable examples — read it first when an API is unfamiliar.
 
 ## Common commands
 
