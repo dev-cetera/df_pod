@@ -86,8 +86,14 @@ mixin class WeakChangeNotifier implements Listenable {
   /// is disposed. Intended for callers that pass [addStrongRefListener] a
   /// closure they themselves do not retain — most commonly, library-internal
   /// helpers like [addSingleExecutionListener] or `GenericPodMixin.cond`.
+  ///
+  /// No-op after [dispose] — without this guard, [_pinnedListeners] would
+  /// be re-allocated after disposal and would hold the listener strongly
+  /// until the entire notifier is collected. Mirrors the spirit (though
+  /// not the letter) of the assert in [addStrongRefListener].
   @protected
   void pinListener(VoidCallback listener) {
+    if (_isDisposed) return;
     (_pinnedListeners ??= <VoidCallback>{}).add(listener);
   }
 

@@ -242,7 +242,8 @@ void main() {
 
     test(
       '.reduce() where the second operand is the SAME pod as the first '
-      'subscribes the same listener twice but stays consistent',
+      'is consistent (post-v0.20.0: subscriptions dedupe by identity, '
+      'reducer still sees both args)',
       () {
         final p = Pod<int>(1);
         final paired = p.reduce<int, int>(p, (a, b) {

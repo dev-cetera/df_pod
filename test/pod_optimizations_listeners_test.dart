@@ -183,7 +183,9 @@ void main() {
       (tester) async {
         final pod = Pod<int>(0);
         var fires = 0;
-        late final l = () => fires++;
+        final l = () {
+          fires++;
+        };
         pod.addStrongRefListener(strongRefListener: l);
 
         // Three immediate sets — each fires synchronously.
@@ -191,6 +193,40 @@ void main() {
         pod.set(2);
         pod.set(3);
         expect(fires, 3);
+
+        pod.dispose();
+      },
+    );
+
+    testWidgets(
+      'P2 safety: sync notify in the middle of a deferred batch '
+      'does not lose the deferred notification',
+      (tester) async {
+        await tester.pumpWidget(_wrap(const SizedBox.shrink()));
+
+        final pod = Pod<int>(0);
+        final fires = <int>[];
+        final l = () => fires.add(pod.getValue());
+        pod.addStrongRefListener(strongRefListener: l);
+
+        // Interleave deferred and immediate sets.
+        pod.set(1, notifyImmediately: false); // schedule deferred-1
+        pod.set(2); // immediate → fires.add(2). The deferred is still
+        // pending (flag still true). At frame end the deferred fires
+        // and adds the *final* value again.
+        pod.set(3, notifyImmediately: false); // value=3, flag still true
+        expect(fires, [2]);
+
+        tester.binding.scheduleFrame();
+        await tester.pump();
+        // Deferred fires once with the final value (3). Pre-P2 it would
+        // have fired twice (once per deferred set), but the listener
+        // would see the same final value each time anyway.
+        expect(
+          fires,
+          [2, 3],
+          reason: 'sync notify path remains uncoalesced; deferred fires once',
+        );
 
         pod.dispose();
       },
