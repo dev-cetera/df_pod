@@ -423,8 +423,10 @@ void main() {
       tester,
     ) async {
       var pollerCalls = 0;
+      // ignore: no_future_outcome_type_or_error
       Option<FutureOr<ValueListenable<int>>> poller() {
         pollerCalls++;
+        // ignore: no_future_outcome_type_or_error
         return const None();
       }
 
@@ -462,8 +464,10 @@ void main() {
     ) async {
       final pod = Pod<int>(7);
       var pollerCalls = 0;
+      // ignore: no_future_outcome_type_or_error
       Option<FutureOr<ValueListenable<int>>> poller() {
         pollerCalls++;
+        // ignore: no_future_outcome_type_or_error
         return Some(pod);
       }
 
@@ -494,18 +498,18 @@ void main() {
     testWidgets('live pod fire wins over cached value after first build', (
       tester,
     ) async {
-      // Pre-seed the cache with a stale value for the key. We expect the
-      // first build (initState, useCache:true) to read it, then subsequent
-      // live fires to OVERWRITE rather than re-read from cache.
+      // v0.20.0 A1 update: cache keys now include identityHashCode(pod)
+      // so a value planted under just the widget-key string can never be
+      // read by a PodBuilder (the lookup uses a compound key). We plant
+      // under the same compound key the widget will use, so the cache
+      // hit actually exercises the read path being tested.
       const key = ValueKey('shadow_fix_key');
-      // The widget looks the cache up via widget.key.toString(), so we
-      // must plant under the same stringification.
-      final keyStr = key.toString();
       final pod = Pod<int>(0);
+      final compoundKey = '$key|${identityHashCode(pod)}';
 
       // Manually plant a cache entry that disagrees with the pod value.
       PodBuilderCacheManager.i.cache(
-        keyStr,
+        compoundKey,
         const Ok<int>(999),
         cacheDuration: const Duration(minutes: 5),
       );
@@ -541,7 +545,7 @@ void main() {
 
       // Cleanup cache.
       PodBuilderCacheManager.i.cache(
-        keyStr,
+        compoundKey,
         const Object(),
         cacheDuration: Duration.zero,
       );
@@ -564,14 +568,14 @@ void main() {
 
     test('refresh() after dispose() does not throw', () async {
       final pod = Pod<int>(0);
-      pod.refresh();
+      unawaited(pod.refresh());
       pod.dispose();
       // The Future.delayed callback inside refresh() should see isDisposed
       // and skip notifyListeners. No throw.
       await Future<void>.delayed(Duration.zero);
       // Re-calling refresh after dispose is technically allowed —
       // the Future.delayed body is the only guard.
-      pod.refresh();
+      unawaited(pod.refresh());
       await Future<void>.delayed(Duration.zero);
     });
 
@@ -702,6 +706,7 @@ void main() {
         toValue: (v) => v,
         initialValue: '',
       ).value;
+      // ignore: must_use_unsafe_wrapper_or_error
       final pod = created.unwrap();
       expect(pod.getValue(), '');
       await pod.set('hello');

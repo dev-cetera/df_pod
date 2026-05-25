@@ -767,13 +767,25 @@ void main() {
         '_test_${tag}_${DateTime.now().microsecondsSinceEpoch}_'
         '${identityHashCode(Object())}';
 
-    test('store → get round-trip with no TTL', () {
+    test('store → get round-trip with a TTL', () {
       final k = uniqueKey('roundtrip');
-      mgr.cache(k, 42);
+      // `null` cacheDuration now means "do not cache" (see M1 in audit
+      // 0.21.0). Use an explicit duration to exercise the round-trip.
+      mgr.cache(k, 42, cacheDuration: const Duration(seconds: 30));
       expect(mgr.get(k), 42);
       // Stays put across multiple reads.
       expect(mgr.get(k), 42);
       expect(mgr.get(k), 42);
+    });
+
+    test('store with null cacheDuration is a no-op (M1)', () {
+      final k = uniqueKey('null_no_cache');
+      mgr.cache(k, 99);
+      expect(
+        mgr.get(k),
+        isNull,
+        reason: 'null cacheDuration must not store',
+      );
     });
 
     test('get(null) returns null', () {
@@ -785,14 +797,20 @@ void main() {
     });
 
     test(
-      'cache(key, value) with no duration overwrites a prior entry with '
-      'a duration and clears the expiration',
+      'cache(key, value) with null duration evicts a prior entry (M1)',
       () async {
         final k = uniqueKey('overwrite_clears_ttl');
         mgr.cache(k, 'A', cacheDuration: const Duration(milliseconds: 20));
-        mgr.cache(k, 'B'); // no duration — expiration cleared
+        // null cacheDuration is "do not cache" AND clears any prior entry
+        // under the same key so a stale value cannot be read back.
+        mgr.cache(k, 'B');
+        expect(
+          mgr.get(k),
+          isNull,
+          reason: 'null cacheDuration evicts; B was never stored',
+        );
         await Future<void>.delayed(const Duration(milliseconds: 80));
-        expect(mgr.get(k), 'B', reason: 'previous TTL must not evict B');
+        expect(mgr.get(k), isNull);
       },
     );
 
@@ -870,19 +888,21 @@ void main() {
 
     test('cache value can be any Object (heterogeneous types)', () {
       final k = uniqueKey('hetero');
-      mgr.cache(k, 1);
+      const long = Duration(seconds: 30);
+      mgr.cache(k, 1, cacheDuration: long);
       expect(mgr.get(k), 1);
-      mgr.cache(k, 'now a string');
+      mgr.cache(k, 'now a string', cacheDuration: long);
       expect(mgr.get(k), 'now a string');
-      mgr.cache(k, const <int>[1, 2, 3]);
+      mgr.cache(k, const <int>[1, 2, 3], cacheDuration: long);
       expect(mgr.get(k), const <int>[1, 2, 3]);
     });
 
     test(
-      'overwriting a no-TTL entry with a TTL entry installs the new TTL',
+      'overwriting a TTL entry with a longer-TTL entry installs the new TTL',
       () async {
         final k = uniqueKey('install_ttl');
-        mgr.cache(k, 'permanent');
+        // Use an explicit long TTL instead of null (which now skips caching).
+        mgr.cache(k, 'permanent', cacheDuration: const Duration(seconds: 30));
         expect(mgr.get(k), 'permanent');
 
         mgr.cache(

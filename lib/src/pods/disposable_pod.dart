@@ -17,20 +17,13 @@ import '/_common.dart';
 
 abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
     implements ValueListenable<T> {
-  /// A flag indicating whether the Pod has been disposed.
-  bool _isDisposed = false;
-
-  /// Whether this [Pod] has been disposed of or not.
-  @nonVirtual
-  bool get isDisposed => _isDisposed;
-
   /// ❌ Do not use this method directly. Use [addStrongRefListener] instead.
   @override
   @Deprecated(
     'Do not use this method directly. Use [addStrongRefListener] instead',
   )
   void addListener(VoidCallback listener) {
-    if (!_isDisposed) {
+    if (!isDisposed) {
       super.addListener(listener);
     } else {
       Log.alert('Tried to add a listener to a disposed Pod!', tags: {#df_pod});
@@ -39,7 +32,7 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
 
   @override
   void removeListener(VoidCallback listener) {
-    if (!_isDisposed) {
+    if (!isDisposed) {
       super.removeListener(listener);
     } else {
       Log.alert(
@@ -52,18 +45,23 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
   @protected
   void Function()? onAfterDispose;
 
-  /// Disposes this [ValueListenable] and sets [isDisposed] to `true`.
+  /// Disposes this [ValueListenable].
   /// Successive calls to this method will be ignored.
+  ///
+  /// The single source of truth for "is this disposed?" is
+  /// [WeakChangeNotifier.isDisposed] — earlier revisions maintained a
+  /// second flag here that briefly disagreed with the parent's flag while
+  /// `super.dispose()` ran, opening a window where re-entrant code saw
+  /// inconsistent state.
   @override
   @mustCallSuper
   void dispose() {
-    if (!_isDisposed) {
+    if (!isDisposed) {
       super.dispose();
-      _isDisposed = true;
       try {
         onAfterDispose?.call();
       } catch (e) {
-        Log.err(e);
+        Log.err(e, tags: {#df_pod});
       }
     } else {
       Log.alert('Tried to dispose a Pod again!', tags: {#df_pod});

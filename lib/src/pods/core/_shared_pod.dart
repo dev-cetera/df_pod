@@ -78,7 +78,7 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   Future<void> set(A newValue, {bool notifyImmediately = true}) {
     return _enqueue(() async {
       final v = toValue(newValue);
-      _sharedPreferences ??= await SharedPreferences.getInstance();
+      _sharedPreferences ??= await _getPrefs();
       switch (v) {
         case final String s:
           await _sharedPreferences!.setString(key, s);
@@ -106,7 +106,7 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
 
   Future<void> delete({bool notifyImmediately = true}) {
     return _enqueue(() async {
-      _sharedPreferences ??= await SharedPreferences.getInstance();
+      _sharedPreferences ??= await _getPrefs();
       await _sharedPreferences!.remove(key);
       _set(initialValue, notifyImmediately: notifyImmediately);
     });
@@ -119,11 +119,46 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   @override
   Future<void> refresh({bool notifyImmediately = true}) {
     return _enqueue(() async {
-      _sharedPreferences ??= await SharedPreferences.getInstance();
+      _sharedPreferences ??= await _getPrefs();
       final v = _sharedPreferences!.get(key);
       final newValue = fromValue(v is B ? v : null);
       _set(newValue, notifyImmediately: notifyImmediately);
     });
+  }
+
+  /// Wraps [SharedPreferences.getInstance] with an actionable error so
+  /// the most common worker-isolate misconfiguration fails loudly with a
+  /// fix-it hint rather than a bare `MissingPluginException` from the
+  /// platform-channel layer.
+  ///
+  /// The two failure modes this surfaces:
+  /// 1. The caller is on a background isolate and never wired up
+  ///    `BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken)`
+  ///    at the worker's entry point.
+  /// 2. The `shared_preferences` plugin is missing from the build (rare;
+  ///    usually a `flutter pub get` problem).
+  Future<SharedPreferences> _getPrefs() async {
+    try {
+      return await SharedPreferences.getInstance();
+    } catch (e, s) {
+      throw StateError(
+        'SharedPod failed to initialise SharedPreferences for key "$key".\n'
+        '\n'
+        'If you are using SharedPod from a worker (background) isolate, '
+        'the worker entry point must call '
+        '`BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken)` '
+        'BEFORE any SharedPod operation. The token must be obtained on '
+        'the root isolate (`RootIsolateToken.instance!`) and passed to '
+        '`Isolate.spawn`.\n'
+        '\n'
+        'If you are on the root isolate, check that the '
+        '`shared_preferences` plugin is registered (run `flutter pub get` '
+        'and rebuild).\n'
+        '\n'
+        'Underlying error: $e\n'
+        'Stack: $s',
+      );
+    }
   }
 
   /// Chains [task] onto [_writeQueue] so concurrent writes commit in call
@@ -132,12 +167,19 @@ base class SharedPod<A extends Object, B extends Object> extends RootPod<A> {
   /// Tasks that resolve after [dispose] become no-ops — without this guard
   /// the trailing [_set] would hit the disposed-pod assertion in
   /// [WeakChangeNotifier.notifyListeners].
+  ///
+  /// Errors are also logged via `df_log` so a fire-and-forget caller
+  /// (`pod.set(x); // no await`) does not lose visibility on a failed
+  /// disk write. The returned [Future] still surfaces the error to
+  /// `await`ing callers — logging is additive, not a substitute.
   Future<void> _enqueue(Future<void> Function() task) {
     final result = _writeQueue.then((_) async {
       if (isDisposed) return;
       await task();
     });
-    _writeQueue = result.catchError((Object _) {});
+    _writeQueue = result.catchError((Object e, StackTrace s) {
+      Log.err(e, tags: {#df_pod});
+    });
     return result;
   }
 }

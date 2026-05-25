@@ -113,15 +113,40 @@ class _PodCollectionBuilderState extends State<PodCollectionBuilder> {
   }
 
   void _attach(Listenable l) {
-    if (l is WeakChangeNotifier) {
-      l.addStrongRefListener(strongRefListener: _listener);
-    } else {
-      l.addListener(_listener);
+    try {
+      if (l is WeakChangeNotifier) {
+        l.addStrongRefListener(strongRefListener: _listener);
+      } else {
+        l.addListener(_listener);
+      }
+    } catch (e, s) {
+      // A misbehaving Listenable (e.g. a disposed pod's addListener) is
+      // logged and skipped. The widget tree stays alive; the bad pod is
+      // simply not subscribed. Without this guard, an exception from
+      // addListener would unwind out of [_onChange] / [_syncSubscriptions]
+      // mid-mutation, leaving `_subscribed` desynced from the actual
+      // listener registrations and causing leaks on subsequent rebuilds.
+      Log.err(e, tags: {#df_pod});
+      assert(() {
+        debugPrint('PodCollectionBuilder attach failed: $e\n$s');
+        return true;
+      }());
     }
   }
 
   void _detach(Listenable l) {
-    l.removeListener(_listener);
+    try {
+      l.removeListener(_listener);
+    } catch (e, s) {
+      // Same defensiveness as [_attach]. removeListener should be a
+      // no-op on unknown listeners, but if a custom Listenable throws,
+      // we don't want one rogue pod to corrupt our bookkeeping.
+      Log.err(e, tags: {#df_pod});
+      assert(() {
+        debugPrint('PodCollectionBuilder detach failed: $e\n$s');
+        return true;
+      }());
+    }
   }
 
   void _onChange() {
@@ -130,14 +155,60 @@ class _PodCollectionBuilderState extends State<PodCollectionBuilder> {
     setState(() {});
   }
 
+  /// Diffs [_subscribed] against the result of [widget.innerPods] and
+  /// adjusts subscriptions to match.
+  ///
+  /// Exception safety: each attach/detach is independently guarded
+  /// inside [_attach]/[_detach] so one rogue Listenable cannot leave
+  /// the bookkeeping desynced. [widget.innerPods] itself is also
+  /// guarded — if it throws, we leave the current subscription set
+  /// unchanged and log; this is a stable failure mode rather than a
+  /// half-mutated state that would cause cascading bugs on subsequent
+  /// rebuilds.
+  ///
+  /// Algorithm: adaptive (v0.20.0 P5). For small collections (the common
+  /// case — most uses are a handful of tiles), a linear identity scan
+  /// is faster than allocating two identity Sets and paying the hash
+  /// overhead. Above the threshold, the algorithm switches to O(N + M)
+  /// via Sets, where N = old subscribed count, M = new inner-pod count.
+  ///
+  /// `Set.identity()` is correct here: `Listenable` subclasses (Pod,
+  /// ChildPod, ValueNotifier, ...) all inherit default `Object.==` so
+  /// identity == equality.
   void _syncSubscriptions() {
-    final next = widget.innerPods();
-    if (_listsIdentical(_subscribed, next)) return;
-    for (final p in _subscribed) {
-      if (!_containsIdentical(next, p)) _detach(p);
+    List<Listenable> next;
+    try {
+      next = widget.innerPods();
+    } catch (e, s) {
+      Log.err(e, tags: {#df_pod});
+      assert(() {
+        debugPrint('PodCollectionBuilder innerPods threw: $e\n$s');
+        return true;
+      }());
+      return;
     }
-    for (final p in next) {
-      if (!_containsIdentical(_subscribed, p)) _attach(p);
+    if (_listsIdentical(_subscribed, next)) return;
+
+    const smallThreshold = 8;
+    if (_subscribed.length <= smallThreshold && next.length <= smallThreshold) {
+      // Linear: zero-allocation. Faster for typical dashboards.
+      for (final p in _subscribed) {
+        if (!_listContainsIdentical(next, p)) _detach(p);
+      }
+      for (final p in next) {
+        if (!_listContainsIdentical(_subscribed, p)) _attach(p);
+      }
+    } else {
+      // Set-based: O(N+M). Faster for large dashboards / wide
+      // collection builders (>8 inner pods).
+      final nextSet = Set<Listenable>.identity()..addAll(next);
+      final oldSet = Set<Listenable>.identity()..addAll(_subscribed);
+      for (final p in _subscribed) {
+        if (!nextSet.contains(p)) _detach(p);
+      }
+      for (final p in next) {
+        if (!oldSet.contains(p)) _attach(p);
+      }
     }
     _subscribed = List.unmodifiable(next);
   }
@@ -146,7 +217,7 @@ class _PodCollectionBuilderState extends State<PodCollectionBuilder> {
   Widget build(BuildContext context) => widget.builder(context);
 }
 
-bool _containsIdentical(List<Listenable> list, Listenable target) {
+bool _listContainsIdentical(List<Listenable> list, Listenable target) {
   for (final e in list) {
     if (identical(e, target)) return true;
   }

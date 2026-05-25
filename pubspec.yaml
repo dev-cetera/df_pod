@@ -45,13 +45,14 @@ dependencies:
   df_debouncer: ^0.5.1
   df_log: ^0.5.0
   df_safer_dart: ^0.20.0
+  df_safer_dart_annotations: ^0.3.1
 
 ## -----------------------------------------------------------------------------
 
 dev_dependencies:
   flutter_lints: ^6.0.0
   custom_lint: ^0.8.1
-  df_safer_dart_lints: ^0.5.0
+  df_safer_dart_lints: ^0.5.2
   flutter_test:
     sdk: flutter
 

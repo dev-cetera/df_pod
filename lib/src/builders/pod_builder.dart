@@ -182,10 +182,26 @@ class AsyncPodBuilder<T extends Object> extends StatelessWidget {
           );
         } else {
           final cached = PodBuilderCacheManager.i.get(key?.toString());
+          // Surface pod-creation errors so the builder can render an error
+          // state instead of an indistinguishable "still loading" state.
+          // Earlier the FutureBuilder error path was silently mapped to
+          // `pod: None`, which is the same shape as the loading state —
+          // critical for medical-grade callers that need to escalate a
+          // failed lookup rather than spin forever.
+          final Option<Result<ValueListenable<T>>> podOpt;
+          if (snapshot.hasError) {
+            podOpt = Some(
+              Err(snapshot.error!, stackTrace: snapshot.stackTrace),
+            );
+          } else if (pod != null) {
+            podOpt = Some(pod);
+          } else {
+            podOpt = const None();
+          }
           return builder(
             context,
             PodBuilderSnapshot(
-              pod: Option.from(pod),
+              pod: podOpt,
               value: Option.from(cached is Result<T> ? cached : null),
               child: child,
             ),
@@ -264,6 +280,10 @@ final class PodResultBuilderState<T extends Object>
   @override
   void didUpdateWidget(PodResultBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // Invalidate the cache-key memo so the next [_resolvedCacheKey]
+    // call recomputes against the new widget.key / widget.pod.
+    _cacheKeyComputed = false;
+    _cachedCacheKey = null;
     UNSAFE:
     {
       oldWidget.pod
@@ -288,16 +308,49 @@ final class PodResultBuilderState<T extends Object>
   //
   //
 
+  /// Memoised cache key. `null` means "not yet computed"; once computed
+  /// it stays valid until [didUpdateWidget] invalidates it. The compound
+  /// key (widget key + pod identityHashCode) is the same for every call
+  /// during a single mount, so we save the string allocation on every
+  /// pod fire / build. See v0.20.0 O4.
+  String? _cachedCacheKey;
+  bool _cacheKeyComputed = false;
+
+  /// Returns the cache key for the current widget+pod pair, or `null` if
+  /// caching is disabled for this build.
+  ///
+  /// The pod's [identityHashCode] is appended to the widget key so two
+  /// `PodBuilder`s with the same `Key` but different pods cannot read
+  /// each other's cached values. This used to be possible: a fresh
+  /// mount with the same widget key but a different pod would show the
+  /// *previous* pod's value for the first frame (a medical-grade hazard
+  /// — one frame of wrong data is one frame too many). See v0.20.0 A1.
+  String? _resolvedCacheKey() {
+    if (_cacheKeyComputed) return _cachedCacheKey;
+    final widgetKey = widget.key;
+    if (widgetKey == null) {
+      _cacheKeyComputed = true;
+      return null;
+    }
+    if (widget.pod.isErr()) {
+      _cacheKeyComputed = true;
+      return null;
+    }
+    UNSAFE:
+    final p = widget.pod.unwrap();
+    _cachedCacheKey = '$widgetKey|${identityHashCode(p)}';
+    _cacheKeyComputed = true;
+    return _cachedCacheKey;
+  }
+
   /// Reads `_value` from either the cache (when [useCache] is `true` and a
-  /// keyed entry exists) or the pod's current value. Cache reads are only
-  /// safe during initial mount / pod swap — using the cache when the pod
-  /// has just fired would shadow the live value forever and was a real bug
-  /// fixed in v0.18.18.
+  /// keyed entry exists for this exact widget+pod pair) or the pod's
+  /// current value.
   void _setValue({bool useCache = false}) {
     if (useCache) {
-      final key = widget.key;
+      final key = _resolvedCacheKey();
       if (key != null) {
-        final cached = PodBuilderCacheManager.i.get(key.toString());
+        final cached = PodBuilderCacheManager.i.get(key);
         final cachedValue = cached is Result<T> ? cached : null;
         if (cachedValue != null) {
           _value = cachedValue;
@@ -313,12 +366,10 @@ final class PodResultBuilderState<T extends Object>
   //
 
   void _cacheValue() {
-    final key = widget.key;
-    if (key == null) {
-      return;
-    }
+    final key = _resolvedCacheKey();
+    if (key == null) return;
     PodBuilderCacheManager.i.cache(
-      key.toString(),
+      key,
       _value,
       cacheDuration: widget.cacheDuration,
     );
@@ -330,15 +381,23 @@ final class PodResultBuilderState<T extends Object>
 
   Timer? _debounceTimer;
 
-  // ignore: prefer_final_fields
-  late void Function() _valueChanged = widget.debounceDuration != null
-      ? () {
-          _debounceTimer?.cancel();
-          _debounceTimer = Timer(widget.debounceDuration!, () {
-            __valueChanged();
-          });
-        }
-      : __valueChanged;
+  /// Stable tear-off so [addListener] / [removeListener] always see the
+  /// same identity across rebuilds. Reads [widget.debounceDuration] at
+  /// call time so a parent that swaps debounce on the fly takes effect on
+  /// the next event — earlier this was a `late` closure that captured
+  /// the *initial* duration and silently ignored updates.
+  late final VoidCallback _valueChanged = _onPodChange;
+
+  void _onPodChange() {
+    final dur = widget.debounceDuration;
+    if (dur != null) {
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(dur, __valueChanged);
+    } else {
+      _debounceTimer?.cancel();
+      __valueChanged();
+    }
+  }
 
   void __valueChanged() {
     if (mounted) {

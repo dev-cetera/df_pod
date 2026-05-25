@@ -117,8 +117,27 @@ final class _ResolvablePollingPodBuilderState<T extends Object>
     });
   }
 
+  /// Runs the user-supplied poller and (if it returned `Some`) schedules
+  /// a rebuild. Returns true when polling should stop.
+  ///
+  /// All exceptions from [widget.podPoller] are caught and logged. Without
+  /// this, a throwing poller would propagate out of the [Timer.periodic]
+  /// callback, leaving the timer alive but throwing on *every* tick —
+  /// unbounded log spam and CPU on long-running deployments. The timer is
+  /// kept running on poller failure because the failure may be transient
+  /// (e.g. DI scope not yet initialized).
   bool _check() {
-    _currentPod = widget.podPoller();
+    try {
+      _currentPod = widget.podPoller();
+    } catch (e, s) {
+      Log.err(e, tags: {#df_pod});
+      // Re-log with stack so the failure is debuggable. Keep polling.
+      assert(() {
+        debugPrint('PollingPodBuilder poller threw: $e\n$s');
+        return true;
+      }());
+      return false;
+    }
     if (_currentPod.isSome()) {
       if (mounted) {
         setState(() {});

@@ -23,33 +23,41 @@ void main() {
     testWidgets(
       'non-zero cacheDuration preserves value across fresh same-key remount',
       (tester) async {
+        // v0.20.0 A1: cache is scoped per (widget-key, pod-identity).
+        // This test uses the SAME pod across remounts to exercise the
+        // "cache survives an unmount/remount" case. The "different pod
+        // → cache miss" case is covered by a separate test (no cross-pod
+        // contamination).
         final key = ValueKey(
           'cache-verify-${DateTime.now().microsecondsSinceEpoch}',
         );
 
-        final podA = Pod<int>(42);
+        final pod = Pod<int>(42);
         await tester.pumpWidget(
           _wrap(
             PodBuilder<int>(
               key: key,
-              pod: podA,
+              pod: pod,
               cacheDuration: const Duration(seconds: 10),
               builder: (_, __) => const SizedBox.shrink(),
             ),
           ),
         );
         // Unmount before remounting so the new build is a fresh initState
-        // (where useCache:true applies). A pod-swap on the same widget now
-        // correctly bypasses the cache — see the pod-swap test below.
+        // (where useCache:true applies).
         await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
-        final podB = Pod<int>(999);
+        // Mutate the pod after unmount — the cache should still hold the
+        // last value that was in effect when the widget was mounted (42),
+        // not the post-unmount value.
+        pod.set(999);
+
         late int observed;
         await tester.pumpWidget(
           _wrap(
             PodBuilder<int>(
               key: key,
-              pod: podB,
+              pod: pod,
               cacheDuration: const Duration(seconds: 10),
               builder: (_, snap) {
                 UNSAFE:
@@ -60,10 +68,14 @@ void main() {
           ),
         );
 
+        // The cache held 42 from the first mount. On fresh initState the
+        // cache hit serves 42, then the listener fires on first frame and
+        // _valueChanged pulls the live value (999). What we test here is
+        // strictly the cache hit: the FIRST observed value.
         expect(
           observed,
           42,
-          reason: 'fresh remount serves the cached value initially',
+          reason: 'fresh remount with same pod serves the cached value',
         );
       },
     );

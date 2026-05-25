@@ -109,19 +109,20 @@ void main() {
     });
 
     test(
-      'record types: equal records DO notify (records are not Comparable '
-      'or Equatable, so isDefinitelyComparableOrEquatable returns false)',
+      'record types: equal records do NOT notify (records have structural '
+      'equality in Dart 3; isDefinitelyComparableOrEquatable now recognises '
+      '`Record`)',
       () {
-        // Documents an intentional limitation of the short-circuit — records
-        // are value-equal in Dart 3, but the heuristic only short-circuits
-        // for known marker types. Users who care should wrap with Equatable.
         final pod = Pod<(int, int)>((1, 2));
         var calls = 0;
         final l = () => calls++;
         pod.addStrongRefListener(strongRefListener: l);
 
         pod.set((1, 2));
-        expect(calls, 1, reason: 'records bypass the equality short-circuit');
+        expect(calls, 0, reason: 'records short-circuit on equal content');
+
+        pod.set((1, 3));
+        expect(calls, 1, reason: 'inequal records still notify');
       },
     );
 
@@ -475,29 +476,39 @@ void main() {
   // cond() abuse
   // ───────────────────────────────────────────────────────────────────────────
   group('cond() abuse', () {
-    test('predicate that throws on the initial sync check propagates', () {
-      final pod = Pod<int>(0);
-      expect(
-        () => pod.cond((_) => throw StateError('bad predicate')),
-        throwsStateError,
-      );
-      // No listener was added; subsequent fires don't re-throw.
-      pod.set(1);
-    });
+    test(
+      'A2 fix: predicate that throws on initial sync check surfaces as '
+      'Err on the returned Resolvable (was: sync throw)',
+      () async {
+        final pod = Pod<int>(0);
+        final r = pod.cond((_) => throw StateError('bad predicate'));
+        final result = await r.toAsync().value;
+        expect(
+          result.isErr(),
+          isTrue,
+          reason: 'A2: predicate throws → Resolvable resolves to Err',
+        );
+        // No listener was added; subsequent fires don't re-throw.
+        pod.set(1);
+      },
+    );
 
     test(
-      'predicate that throws on a later notify is reported via FlutterError, '
-      'not propagated to the setter',
-      () {
+      'A2 fix: predicate that throws on a later notify surfaces as Err '
+      'on the cond() Resolvable (was: FlutterError-reported)',
+      () async {
         final pod = Pod<int>(0);
         var checks = 0;
-        // ignore: unused_local_variable
-        final unused = pod.cond((v) {
+        final r = pod.cond((v) {
           checks++;
           if (checks > 1) throw StateError('later boom');
           return false;
         });
-
+        // Initial sync check did not throw (checks==1, returns false).
+        // The next set() triggers the listener which throws — our try/catch
+        // converts the throw into an Err on the Resolvable. FlutterError
+        // is NOT involved any more (we catch before WCN's listener-error
+        // path runs).
         final errors = <FlutterErrorDetails>[];
         final prev = FlutterError.onError;
         FlutterError.onError = errors.add;
@@ -506,8 +517,13 @@ void main() {
         } finally {
           FlutterError.onError = prev;
         }
-        expect(errors, hasLength(1));
-        expect(errors.single.exception, isA<StateError>());
+        expect(
+          errors,
+          isEmpty,
+          reason: 'A2: predicate throw is caught locally, not via FlutterError',
+        );
+        final result = await r.toAsync().value;
+        expect(result.isErr(), isTrue);
       },
     );
   });
@@ -633,6 +649,7 @@ void main() {
             PollingPodBuilder<int>(
               podPoller: () {
                 pollerCalls++;
+                // ignore: no_future_outcome_type_or_error
                 return const None();
               },
               interval: const Duration(milliseconds: 50),
@@ -677,13 +694,14 @@ void main() {
             podPoller: () {
               pollerCalls++;
               final r = resolved;
+              // ignore: no_future_outcome_type_or_error
               return r == null ? const None() : Some(r);
             },
             interval: const Duration(milliseconds: 30),
             builder: (_, snap) {
               return Text(
                 snap.value.isSome()
-                    // ignore: invalid_use_of_visible_for_testing_member
+                    // ignore: invalid_use_of_visible_for_testing_member, must_use_unsafe_wrapper_or_error
                     ? '${snap.value.unwrap().unwrap()}'
                     : 'pending',
                 textDirection: TextDirection.ltr,
@@ -910,8 +928,8 @@ void main() {
   // ───────────────────────────────────────────────────────────────────────────
   group('PodBuilder cache key/type collisions', () {
     testWidgets(
-      'cache entry from a previous pod with the same key is overwritten '
-      'by the new pod on mount',
+      'A1 fix: cache entry from a previous pod with the same key is '
+      'NEVER read by a new pod (medical-grade isolation)',
       (tester) async {
         final key =
             ValueKey('abuse_cache_${DateTime.now().microsecondsSinceEpoch}');
@@ -934,25 +952,26 @@ void main() {
         await tester.pumpWidget(make(podA));
         expect(seen, 111);
 
-        // Tear down and remount with a new pod under the same key.
+        // Tear down and remount with a NEW pod under the SAME widget key.
+        // Pre-v0.20.0 this would briefly show 111 (podA's cached value) —
+        // a medical-grade data-integrity bug. The A1 fix scopes cache
+        // entries by pod identity, so this lookup misses and podB wins
+        // immediately.
         await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
         final podB = Pod<int>(222);
         await tester.pumpWidget(make(podB));
-        // First build uses the cached value from podA.
-        expect(seen, 111);
+        expect(
+          seen,
+          222,
+          reason: 'A1: different pod must not read podA\'s cached value '
+              'even for one frame',
+        );
 
-        // After podB fires, the live value wins.
+        // Subsequent fires of podB still propagate live.
         podB.set(333);
         await tester.pump();
         expect(seen, 333);
-
-        // Drain the cache TTL so the entry is gone for next time.
-        PodBuilderCacheManager.i.cache(
-          key.toString(),
-          const Object(),
-          cacheDuration: Duration.zero,
-        );
       },
     );
   });

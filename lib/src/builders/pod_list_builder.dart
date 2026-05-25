@@ -261,6 +261,10 @@ final class PodResultListBuilderState<T extends Object>
   @override
   void didUpdateWidget(PodResultListBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // Invalidate the cache-key memo — the pod list (and thus the
+    // compound key) may have changed.
+    _cacheKeyComputed = false;
+    _cachedCacheKey = null;
     _removeListenerFromPods(oldWidget.podList);
     _setValue(useCache: true);
     _cacheValue();
@@ -271,13 +275,48 @@ final class PodResultListBuilderState<T extends Object>
   //
   //
 
+  /// Memoised cache key. Stable across the State's lifetime until
+  /// [didUpdateWidget] invalidates it. See v0.20.0 O4.
+  String? _cachedCacheKey;
+  bool _cacheKeyComputed = false;
+
+  /// Returns the cache key for the current widget+podList tuple, or
+  /// `null` if caching is disabled.
+  ///
+  /// The identityHashCode of each pod is folded into the key so two
+  /// `PodListBuilder`s with the same `Key` but different pod lists
+  /// cannot read each other's cached values. See v0.20.0 A1.
+  String? _resolvedCacheKey() {
+    if (_cacheKeyComputed) return _cachedCacheKey;
+    final widgetKey = widget.key;
+    if (widgetKey == null) {
+      _cacheKeyComputed = true;
+      return null;
+    }
+    final parts = StringBuffer('$widgetKey|');
+    var first = true;
+    for (final r in widget.podList) {
+      if (!first) parts.write(',');
+      first = false;
+      if (r.isErr()) {
+        parts.write('e');
+      } else {
+        UNSAFE:
+        parts.write(identityHashCode(r.unwrap()).toRadixString(16));
+      }
+    }
+    _cachedCacheKey = parts.toString();
+    _cacheKeyComputed = true;
+    return _cachedCacheKey;
+  }
+
   /// See `PodResultBuilderState._setValue` — same shadowing-bug fix applies
   /// here. Live pod fires must read from the pods, not from the cache.
   void _setValue({bool useCache = false}) {
     if (useCache) {
-      final key = widget.key;
+      final key = _resolvedCacheKey();
       if (key != null) {
-        final cached = PodBuilderCacheManager.i.get(key.toString());
+        final cached = PodBuilderCacheManager.i.get(key);
         final cachedValue = cached is List<Result<T>> ? cached : null;
         if (cachedValue != null) {
           _valueList = cachedValue;
@@ -296,12 +335,10 @@ final class PodResultListBuilderState<T extends Object>
   //
 
   void _cacheValue() {
-    final key = widget.key;
-    if (key == null) {
-      return;
-    }
+    final key = _resolvedCacheKey();
+    if (key == null) return;
     PodBuilderCacheManager.i.cache(
-      key.toString(),
+      key,
       // Materialise to a List — see _setValue for why.
       widget.podList.map((e) => e.map((e) => e.value)).toList(),
       cacheDuration: widget.cacheDuration,
@@ -338,15 +375,23 @@ final class PodResultListBuilderState<T extends Object>
 
   Timer? _debounceTimer;
 
-  // ignore: prefer_final_fields
-  late void Function() _valueChanged = widget.debounceDuration != null
-      ? () {
-          _debounceTimer?.cancel();
-          _debounceTimer = Timer(widget.debounceDuration!, () {
-            __valueChanged();
-          });
-        }
-      : __valueChanged;
+  /// Stable tear-off so add/remove listener calls always see the same
+  /// identity across rebuilds. Reads [widget.debounceDuration] at call
+  /// time so a parent that swaps debounce on the fly takes effect on the
+  /// next event — earlier this was a `late` closure that captured the
+  /// *initial* duration and silently ignored updates.
+  late final VoidCallback _valueChanged = _onPodChange;
+
+  void _onPodChange() {
+    final dur = widget.debounceDuration;
+    if (dur != null) {
+      _debounceTimer?.cancel();
+      _debounceTimer = Timer(dur, __valueChanged);
+    } else {
+      _debounceTimer?.cancel();
+      __valueChanged();
+    }
+  }
 
   void __valueChanged() {
     if (mounted) {

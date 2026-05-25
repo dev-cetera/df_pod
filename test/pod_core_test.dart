@@ -278,7 +278,7 @@ void main() {
       'refresh() before dispose does not throw on the scheduled tick',
       () async {
         final pod = Pod<int>(0);
-        pod.refresh();
+        unawaited(pod.refresh());
         pod.dispose();
         // Drain the Future.delayed(Duration.zero) the refresh enqueued.
         await Future<void>.delayed(Duration.zero);

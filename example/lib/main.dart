@@ -1,4 +1,5 @@
 import 'package:df_pod/df_pod.dart';
+import 'package:df_safer_dart/df_safer_dart.dart';
 import 'package:flutter/material.dart';
 
 // ===================================================================
@@ -131,13 +132,35 @@ class SearchSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // PodListBuilder efficiently listens to multiple pods and rebuilds if any of them change.
+    // PodListBuilder efficiently listens to multiple pods and rebuilds if
+    // any of them change.
     return PodListBuilder(
       podList: [pResultCount, pSummaryMessage],
       builder: (context, snapshot) {
-        final values = snapshot.value.unwrap().map((e) => e.unwrap()).toList();
-        final count = values[0] as int;
-        final message = values[1] as String;
+        // snapshot.value: Option<Iterable<Option<Result<Object>>>>
+        //
+        // Destructure with Dart 3 sealed-class patterns. The
+        // `final int v` / `final String v` bindings act as type guards —
+        // the arm only matches when the inner value has the expected
+        // runtime type, so we avoid `.unwrap()` and `as`. Falling
+        // through to the wildcard arm returns an empty widget instead
+        // of throwing.
+        final entries = switch (snapshot.value) {
+          Some(value: final list) => list.toList(),
+          None() => const <Option<Result<Object>>>[],
+        };
+        if (entries.length < 2) return const SizedBox.shrink();
+        final count = switch (entries[0]) {
+          Some(value: Ok(value: final int v)) => v,
+          _ => null,
+        };
+        final message = switch (entries[1]) {
+          Some(value: Ok(value: final String v)) => v,
+          _ => null,
+        };
+        if (count == null || message == null) {
+          return const SizedBox.shrink();
+        }
         return Card(
           color: Theme.of(context).colorScheme.secondaryContainer,
           child: Padding(
@@ -167,7 +190,14 @@ class SearchResults extends StatelessWidget {
       // Debounce user input to avoid firing the API on every keystroke.
       debounceDuration: const Duration(milliseconds: 400),
       builder: (context, querySnapshot) {
-        final query = querySnapshot.value.unwrap().unwrap();
+        // Destructure Option<Result<String>> via patterns. No `unwrap()`,
+        // no `as` — the pattern's `final String v` doubles as a type
+        // guard, so the empty-string fallback only fires on None / Err /
+        // unexpected type.
+        final query = switch (querySnapshot.value) {
+          Some(value: Ok(value: final String v)) => v,
+          _ => '',
+        };
 
         if (query.isEmpty) {
           return const Center(
@@ -183,42 +213,41 @@ class SearchResults extends StatelessWidget {
           // Cache successful results for 2 minutes.
           cacheDuration: const Duration(minutes: 2),
           builder: (context, resultsSnapshot) {
-            // 1. Handle the Option layer: Loading vs. Available
-            if (resultsSnapshot.value.isNone()) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final result = resultsSnapshot.value.unwrap();
-
-            // 2. Handle the Result layer: Success vs. Failure
-            if (result.isErr()) {
-              final error = result.err().unwrap().error;
-              return Center(
+            // Three-state switch: loading / success / failure. Each
+            // arm gets exactly the data it needs via destructuring —
+            // no defensive unwraps, no casts. The Object generic on
+            // `error` is the type from `Err.error`; we render its
+            // toString() for the UI.
+            return switch (resultsSnapshot.value) {
+              None() => const Center(child: CircularProgressIndicator()),
+              Some(value: Err(:final error)) => Center(
                 child: Text(
                   'An error occurred: $error',
                   style: const TextStyle(color: Colors.red),
                 ),
-              );
-            }
-
-            final products = result.unwrap();
-            // Update our root pod with the latest successful results
-            pLatestResults.set(products);
-
-            if (products.isEmpty) {
-              return Center(child: Text('No results found for "$query"'));
-            }
-
-            return ListView.builder(
-              itemCount: products.length,
-              itemBuilder: (_, index) => ListTile(
-                leading: const Icon(Icons.shopping_bag_outlined),
-                title: Text(products[index]),
               ),
-            );
+              Some(value: Ok(value: final products)) =>
+                _buildProductList(query, products),
+            };
           },
         );
       },
+    );
+  }
+
+  /// Renders the product list and side-effects the latest-results pod.
+  /// Extracted so the switch arm above stays a clean expression.
+  Widget _buildProductList(String query, List<String> products) {
+    pLatestResults.set(products);
+    if (products.isEmpty) {
+      return Center(child: Text('No results found for "$query"'));
+    }
+    return ListView.builder(
+      itemCount: products.length,
+      itemBuilder: (_, index) => ListTile(
+        leading: const Icon(Icons.shopping_bag_outlined),
+        title: Text(products[index]),
+      ),
     );
   }
 }

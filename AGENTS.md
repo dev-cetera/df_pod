@@ -65,8 +65,8 @@ Internal files import via `/_common.dart` (the absolute path of `lib/_common.dar
 
 The pod types are interlocking and live as `part`/`part of` files under one library — `lib/src/pods/core/core.dart` is the part-of root. Edit any of these and you are editing the same library:
 
-- `DisposablePod<T>` (`disposable_pod.dart`) — base class extending `WeakChangeNotifier`, owns `isDisposed` + `onAfterDispose`. The deprecation on `addListener` is intentional; weak refs go through `addStrongRefListener` from `WeakChangeNotifier`.
-- `PodNotifier<T>` (`_pod_notifier.dart`) — abstract base over `DisposablePod`, adds `onBeforeDispose`.
+- `DisposablePod<T>` (`disposable_pod.dart`) — base class extending `WeakChangeNotifier`, owns `onAfterDispose`. The deprecation on `addListener` is intentional; weak refs go through `addStrongRefListener` from `WeakChangeNotifier`. Note: the single source of truth for "is disposed?" is `WeakChangeNotifier.isDisposed`; do not introduce a duplicate flag.
+- `PodNotifier<T>` (`_pod_notifier.dart`) — abstract base over `DisposablePod`, adds the abstract `value` field and `getValue()` accessor. Also declares the `TOnBeforeDispose<T>` typedef (currently unused — historical hook).
 - `GenericPodMixin<T>` (`_generic_pod_mixin.dart`) — the mixin that adds `getValue`, `.map(...)`, `.reduce(...)` to anything that is both a `PodNotifier` and a `ValueListenable`. `typedef GenericPod<T> = GenericPodMixin<T>`.
 - `RootPod<T>` (`_root_pod.dart`) — the mutable root. **`Pod<T>` is a typedef for `RootPod<T>`** — that's why user code writes `Pod(0)`. Has `set`, `update`, `refresh`, plus a `RootPod.fromStream` constructor that auto-cancels the subscription on dispose.
 - `ChildPod<TParent, TChild>` (`_child_pod.dart`) — read-only derived pod from `.map(...)`.
@@ -100,6 +100,50 @@ This is the linchpin. `WeakChangeNotifier` stores listeners as `WeakReference`s 
 - **`@protected` matters**: protected members in this package rely on `invalid_use_of_protected_member: error` to prevent misuse. When adding mutator APIs that should only be called from within the pod machinery, mark them `@protected`.
 - **Logging via `df_log`** (`Log.alert`, `Log.err`) — never `print` / `debugPrint`. Already enforced by convention in `disposable_pod.dart`.
 - **Tests**: `flutter_test` only. Group by feature; the existing files (`pod_core_test.dart`, `pod_builder_test.dart`, `pod_collection_builder_test.dart`) are the templates.
+
+## Platform support
+
+The package targets **Flutter** (its `pubspec.yaml` depends on the
+Flutter SDK and `lib/_common.dart` re-exports `dart:ui`,
+`package:flutter/foundation`, `package:flutter/widgets`). It cannot be
+used in a non-Flutter pure-Dart program. Within a Flutter app the
+matrix is:
+
+| Surface | Flutter native | Flutter web | Worker isolate |
+| --- | --- | --- | --- |
+| Core pods (`RootPod`, `ChildPod`, `ReducerPod`, `WeakChangeNotifier`, `cond`, `set`, `update`, `refresh`, `RootPod.fromStream`) | ✅ | ✅ | ✅ |
+| `_set(notifyImmediately: false)` | ✅ via `WidgetsBinding.addPostFrameCallback` | ✅ same | ✅ falls back to `scheduleMicrotask` when no binding (v0.21.0 H6 fix) |
+| `SharedPod` / `SharedProtectedPod` and the typed helpers | ✅ | ✅ via `shared_preferences_web` (`localStorage`) | ⚠️ requires `BackgroundIsolateBinaryMessenger.ensureInitialized` in the worker (see below) |
+| Builders (`PodBuilder`, `PodListBuilder`, `PodCollectionBuilder`, `PollingPodBuilder`) | ✅ | ✅ | ❌ UI-only by nature |
+| `WeakReference` / `Finalizer` (used for listener bookkeeping and `_children`) | ✅ deterministic timing | ⚠️ best-effort (maps to `WeakRef` / `FinalizationRegistry`) — collection can be delayed or skipped; prefer explicit `dispose()` for known-dead pods | ✅ |
+
+### Worker isolate setup (for `SharedPod`)
+
+Plain pods need no setup. `SharedPod` uses a Flutter platform channel,
+so a worker isolate that touches storage must initialise the binary
+messenger first. If you forget, `SharedPod` now fails loudly with a
+fix-it hint that points to this exact section (see `_getPrefs` in
+`_shared_pod.dart`).
+
+```dart
+// Root isolate, before spawning the worker:
+final rootToken = RootIsolateToken.instance!;
+await Isolate.spawn(workerMain, rootToken);
+
+// Worker entry point:
+void workerMain(RootIsolateToken token) async {
+  BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+  // Safe to use SharedPod now.
+  final pTheme = await SharedStringPodCreator.create('theme');
+}
+```
+
+Builders cannot run in workers (they're `Widget`s — the framework
+itself only runs on the UI isolate). Move the build logic to the UI
+isolate and have the worker mutate pods that the UI isolate observes —
+but note that pods themselves are not shared across isolates either,
+so this means streaming state changes over a `SendPort`, not handing
+the pod object across.
 
 ## Releasing
 

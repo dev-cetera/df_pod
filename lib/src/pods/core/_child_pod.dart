@@ -24,7 +24,10 @@ final class ChildPod<TParent extends Object, TChild extends Object>
 
   final TPodsResponderFn<TParent> _responder;
   final TValuesReducerFn<TChild, TParent> _reducer;
-  late Iterable<GenericPod<TParent>> _parents;
+  // Stored as a List so the identity short-circuit in [_refresh] can
+  // index directly without a List cast. The responder may return any
+  // Iterable; we materialise it to a List on every entry.
+  late List<GenericPod<TParent>> _parents;
 
   @override
   // ignore: overridden_fields
@@ -39,9 +42,15 @@ final class ChildPod<TParent extends Object, TChild extends Object>
     required TValuesReducerFn<TChild, TParent> reducer,
   })  : _reducer = reducer,
         _responder = responder {
-    _parents = responder();
-    value = reducer(parents.map((p) => p.value).toList());
-    _initializeParents(parents);
+    // Materialise responder output to a List so a `sync*` generator (or
+    // any other one-shot iterable) is fully consumed exactly once.
+    // [_initializeParents] and the reducer call both iterate; without
+    // this snapshot, a generator-style responder would yield nothing on
+    // the second walk and parent subscriptions would silently desync.
+    final initial = responder().toList();
+    _parents = initial;
+    value = reducer(initial.map((p) => p.value).toList());
+    _initializeParents(initial);
   }
 
   //
@@ -77,16 +86,26 @@ final class ChildPod<TParent extends Object, TChild extends Object>
     if (_isDirty) return;
     _isDirty = true;
     try {
-      final newParents = _responder();
+      // Materialise to a List so a generator-style responder is consumed
+      // exactly once. The diff, the re-subscribe pass, and the reducer
+      // call all iterate this list — re-invoking the responder would be
+      // racy (different parents could appear in different walks).
+      final newParents = _responder().toList();
 
-      final oldParentsSet = _parents.nonNulls.toSet();
-      final newParentsSet = newParents.nonNulls.toSet();
-      for (final oldParent in oldParentsSet.difference(newParentsSet)) {
-        oldParent._removeChild(this);
+      // Fast path (v0.20.0 O3): if the parent list is unchanged by
+      // element identity, skip the subscription diff entirely and just
+      // recompute the value. Common case for `.map()` and arity reducer
+      // helpers whose responder returns the same parents every fire.
+      if (!_parentsIdenticalTo(newParents)) {
+        final oldParentsSet = _parents.nonNulls.toSet();
+        final newParentsSet = newParents.nonNulls.toSet();
+        for (final oldParent in oldParentsSet.difference(newParentsSet)) {
+          oldParent._removeChild(this);
+        }
+
+        _initializeParents(newParents);
+        _parents = newParents;
       }
-
-      _initializeParents(newParents);
-      _parents = newParents;
 
       final newValue = _reducer(newParents.map((p) => p.value).toList());
       _set(newValue);
@@ -94,6 +113,19 @@ final class ChildPod<TParent extends Object, TChild extends Object>
       _isDirty = false;
     }
   };
+
+  /// Element-wise identity equality between [_parents] and [newParents].
+  /// Returns true when the parent set is unchanged in both content and
+  /// order, which is the common case — every `.map()` and arity-reducer
+  /// helper returns its captured parents on each fire.
+  bool _parentsIdenticalTo(List<GenericPod<TParent>> newParents) {
+    final parents = _parents;
+    if (parents.length != newParents.length) return false;
+    for (var i = 0; i < newParents.length; i++) {
+      if (!identical(parents[i], newParents[i])) return false;
+    }
+    return true;
+  }
 
   //
   //

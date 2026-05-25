@@ -366,7 +366,14 @@ void main() {
 
   group('PodBuilder cache (key + cacheDuration)', () {
     testWidgets('cache survives a same-key remount within TTL', (tester) async {
-      final podA = Pod<int>(111);
+      // v0.20.0 A1: cache keys now include the pod's identityHashCode, so
+      // the cache is only served on remount with the SAME pod instance.
+      // A remount with a DIFFERENT pod (same widget key) used to serve
+      // the previous pod's value on the first frame — a medical-grade
+      // hazard. The "different-pod remount" branch of this test is now
+      // a separate `cache does NOT serve a different pod's value` test
+      // below.
+      final pod = Pod<int>(111);
       const key = ValueKey('cache_test_ttl');
       var buildSnapshot = -1;
 
@@ -383,27 +390,63 @@ void main() {
             ),
           );
 
-      await tester.pumpWidget(make(podA));
+      await tester.pumpWidget(make(pod));
       expect(buildSnapshot, 111);
 
       await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
-      // Re-mount with a DIFFERENT pod but the SAME key — the cache should
-      // serve the previous value initially.
-      final podB = Pod<int>(222);
-      await tester.pumpWidget(make(podB));
+      // Re-mount with the SAME pod under the SAME key — cache is served.
+      await tester.pumpWidget(make(pod));
       expect(
         buildSnapshot,
         111,
-        reason: 'first build after remount serves the cached value',
+        reason: 'same pod, same key — cache hit on remount',
       );
 
-      // After podB fires once, the live value wins (cache shadowing was the
-      // bug fixed in pass 4).
-      podB.set(333);
+      // Live fire still wins after the cached read.
+      pod.set(333);
       await tester.pump();
       expect(buildSnapshot, 333);
     });
+
+    testWidgets(
+      'A1: cache does NOT serve a different pod\'s value on same-key remount',
+      (tester) async {
+        final podA = Pod<int>(111);
+        const key = ValueKey('cache_test_ttl_collision');
+        var buildSnapshot = -1;
+
+        Widget make(Pod<int> p) => _wrap(
+              PodBuilder<int>(
+                key: key,
+                pod: p,
+                cacheDuration: const Duration(seconds: 30),
+                builder: (context, snapshot) {
+                  UNSAFE:
+                  buildSnapshot = snapshot.value.unwrap().unwrap();
+                  return const SizedBox.shrink();
+                },
+              ),
+            );
+
+        await tester.pumpWidget(make(podA));
+        expect(buildSnapshot, 111);
+        await tester.pumpWidget(_wrap(const SizedBox.shrink()));
+
+        // Re-mount with a DIFFERENT pod under the SAME widget key. Pre-v0.20.0
+        // this would briefly show podA's cached value (111) — a medical-grade
+        // hazard. Now the cache key incorporates identityHashCode(pod) so
+        // the lookup misses and podB's live value wins immediately.
+        final podB = Pod<int>(222);
+        await tester.pumpWidget(make(podB));
+        expect(
+          buildSnapshot,
+          222,
+          reason: 'A1: different pod must not read podA\'s cached value '
+              'even for one frame',
+        );
+      },
+    );
 
     testWidgets('cache miss for a different key — live pod value wins', (
       tester,
