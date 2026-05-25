@@ -319,6 +319,95 @@ void main() {
       expect(fires, 1);
     });
   });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Audit #5 (post-v0.20.0 hardening of v0.20.0 itself)
+  // ───────────────────────────────────────────────────────────────────────────
+  group('Audit #5: cond() guard against disposed pod', () {
+    test('cond() on an already-disposed pod returns Err synchronously', () {
+      final pod = Pod<int>(0);
+      pod.dispose();
+      final r = pod.cond((v) => v == 7);
+      // Returns synchronously because we bail out before allocating
+      // the SafeCompleter. Pre-fix, a non-matching predicate path
+      // would re-allocate the lazy `_pendingConds` and the
+      // SafeCompleter would never resolve — caller's `await` hung
+      // forever.
+      expect(r.isSync(), isTrue);
+      UNSAFE:
+      {
+        // r.sync().unwrap() is `Sync<int>`; its `.value` is the
+        // `Result<int>` (Ok or Err). Disposed-pod path returns Err.
+        expect(r.sync().unwrap().value.isErr(), isTrue);
+      }
+    });
+
+    test('cond() on a disposed pod resolves to Err via toAsync', () async {
+      final pod = Pod<int>(0);
+      pod.dispose();
+      final r = pod.cond((v) => v == 9999);
+      final result = await r.toAsync().value;
+      expect(result.isErr(), isTrue);
+    });
+  });
+
+  group('Audit #5: dispose() steps are individually guarded', () {
+    test(
+      'pod with pending conds disposes cleanly and surfaces Err on each',
+      () async {
+        final pod = Pod<int>(0);
+        final r1 = pod.cond((v) => v == 9999);
+        final r2 = pod.cond((v) => v == 9998);
+        pod.dispose();
+        expect(pod.isDisposed, isTrue);
+        final results = await Future.wait<Result<int>>([
+          r1.toAsync().value,
+          r2.toAsync().value,
+        ]);
+        for (final result in results) {
+          expect(result.isErr(), isTrue);
+        }
+      },
+    );
+  });
+
+  group('Audit #5: ReducerPod reducer-triggers-dispose safety', () {
+    test(
+      'disposing a ReducerPod between refreshes does not leave a stale '
+      'listener that NPEs on parent fire',
+      () {
+        final a = Pod<int>(1);
+        final b = Pod<int>(2);
+        final pSum = ReducerPod<int>(
+          responder: () => [Some(a), Some(b)],
+          reducer: (vs) {
+            UNSAFE:
+            return Some(
+              vs.fold<int>(
+                0,
+                (acc, v) => acc + (v.isSome() ? v.unwrap() as int : 0),
+              ),
+            );
+          },
+        );
+        expect(pSum.getValue(), 3);
+        pSum.dispose();
+        expect(pSum.isDisposed, isTrue);
+
+        // Pre-fix, a parent fire after a dispose-during-reducer would
+        // NPE on `_refresh!` because the listener captured a closure
+        // that re-reads the now-null `_refresh`. With the v0.20.0
+        // hardening (subscriptions only commit after the reducer
+        // returns AND only if `isDisposed` is false), no such stale
+        // listener can exist.
+        expect(() => a.set(10), returnsNormally);
+        expect(() => b.set(20), returnsNormally);
+
+        a.dispose();
+        b.dispose();
+      },
+    );
+  });
 }
 
 /// Test helper: lets us observe [isDisposed] from inside the

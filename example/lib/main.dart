@@ -221,11 +221,11 @@ class SearchResults extends StatelessWidget {
             return switch (resultsSnapshot.value) {
               None() => const Center(child: CircularProgressIndicator()),
               Some(value: Err(:final error)) => Center(
-                child: Text(
-                  'An error occurred: $error',
-                  style: const TextStyle(color: Colors.red),
+                  child: Text(
+                    'An error occurred: $error',
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
-              ),
               Some(value: Ok(value: final products)) =>
                 _buildProductList(query, products),
             };

@@ -179,34 +179,36 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
       if (!dup) toAdd.add(fresh);
     }
 
+    // Run the reducer FIRST. Subscriptions are only committed if the
+    // reducer succeeds and the pod is still alive afterwards. This
+    // makes the "reducer throws" and "reducer triggers dispose"
+    // paths trivially safe — no rollback is needed and a newly-joined
+    // parent cannot end up subscribed to a dead pod.
+    //
+    // Trade-off: a parent that "leaves" stays subscribed for the
+    // duration of the reducer call. That's fine; we already have a
+    // listener on it, and the [_isDirty] guard prevents re-entrant
+    // refreshes if it fires during the reducer.
+    final valuesToReduce = values.map((e) => e.map((e) => e.value)).toList();
+    final result = reducer(valuesToReduce);
+
+    // If the reducer (or a callback it triggered) disposed us, abandon
+    // the subscription update entirely. The dispose() path already
+    // cleared the original subscriptions; we must not re-attach to
+    // anything because a listener referencing `refresh` would NPE on
+    // the now-null `_refresh` when its parent next fires.
+    if (isDisposed) return result;
+
     for (final l in toRemove) {
       _detachListener(l, refresh);
     }
     for (final l in toAdd) {
       _attachListener(l, refresh);
     }
-
-    try {
-      final valuesToReduce = values.map((e) => e.map((e) => e.value)).toList();
-      final result = reducer(valuesToReduce);
-      // Commit the dedup'd new subscription set.
-      _listenables
-        ..removeAll(toRemove)
-        ..addAll(toAdd);
-      return result;
-    } catch (e) {
-      // Roll back so the pod's subscription state matches what was in
-      // effect before this call. The old implementation cleared every
-      // subscription on throw, leaving the pod silently dead until
-      // disposed.
-      for (final l in toAdd) {
-        _detachListener(l, refresh);
-      }
-      for (final l in toRemove) {
-        _attachListener(l, refresh);
-      }
-      rethrow;
-    }
+    _listenables
+      ..removeAll(toRemove)
+      ..addAll(toAdd);
+    return result;
   }
 
   /// Subscribes [refresh] to [l] using the API appropriate for the

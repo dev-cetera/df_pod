@@ -51,6 +51,18 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   ///   [SafeCompleter] permanently pending and a throwing initial sync
   ///   check propagated out of [cond] itself, depending on timing.
   Resolvable<T> cond(bool Function(T value) test) {
+    // Guard against calls on an already-disposed pod. Without this,
+    // a non-matching predicate would (re-)allocate [_pendingConds],
+    // pin the listener via [addStrongRefListener] (which only asserts
+    // in debug and silently appends in release), and the
+    // [SafeCompleter] would never resolve — the caller's `await` would
+    // hang forever. Brings post-dispose behaviour in line with the
+    // dispose-during-wait path that [_failPendingConds] handles.
+    if (isDisposed) {
+      return Sync.err(
+        Err(StateError('Cannot call cond() on a disposed pod')),
+      );
+    }
     final finisher = SafeCompleter<T>();
     late final VoidCallback check;
     check = () {
@@ -208,20 +220,30 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     );
   }
 
-  /// Disposes all children before disposing `this`.
+  /// Disposes all children, fails pending cond completers, then
+  /// disposes `this`.
   ///
-  /// Wrapped in try/finally so a child whose [dispose] throws still lets
-  /// [super.dispose] run — otherwise the pod was left half-disposed
-  /// (`isDisposed == false`, `_listeners` still attached) and subsequent
-  /// `set` calls kept firing listeners.
+  /// Each step is independently guarded so a throw in one cannot
+  /// prevent the others from running. Specifically, [super.dispose]
+  /// MUST run — without it the pod is left half-disposed
+  /// (`isDisposed == false`, `_listeners` still attached) and
+  /// subsequent `set` calls keep firing listeners. Previous
+  /// implementations wrapped only [disposeChildren] in try/finally,
+  /// so a throw inside [_failPendingConds] (rare — only via a
+  /// misbehaving `SafeCompleter` chain) would skip [super.dispose].
   @override
   void dispose() {
     try {
       disposeChildren();
-    } finally {
-      _failPendingConds();
-      super.dispose();
+    } catch (e) {
+      Log.err(e, tags: {#df_pod});
     }
+    try {
+      _failPendingConds();
+    } catch (e) {
+      Log.err(e, tags: {#df_pod});
+    }
+    super.dispose();
   }
 
   /// Errors every pending [cond] so callers awaiting one get a clean
