@@ -41,8 +41,19 @@ final class PodFinalizerWrapper<T extends Object> {
   /// it beyond what the finalizer token does.
   final WeakReference<PodNotifier<T>> pod;
 
+  /// A throw from inside a [Finalizer] callback is undefined behaviour
+  /// per the Dart spec, so any exception from [PodNotifier.dispose] is
+  /// caught and logged rather than allowed to escape.
   static final _finalizer = Finalizer<PodNotifier<dynamic>>((pod) {
-    if (!pod.isDisposed) pod.dispose();
+    try {
+      if (!pod.isDisposed) pod.dispose();
+    } catch (e, s) {
+      Log.err(e, tags: {#df_pod});
+      assert(() {
+        debugPrint('PodFinalizerWrapper.dispose threw: $e\n$s');
+        return true;
+      }());
+    }
   });
 
   PodFinalizerWrapper(PodNotifier<T> pod) : pod = WeakReference(pod) {

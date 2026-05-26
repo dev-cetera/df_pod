@@ -15,7 +15,7 @@
 //      propagation, type changes, intermediate-link death.
 //   2. Reducer arity helpers — `PodReducer1` … `PodReducer7` and
 //      `MultiplePodReducer`. We exercise every arity end-to-end and the
-//      single-responder-call invariant first guaranteed in v0.18.x.
+//      single-responder-call invariant.
 //   3. WeakChangeNotifier — `hasListeners`, swapping the listener set
 //      between notifies, the count-vs-capacity invariants the deeper
 //      tests don't quite hit.
@@ -242,7 +242,7 @@ void main() {
 
     test(
       '.reduce() where the second operand is the SAME pod as the first '
-      'is consistent (post-v0.20.0: subscriptions dedupe by identity, '
+      'is consistent (subscriptions dedupe by identity, '
       'reducer still sees both args)',
       () {
         final p = Pod<int>(1);

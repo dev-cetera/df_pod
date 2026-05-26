@@ -182,12 +182,8 @@ class AsyncPodBuilder<T extends Object> extends StatelessWidget {
           );
         } else {
           final cached = PodBuilderCacheManager.i.get(key?.toString());
-          // Surface pod-creation errors so the builder can render an error
-          // state instead of an indistinguishable "still loading" state.
-          // Earlier the FutureBuilder error path was silently mapped to
-          // `pod: None`, which is the same shape as the loading state —
-          // critical for medical-grade callers that need to escalate a
-          // failed lookup rather than spin forever.
+          // Surface pod-creation errors as Some(Err) so the builder can
+          // render an error state distinct from "still loading" (None).
           final Option<Result<ValueListenable<T>>> podOpt;
           if (snapshot.hasError) {
             podOpt = Some(
@@ -289,9 +285,9 @@ final class PodResultBuilderState<T extends Object>
       oldWidget.pod
           .ifOk((self, ok) => ok.unwrap().removeListener(_valueChanged))
           .end();
-      // When the pod identity changes under the same widget key, the cache
-      // still holds the previous pod's value. Reading from the cache here
-      // would shadow the new pod's live value until the new pod first fires.
+      // If the pod identity changes under the same widget key, the
+      // cache still holds the previous pod's value — reading it would
+      // shadow the new pod until the new pod first fires.
       final podIdentityChanged = !identical(
         oldWidget.pod.isOk() ? oldWidget.pod.unwrap() : null,
         widget.pod.isOk() ? widget.pod.unwrap() : null,
@@ -309,22 +305,17 @@ final class PodResultBuilderState<T extends Object>
   //
 
   /// Memoised cache key. `null` means "not yet computed"; once computed
-  /// it stays valid until [didUpdateWidget] invalidates it. The compound
-  /// key (widget key + pod identityHashCode) is the same for every call
-  /// during a single mount, so we save the string allocation on every
-  /// pod fire / build. See v0.20.0 O4.
+  /// it stays valid until [didUpdateWidget] invalidates it. Saves the
+  /// string allocation on every pod fire / build.
   String? _cachedCacheKey;
   bool _cacheKeyComputed = false;
 
-  /// Returns the cache key for the current widget+pod pair, or `null` if
-  /// caching is disabled for this build.
+  /// Returns the cache key for the current widget+pod pair, or `null`
+  /// if caching is disabled for this build.
   ///
   /// The pod's [identityHashCode] is appended to the widget key so two
   /// `PodBuilder`s with the same `Key` but different pods cannot read
-  /// each other's cached values. This used to be possible: a fresh
-  /// mount with the same widget key but a different pod would show the
-  /// *previous* pod's value for the first frame (a medical-grade hazard
-  /// — one frame of wrong data is one frame too many). See v0.20.0 A1.
+  /// each other's cached values.
   String? _resolvedCacheKey() {
     if (_cacheKeyComputed) return _cachedCacheKey;
     final widgetKey = widget.key;
@@ -383,9 +374,8 @@ final class PodResultBuilderState<T extends Object>
 
   /// Stable tear-off so [addListener] / [removeListener] always see the
   /// same identity across rebuilds. Reads [widget.debounceDuration] at
-  /// call time so a parent that swaps debounce on the fly takes effect on
-  /// the next event — earlier this was a `late` closure that captured
-  /// the *initial* duration and silently ignored updates.
+  /// call time so a parent that swaps debounce on the fly takes effect
+  /// on the next event.
   late final VoidCallback _valueChanged = _onPodChange;
 
   void _onPodChange() {

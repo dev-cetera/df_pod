@@ -366,13 +366,9 @@ void main() {
 
   group('PodBuilder cache (key + cacheDuration)', () {
     testWidgets('cache survives a same-key remount within TTL', (tester) async {
-      // v0.20.0 A1: cache keys now include the pod's identityHashCode, so
-      // the cache is only served on remount with the SAME pod instance.
-      // A remount with a DIFFERENT pod (same widget key) used to serve
-      // the previous pod's value on the first frame — a medical-grade
-      // hazard. The "different-pod remount" branch of this test is now
-      // a separate `cache does NOT serve a different pod's value` test
-      // below.
+      // Cache keys include the pod's identityHashCode, so the cache is
+      // only served on remount with the SAME pod instance. The
+      // different-pod case has its own test below.
       final pod = Pod<int>(111);
       const key = ValueKey('cache_test_ttl');
       var buildSnapshot = -1;
@@ -433,16 +429,15 @@ void main() {
         expect(buildSnapshot, 111);
         await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
-        // Re-mount with a DIFFERENT pod under the SAME widget key. Pre-v0.20.0
-        // this would briefly show podA's cached value (111) — a medical-grade
-        // hazard. Now the cache key incorporates identityHashCode(pod) so
-        // the lookup misses and podB's live value wins immediately.
+        // Re-mount with a different pod under the same widget key.
+        // The cache key incorporates identityHashCode(pod), so the
+        // lookup misses and podB's live value wins immediately.
         final podB = Pod<int>(222);
         await tester.pumpWidget(make(podB));
         expect(
           buildSnapshot,
           222,
-          reason: 'A1: different pod must not read podA\'s cached value '
+          reason: 'different pod must not read podA\'s cached value '
               'even for one frame',
         );
       },

@@ -1,18 +1,5 @@
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//
-// Regression tests for the v0.20.0 optimization pass. These tests
-// verify CORRECTNESS, not performance — perf claims are documented in
-// CHANGELOG. The point here is to prove that the optimizations
-// preserve every observable behaviour the test suite already guarantees.
-//
-//   - O1: ReducerPod diff (only mutates listeners that actually changed)
-//   - O2: WeakChangeNotifier._compactListeners fast-path skips when
-//         nothing died during the notify
-//   - O3: ChildPod identity short-circuit when parent list is unchanged
-//   - O4: PodBuilder/PodListBuilder cache-key memoization
-//   - MO1: PodCollectionBuilder identity-Set diff
-//
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// Correctness regression tests for the optimization paths. Group titles
+// describe each scenario.
 
 import 'package:df_pod/df_pod.dart';
 import 'package:df_safer_dart/df_safer_dart.dart';
@@ -23,10 +10,7 @@ Widget _wrap(Widget child) =>
     Directionality(textDirection: TextDirection.ltr, child: child);
 
 void main() {
-  // ───────────────────────────────────────────────────────────────────────────
-  // O1: ReducerPod diff correctness
-  // ───────────────────────────────────────────────────────────────────────────
-  group('O1: ReducerPod diff', () {
+  group('ReducerPod diff', () {
     test('stable parent list — listeners survive across many refreshes', () {
       final a = Pod<int>(1);
       final b = Pod<int>(2);
@@ -134,10 +118,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // O2: WeakChangeNotifier compaction fast-path
-  // ───────────────────────────────────────────────────────────────────────────
-  group('O2: compactListeners fast path', () {
+  group('compactListeners fast path', () {
     test('many notifies with stable listeners — no spurious recompaction', () {
       final pod = Pod<int>(0);
       // Stable, alive listeners.
@@ -159,10 +140,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // O3: ChildPod identity short-circuit
-  // ───────────────────────────────────────────────────────────────────────────
-  group('O3: ChildPod identity short-circuit', () {
+  group('ChildPod identity short-circuit', () {
     test('stable parent list — child still propagates updates correctly', () {
       final parent = Pod<int>(1);
       final child = parent.map<int>((v) => v * 10);
@@ -199,10 +177,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // O4: cache-key memoization
-  // ───────────────────────────────────────────────────────────────────────────
-  group('O4: cache-key memo', () {
+  group('cache-key memo', () {
     setUp(PodBuilderCacheManager.i.clear);
 
     testWidgets('cache survives many rebuilds with the same pod',
@@ -265,10 +240,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // MO1: PodCollectionBuilder identity-Set diff
-  // ───────────────────────────────────────────────────────────────────────────
-  group('MO1: PodCollectionBuilder identity-set diff', () {
+  group('PodCollectionBuilder identity-set diff', () {
     testWidgets(
       'large dynamic inner list — diff stays correct under churn',
       (tester) async {

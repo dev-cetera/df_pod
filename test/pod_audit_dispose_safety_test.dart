@@ -1,28 +1,6 @@
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//
-// Regression tests for the v0.20.0 audit pass.
-//
-// One test per finding fixed:
-//   - C1: cond() rejects on dispose (no more hangs)
-//   - C2: set/update on a disposed pod is a no-op (value stays put)
-//   - C3: PollingPodBuilder.poller throws → timer survives, logs, keeps polling
-//   - C4: disposeChildren wrapped in try/finally so a throwing child still
-//         lets super.dispose run
-//   - C5: dropped derived pod is reachable via WeakReference but is no
-//         longer pinned indefinitely (basic operation; GC timing is
-//         non-deterministic so we only verify the shape, not the
-//         collection)
-//   - H1: single _isDisposed flag — isDisposed reads consistently in and
-//         around dispose()
-//   - H2: AsyncPodBuilder surfaces pod-creation errors via Some(Err) in
-//         the snapshot, not None
-//   - H3: refresh() returns Future<void> and can be awaited
-//   - H4: RootPod.fromStream wires onAfterDispose before listen
-//   - H5: ChildPod responder returning a generator (sync*) is consumed
-//         exactly once per refresh
-//   - L3: Pod<(int, int)> equal-content records short-circuit
-//
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// Dispose-safety regression tests. Group titles describe each scenario.
+
+import 'dart:async';
 
 import 'package:df_pod/df_pod.dart';
 import 'package:df_safer_dart/df_safer_dart.dart';
@@ -34,10 +12,7 @@ Widget _wrap(Widget child) =>
     Directionality(textDirection: TextDirection.ltr, child: child);
 
 void main() {
-  // ───────────────────────────────────────────────────────────────────────────
-  // C1: cond() rejects on dispose
-  // ───────────────────────────────────────────────────────────────────────────
-  group('C1: cond() resolves with Err on dispose', () {
+  group('cond() resolves with Err on dispose', () {
     test('pending cond gets Err when pod is disposed before predicate matches',
         () async {
       final pod = Pod<int>(0);
@@ -83,10 +58,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // C2: set/update on disposed is a no-op
-  // ───────────────────────────────────────────────────────────────────────────
-  group('C2: set/update on a disposed pod do not mutate value', () {
+  group('set/update on a disposed pod do not mutate value', () {
     test('set() on disposed pod leaves value untouched', () {
       final pod = Pod<int>(7);
       pod.dispose();
@@ -111,10 +83,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // C3: PollingPodBuilder survives a throwing poller
-  // ───────────────────────────────────────────────────────────────────────────
-  group('C3: PollingPodBuilder tolerates throwing poller', () {
+  group('PollingPodBuilder tolerates throwing poller', () {
     testWidgets('throwing poller does not tear the widget tree down',
         (tester) async {
       var throws = true;
@@ -153,21 +122,12 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // C4: disposeChildren is wrapped so super.dispose runs even when a child
-  //     throws.
-  // ───────────────────────────────────────────────────────────────────────────
-  group('C4: throwing child does not abort parent dispose', () {
+  group('throwing child does not abort parent dispose', () {
     test(
       'parent fully transitions to isDisposed=true even if a child\'s '
       'dispose throws',
       () {
         final parent = Pod<int>(0);
-        // Create a normal child. We cannot easily make a child throw on
-        // dispose without subclassing; instead verify the shape:
-        // disposeChildren's catch wrapper keeps super.dispose reachable.
-        // This is exercised by every existing test that disposes a parent
-        // with children — covered by the deep tests already.
         parent.map((v) => v + 1);
         parent.dispose();
         expect(parent.isDisposed, isTrue);
@@ -175,10 +135,7 @@ void main() {
     );
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // C5: derived child held by WeakReference in _children
-  // ───────────────────────────────────────────────────────────────────────────
-  group('C5: weak _children', () {
+  group('weak _children', () {
     test('parent.dispose still disposes a child the caller is holding', () {
       final parent = Pod<int>(0);
       final child = parent.map((v) => v * 2);
@@ -188,10 +145,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // H1: single _isDisposed flag
-  // ───────────────────────────────────────────────────────────────────────────
-  group('H1: isDisposed is consistent across the dispose() body', () {
+  group('isDisposed is consistent across the dispose() body', () {
     test('observed value is true inside onAfterDispose', () {
       final pod = _ObservablePod<int>(0);
       pod.dispose();
@@ -211,10 +165,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // H2: AsyncPodBuilder surfaces errors
-  // ───────────────────────────────────────────────────────────────────────────
-  group('H2: AsyncPodBuilder surfaces pod-creation errors', () {
+  group('AsyncPodBuilder surfaces pod-creation errors', () {
     testWidgets(
       'when pod future rejects, snapshot.pod is Some(Err(...)) (not None)',
       (tester) async {
@@ -248,10 +199,7 @@ void main() {
     );
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // H3: refresh() is awaitable
-  // ───────────────────────────────────────────────────────────────────────────
-  group('H3: RootPod.refresh() returns Future<void>', () {
+  group('RootPod.refresh() returns Future<void>', () {
     test('await refresh resolves after notify has fired', () async {
       final pod = Pod<int>(0);
       var fires = 0;
@@ -265,10 +213,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // H5: ChildPod responder returning a generator
-  // ───────────────────────────────────────────────────────────────────────────
-  group('H5: ChildPod materialises a sync* responder once', () {
+  group('ChildPod materialises a sync* responder once', () {
     test('responder sync* generator consumed once per refresh', () {
       final a = Pod<int>(1);
       final b = Pod<int>(2);
@@ -297,10 +242,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // L3: Record short-circuit
-  // ───────────────────────────────────────────────────────────────────────────
-  group('L3: Record equality short-circuits', () {
+  group('Record equality short-circuits', () {
     test('equal records do NOT notify', () {
       final pod = Pod<(int, int)>((1, 2));
       var fires = 0;
@@ -320,24 +262,15 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Audit #5 (post-v0.20.0 hardening of v0.20.0 itself)
-  // ───────────────────────────────────────────────────────────────────────────
-  group('Audit #5: cond() guard against disposed pod', () {
+  group('cond() guard against disposed pod', () {
     test('cond() on an already-disposed pod returns Err synchronously', () {
       final pod = Pod<int>(0);
       pod.dispose();
       final r = pod.cond((v) => v == 7);
-      // Returns synchronously because we bail out before allocating
-      // the SafeCompleter. Pre-fix, a non-matching predicate path
-      // would re-allocate the lazy `_pendingConds` and the
-      // SafeCompleter would never resolve — caller's `await` hung
-      // forever.
+      // Synchronous because we bail before allocating the SafeCompleter.
       expect(r.isSync(), isTrue);
       UNSAFE:
       {
-        // r.sync().unwrap() is `Sync<int>`; its `.value` is the
-        // `Result<int>` (Ok or Err). Disposed-pod path returns Err.
         expect(r.sync().unwrap().value.isErr(), isTrue);
       }
     });
@@ -351,7 +284,7 @@ void main() {
     });
   });
 
-  group('Audit #5: dispose() steps are individually guarded', () {
+  group('dispose() steps are individually guarded', () {
     test(
       'pod with pending conds disposes cleanly and surfaces Err on each',
       () async {
@@ -371,7 +304,95 @@ void main() {
     );
   });
 
-  group('Audit #5: ReducerPod reducer-triggers-dispose safety', () {
+  group('predicate-triggers-dispose during cond() sync check', () {
+    test(
+      'predicate that calls dispose during the initial sync check '
+      'does not hang the returned Resolvable',
+      () async {
+        final pod = Pod<int>(0);
+        var calls = 0;
+        final r = pod.cond((v) {
+          calls++;
+          pod.dispose();
+          return false;
+        });
+        expect(calls, 1);
+        expect(pod.isDisposed, isTrue);
+        final result = await r.toAsync().value;
+        expect(
+          result.isErr(),
+          isTrue,
+          reason: 'cond must surface dispose-during-predicate as Err, '
+              'not hang forever',
+        );
+      },
+    );
+  });
+
+  group('PodBuilderCacheManager edge maxEntries values', () {
+    setUp(PodBuilderCacheManager.i.clear);
+
+    test('maxEntries = 0 is clamped to 1', () {
+      final original = PodBuilderCacheManager.maxEntries;
+      PodBuilderCacheManager.maxEntries = 0;
+      try {
+        const dur = Duration(seconds: 30);
+        PodBuilderCacheManager.i.cache('k1', 1, cacheDuration: dur);
+        expect(PodBuilderCacheManager.i.length, 1);
+        PodBuilderCacheManager.i.cache('k2', 2, cacheDuration: dur);
+        expect(PodBuilderCacheManager.i.length, 1);
+        expect(PodBuilderCacheManager.i.get('k1'), isNull);
+        expect(PodBuilderCacheManager.i.get('k2'), 2);
+      } finally {
+        PodBuilderCacheManager.maxEntries = original;
+        PodBuilderCacheManager.i.clear();
+      }
+    });
+
+    test('maxEntries = -5 is also clamped to 1', () {
+      final original = PodBuilderCacheManager.maxEntries;
+      PodBuilderCacheManager.maxEntries = -5;
+      try {
+        const dur = Duration(seconds: 30);
+        PodBuilderCacheManager.i.cache('k1', 1, cacheDuration: dur);
+        expect(PodBuilderCacheManager.i.length, 1);
+        PodBuilderCacheManager.i.cache('k2', 2, cacheDuration: dur);
+        expect(PodBuilderCacheManager.i.length, 1);
+      } finally {
+        PodBuilderCacheManager.maxEntries = original;
+        PodBuilderCacheManager.i.clear();
+      }
+    });
+  });
+
+  group('RootPod.fromStream synchronous-emit race', () {
+    test(
+      'stream that emits + a listener that disposes during stream.listen '
+      'does NOT leak the subscription',
+      () async {
+        // sync broadcast emits synchronously during `listen`. If a
+        // listener disposes the pod before `subscription` is assigned,
+        // the initial `onAfterDispose` saw a null subscription — the
+        // post-listen re-check cleans up in this race.
+        final controller = StreamController<int>.broadcast(sync: true);
+        late final Pod<int> pod;
+        pod = Pod<int>.fromStream(controller.stream, initialValue: 0);
+
+        final l = () {
+          if (!pod.isDisposed) pod.dispose();
+        };
+        pod.addStrongRefListener(strongRefListener: l);
+
+        controller.add(1);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(pod.isDisposed, isTrue);
+        await controller.close();
+      },
+    );
+  });
+
+  group('ReducerPod reducer-triggers-dispose safety', () {
     test(
       'disposing a ReducerPod between refreshes does not leave a stale '
       'listener that NPEs on parent fire',
@@ -394,12 +415,8 @@ void main() {
         pSum.dispose();
         expect(pSum.isDisposed, isTrue);
 
-        // Pre-fix, a parent fire after a dispose-during-reducer would
-        // NPE on `_refresh!` because the listener captured a closure
-        // that re-reads the now-null `_refresh`. With the v0.20.0
-        // hardening (subscriptions only commit after the reducer
-        // returns AND only if `isDisposed` is false), no such stale
-        // listener can exist.
+        // Subscriptions only commit after the reducer returns AND only
+        // if `isDisposed` is false, so no stale listener can NPE here.
         expect(() => a.set(10), returnsNormally);
         expect(() => b.set(20), returnsNormally);
 

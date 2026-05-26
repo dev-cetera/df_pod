@@ -33,21 +33,17 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
 
   RootPod(this.value);
 
-  /// Creates a [RootPod] whose value tracks [stream]. Errors emitted by the
-  /// stream are passed to [onError]; if [onError] is not supplied they are
-  /// logged via `df_log` so they do not propagate to the zone's uncaught
-  /// handler. The subscription is cancelled on [dispose].
+  /// Creates a [RootPod] whose value tracks [stream]. Errors emitted by
+  /// the stream are passed to [onError]; if [onError] is not supplied
+  /// they are logged via `df_log`. The subscription is cancelled on
+  /// [dispose].
   ///
-  /// In-flight events that arrive after [dispose] (the async [StreamSubscription.cancel]
-  /// hasn't propagated yet) are dropped instead of hitting the disposed-pod
-  /// assertion in [WeakChangeNotifier.notifyListeners].
+  /// In-flight events that arrive after [dispose] (before the async
+  /// [StreamSubscription.cancel] propagates) are dropped.
   ///
-  /// Implementation note: `onAfterDispose` is wired up *before* [stream.listen]
-  /// is called so a synchronous emit during listen (e.g. a behaviour-subject
-  /// stream that drains on subscribe) cannot leak the subscription if a
-  /// callback in the same microtask disposes the pod. The subscription field
-  /// is nullable to bridge the gap between wiring up the handler and the
-  /// `listen` call returning.
+  /// `onAfterDispose` is wired *before* [stream.listen] runs so a
+  /// synchronous emit on subscribe cannot leak the subscription if a
+  /// callback disposes the pod in the same microtask.
   RootPod.fromStream(
     Stream<T> stream, {
     required T initialValue,
@@ -56,7 +52,12 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
     StreamSubscription<T>? subscription;
     onAfterDispose = () {
       final s = subscription;
-      if (s != null) unawaited(s.cancel());
+      if (s == null) return;
+      // A throw from cancel — uncommon, usually a misbehaving stream
+      // transformer — should surface in the log, not be swallowed.
+      s.cancel().catchError((Object e, StackTrace st) {
+        Log.err(e, tags: {#df_pod});
+      });
     };
     subscription = stream.listen(
       (v) {
@@ -72,6 +73,15 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
         }
       },
     );
+    // If a synchronous emit during `listen` already disposed us,
+    // `onAfterDispose` ran against a still-null `subscription`. Cancel
+    // the now-assigned subscription explicitly so it doesn't outlive
+    // the pod.
+    if (isDisposed) {
+      subscription.cancel().catchError((Object e, StackTrace st) {
+        Log.err(e, tags: {#df_pod});
+      });
+    }
   }
 
   /// Returns the current value of the Pod and calls [refresh].
@@ -85,13 +95,10 @@ base class RootPod<T extends Object> extends PodNotifier<T> with GenericPod<T> {
     return value;
   }
 
-  /// Sets the value of the Pod to [newValue] and calls [notifyListeners] if
-  /// the value is different from the current value.
+  /// Sets the value of the Pod to [newValue] and calls [notifyListeners]
+  /// if the value is different from the current value.
   ///
-  /// No-op on a disposed pod (the value field is *not* mutated). This is a
-  /// behavior change from the silent-mutate semantics in earlier revisions,
-  /// where the value field was overwritten and only the debug-only assert
-  /// in [notifyListeners] flagged the misuse.
+  /// No-op on a disposed pod (the value field is *not* mutated).
   void set(T newValue, {bool notifyImmediately = true}) {
     _set(newValue, notifyImmediately: notifyImmediately);
   }

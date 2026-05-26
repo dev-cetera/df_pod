@@ -1,27 +1,5 @@
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//
-// Regression tests for the v0.20.0 optimization pass.
-//
-//   - P1: ReducerPod._listenables stored as Set.identity() — diff uses
-//         O(1) "already subscribed?" lookups, no per-refresh `oldSet`
-//         allocation.
-//   - P2: Deferred notifications coalesce — multiple
-//         `set(.., notifyImmediately: false)` within one frame produce
-//         exactly one notification, not N.
-//   - P3: _pendingConds is lazy-initialised — pods that never call
-//         `cond()` don't allocate the Set.
-//   - P4: _pinnedListeners is lazy-initialised — pods that never use
-//         pinning helpers don't allocate the Set.
-//   - P5: PodCollectionBuilder uses linear diff for small lists, set
-//         diff for large lists. Both branches produce identical
-//         observable behavior.
-//
-// The optimizations are *observably* correctness-preserving — these
-// tests check the new emergent behaviour (coalescing) and the
-// invariants any optimization must keep (round-trip subscription
-// changes, dispose cleanup).
-//
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// Listener-path optimization regression tests. Group titles describe
+// each scenario.
 
 import 'package:df_pod/df_pod.dart';
 import 'package:df_safer_dart/df_safer_dart.dart';
@@ -32,10 +10,7 @@ Widget _wrap(Widget child) =>
     Directionality(textDirection: TextDirection.ltr, child: child);
 
 void main() {
-  // ───────────────────────────────────────────────────────────────────────────
-  // P1: ReducerPod with Set-typed _listenables still behaves correctly
-  // ───────────────────────────────────────────────────────────────────────────
-  group('P1: ReducerPod _listenables as Set', () {
+  group('ReducerPod _listenables as Set', () {
     test('static parents — many updates propagate end-to-end', () {
       final a = Pod<int>(1);
       final b = Pod<int>(2);
@@ -122,10 +97,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // P2: Coalesced deferred notifications
-  // ───────────────────────────────────────────────────────────────────────────
-  group('P2: deferred notify coalescing', () {
+  group('deferred notify coalescing', () {
     testWidgets(
       'N rapid sets with notifyImmediately:false → 1 notify per frame',
       (tester) async {
@@ -233,10 +205,7 @@ void main() {
     );
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // P3: _pendingConds lazy init does not regress cond() semantics
-  // ───────────────────────────────────────────────────────────────────────────
-  group('P3: cond() with lazy _pendingConds', () {
+  group('cond() with lazy _pendingConds', () {
     test('cond() resolves on match', () async {
       final pod = Pod<int>(0);
       final r = pod.cond((v) => v == 7);
@@ -263,10 +232,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // P4: _pinnedListeners lazy init does not regress pin/unpin
-  // ───────────────────────────────────────────────────────────────────────────
-  group('P4: lazy _pinnedListeners', () {
+  group('lazy _pinnedListeners', () {
     test('addSingleExecutionListener still fires exactly once', () {
       final pod = Pod<int>(0);
       var fires = 0;
@@ -295,10 +261,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // P5: PodCollectionBuilder adaptive diff
-  // ───────────────────────────────────────────────────────────────────────────
-  group('P5: PodCollectionBuilder linear-vs-set diff', () {
+  group('PodCollectionBuilder linear-vs-set diff', () {
     testWidgets('small inner list (linear branch) produces correct diff',
         (tester) async {
       final source = Pod<int>(0);

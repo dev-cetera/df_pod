@@ -27,11 +27,6 @@ import '/_common.dart';
 /// new set against the current subscriptions by identity, adds new
 /// listeners, removes gone ones, and rebuilds.
 ///
-/// Previously this pattern required manual `addStrongRefListener` calls
-/// plus a hand-rolled bookkeeping list (e.g. `_subscribedJobServices`) to
-/// track which inner pods were currently observed. [PodCollectionBuilder]
-/// subsumes that machinery.
-///
 /// ## Example
 ///
 /// ```dart
@@ -160,21 +155,13 @@ class _PodCollectionBuilderState extends State<PodCollectionBuilder> {
   ///
   /// Exception safety: each attach/detach is independently guarded
   /// inside [_attach]/[_detach] so one rogue Listenable cannot leave
-  /// the bookkeeping desynced. [widget.innerPods] itself is also
-  /// guarded — if it throws, we leave the current subscription set
-  /// unchanged and log; this is a stable failure mode rather than a
-  /// half-mutated state that would cause cascading bugs on subsequent
-  /// rebuilds.
+  /// the bookkeeping desynced. If [widget.innerPods] itself throws,
+  /// we leave the current subscription set unchanged and log.
   ///
-  /// Algorithm: adaptive (v0.20.0 P5). For small collections (the common
-  /// case — most uses are a handful of tiles), a linear identity scan
-  /// is faster than allocating two identity Sets and paying the hash
-  /// overhead. Above the threshold, the algorithm switches to O(N + M)
-  /// via Sets, where N = old subscribed count, M = new inner-pod count.
-  ///
-  /// `Set.identity()` is correct here: `Listenable` subclasses (Pod,
-  /// ChildPod, ValueNotifier, ...) all inherit default `Object.==` so
-  /// identity == equality.
+  /// Adaptive algorithm: a linear identity scan for small collections
+  /// (the common case), Set-based O(N+M) above the threshold.
+  /// `Set.identity()` is correct here: `Listenable` subclasses all
+  /// inherit default `Object.==` so identity == equality.
   void _syncSubscriptions() {
     List<Listenable> next;
     try {
@@ -191,7 +178,7 @@ class _PodCollectionBuilderState extends State<PodCollectionBuilder> {
 
     const smallThreshold = 8;
     if (_subscribed.length <= smallThreshold && next.length <= smallThreshold) {
-      // Linear: zero-allocation. Faster for typical dashboards.
+      // Linear: zero-allocation.
       for (final p in _subscribed) {
         if (!_listContainsIdentical(next, p)) _detach(p);
       }
@@ -199,8 +186,7 @@ class _PodCollectionBuilderState extends State<PodCollectionBuilder> {
         if (!_listContainsIdentical(_subscribed, p)) _attach(p);
       }
     } else {
-      // Set-based: O(N+M). Faster for large dashboards / wide
-      // collection builders (>8 inner pods).
+      // Set-based: O(N+M) for >8 inner pods.
       final nextSet = Set<Listenable>.identity()..addAll(next);
       final oldSet = Set<Listenable>.identity()..addAll(_subscribed);
       for (final p in _subscribed) {

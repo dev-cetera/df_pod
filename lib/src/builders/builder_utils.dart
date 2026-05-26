@@ -36,17 +36,13 @@ class BuilderSnapshot {
 ///   both maps).
 /// - `cacheDuration == Duration.zero`: stored but immediately evicted on
 ///   first [get] — effectively "no cache."
-/// - `cacheDuration == null`: **the store is skipped entirely**. Earlier
-///   revisions treated null as "cache forever" which caused entries to
-///   accumulate indefinitely on long-running deployments; that footgun
-///   is now closed. Callers that want unbounded caching should pass an
-///   explicit large `Duration`.
+/// - `cacheDuration == null`: the store is skipped entirely. Callers
+///   that want unbounded caching should pass an explicit large
+///   `Duration`.
 ///
-/// Expiration is lazy: nothing fires when an entry ages out, the next
-/// [get] for that key sees the timestamp has passed and evicts it from
-/// both the value map and the expiry map. This avoids leaving real
-/// [Timer]s pending in [flutter_test] (which fails with
-/// "A Timer is still pending even after the widget tree was disposed").
+/// Expiration is lazy: no [Timer] is scheduled — the next [get] for a
+/// key sees the timestamp has passed and evicts. Avoids leaving real
+/// timers pending in [flutter_test].
 final class PodBuilderCacheManager {
   final CacheManager<Object> _inner;
   final _expirations = <String, DateTime>{};
@@ -54,12 +50,9 @@ final class PodBuilderCacheManager {
 
   static final i = PodBuilderCacheManager._(CacheManager<Object>());
 
-  /// Hard cap on simultaneously-cached entries. Prevents unbounded
-  /// memory growth in long-running deployments (medical-grade apps may
-  /// run for days). When the cap is reached on a *new-key* insert, the
-  /// oldest entries (insertion-order) are evicted to make room.
-  ///
-  /// Tunable for unusual workloads — assignable via [maxEntries].
+  /// Hard cap on simultaneously-cached entries. When the cap is reached
+  /// on a *new-key* insert, the oldest entries (insertion-order) are
+  /// evicted to make room.
   static int maxEntries = 256;
 
   void cache(String key, Object value, {Duration? cacheDuration}) {
@@ -69,11 +62,13 @@ final class PodBuilderCacheManager {
       _evict(key);
       return;
     }
-    // If we are at capacity and this is a *new* key, evict the oldest
-    // entry first. Refreshing an existing key never grows the map and
-    // does not trigger eviction.
-    if (!_expirations.containsKey(key) && _expirations.length >= maxEntries) {
-      final overflow = _expirations.length - maxEntries + 1;
+    // Clamp to at least 1 so a misconfigured `maxEntries <= 0` doesn't
+    // evict every entry we just inserted.
+    final effectiveCap = maxEntries < 1 ? 1 : maxEntries;
+    // At capacity on a new-key insert, evict the oldest first.
+    // Refreshing an existing key never grows the map.
+    if (!_expirations.containsKey(key) && _expirations.length >= effectiveCap) {
+      final overflow = _expirations.length - effectiveCap + 1;
       final toEvict = _expirations.keys.take(overflow).toList();
       for (final k in toEvict) {
         _evict(k);
@@ -93,24 +88,18 @@ final class PodBuilderCacheManager {
     return _inner.get(key);
   }
 
-  /// Removes [key] from both maps together. The previous behavior of
-  /// removing only from [_expirations] turned every short-lived widget key
-  /// into a permanent entry in [_inner].
+  /// Removes [key] from both maps together.
   void _evict(String key) {
     _expirations.remove(key);
     _inner.remove(key);
   }
 
-  /// Clears every entry. Intended for tests; production code should let
-  /// entries expire naturally.
   @visibleForTesting
   void clear() {
     _expirations.clear();
     _inner.clear();
   }
 
-  /// Current entry count. Exposed for tests and diagnostics; production
-  /// code should not depend on this for behaviour.
   @visibleForTesting
   int get length => _expirations.length;
 }

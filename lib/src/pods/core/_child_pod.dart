@@ -92,10 +92,9 @@ final class ChildPod<TParent extends Object, TChild extends Object>
       // racy (different parents could appear in different walks).
       final newParents = _responder().toList();
 
-      // Fast path (v0.20.0 O3): if the parent list is unchanged by
-      // element identity, skip the subscription diff entirely and just
-      // recompute the value. Common case for `.map()` and arity reducer
-      // helpers whose responder returns the same parents every fire.
+      // If the parent list is unchanged by element identity, skip the
+      // subscription diff and just recompute the value. Common case for
+      // `.map()` and arity reducer helpers.
       if (!_parentsIdenticalTo(newParents)) {
         final oldParentsSet = _parents.nonNulls.toSet();
         final newParentsSet = newParents.nonNulls.toSet();

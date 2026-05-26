@@ -102,10 +102,9 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
   //
   //
 
-  /// Stored as an identity-keyed Set (v0.20.0 P1) so the per-refresh
-  /// diff in [_getValue] can do O(1) "is this already subscribed?"
-  /// lookups instead of allocating a temporary `oldSet` every call.
-  /// Iteration order doesn't matter for any consumer.
+  /// Identity-keyed Set so the per-refresh diff in [_getValue] can do
+  /// O(1) "is this already subscribed?" lookups without allocating a
+  /// temporary `oldSet`. Iteration order doesn't matter for any consumer.
   final _listenables = Set<ValueListenable<Object>>.identity();
 
   //
@@ -114,23 +113,14 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
 
   /// Refreshes the cached value and reconciles parent subscriptions.
   ///
-  /// v0.20.0 (O1): Diffs subscriptions instead of remove-all-then-add-all.
-  /// For a [ReducerPod] watching N stable parents that update at high
-  /// frequency, this avoids 2·N listener-list mutations per parent fire.
-  /// On reducer throw, subscriptions roll back so the pod remains
-  /// consistent with [_listenables] (the old code left the pod with
-  /// zero subscriptions on throw, silently freezing it).
+  /// Diffs subscriptions rather than remove-all-then-add-all, so a
+  /// ReducerPod watching N stable parents avoids 2·N listener-list
+  /// mutations per parent fire. The "is this still wanted?" check
+  /// adaptively uses a linear identity scan (small N — the common
+  /// case, 2-3 parents) or a one-shot Set conversion (large N).
   ///
-  /// v0.20.0 (P1 + P5): [_listenables] is now an identity-Set so the
-  /// per-refresh "is this already subscribed?" check is O(1) without
-  /// allocating an `oldSet` copy. The "is this still wanted?" check
-  /// against [newListenables] adaptively uses either a linear identity
-  /// scan (small) or a one-shot Set conversion (large) — the small
-  /// case is the common one for ReducerPod (typically 2-3 parents) and
-  /// linear is faster than a hashed lookup at that size.
-  ///
-  /// Duplicate listenables in the responder output collapse to a single
-  /// subscription (matches [ChildPod]'s `_addChild` dedup behaviour).
+  /// Duplicate listenables in the responder output collapse to a
+  /// single subscription (matches [ChildPod]'s `_addChild` dedup).
   Option<T> _getValue() {
     final refresh = _refresh!;
     final values = responder().toList();
@@ -141,10 +131,8 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
       newListenables.add(option.unwrap());
     }
 
-    // Threshold tuned for the typical case: ReducerPods almost always
-    // watch 2-7 parents. Below the threshold, the linear identical()
-    // scan is faster (and zero-allocation); above it, the Set conversion
-    // pays off because the inner `contains` becomes O(1).
+    // Below the threshold, a linear identical() scan is faster and
+    // allocation-free; above it, the Set conversion pays off.
     const smallThreshold = 8;
     final useSetForNew = newListenables.length > smallThreshold;
     final newSet = useSetForNew
@@ -179,24 +167,18 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
       if (!dup) toAdd.add(fresh);
     }
 
-    // Run the reducer FIRST. Subscriptions are only committed if the
-    // reducer succeeds and the pod is still alive afterwards. This
-    // makes the "reducer throws" and "reducer triggers dispose"
-    // paths trivially safe — no rollback is needed and a newly-joined
-    // parent cannot end up subscribed to a dead pod.
-    //
-    // Trade-off: a parent that "leaves" stays subscribed for the
-    // duration of the reducer call. That's fine; we already have a
-    // listener on it, and the [_isDirty] guard prevents re-entrant
-    // refreshes if it fires during the reducer.
+    // Run the reducer before committing subscription changes. If the
+    // reducer throws or triggers dispose, no rollback is needed and a
+    // newly-joined parent cannot end up subscribed to a dead pod.
+    // Parents that "leave" stay subscribed for the duration of the
+    // reducer call — the [_isDirty] guard prevents re-entrant refreshes
+    // if they fire mid-reducer.
     final valuesToReduce = values.map((e) => e.map((e) => e.value)).toList();
     final result = reducer(valuesToReduce);
 
     // If the reducer (or a callback it triggered) disposed us, abandon
-    // the subscription update entirely. The dispose() path already
-    // cleared the original subscriptions; we must not re-attach to
-    // anything because a listener referencing `refresh` would NPE on
-    // the now-null `_refresh` when its parent next fires.
+    // the subscription update. Re-attaching would leave listeners
+    // referencing a now-null `_refresh` that NPEs on the next fire.
     if (isDisposed) return result;
 
     for (final l in toRemove) {
@@ -213,25 +195,17 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
 
   /// Subscribes [refresh] to [l] using the API appropriate for the
   /// listenable's actual type. For `WeakChangeNotifier`-based pods we
-  /// route through `addStrongRefListener` (the canonical path that the
-  /// `mustBeStrongRefOrError` lint enforces); for stock
-  /// `ValueNotifier` / `ChangeNotifier` we fall back to the plain
-  /// `addListener`. This mirrors `PodCollectionBuilder._attach`.
-  ///
-  /// Promotion-via-local: Dart's flow analysis does not promote the
-  /// parameter `l` directly to `WeakChangeNotifier` (the declared
-  /// type `ValueListenable<Object>` has no subtype relationship to
-  /// `WeakChangeNotifier`). Assigning to a local then testing lets the
-  /// analyzer promote.
+  /// route through `addStrongRefListener` (enforced by
+  /// `mustBeStrongRefOrError`); for stock `ValueNotifier` /
+  /// `ChangeNotifier` we fall back to `addListener`.
   static void _attachListener(
     ValueListenable<Object> l,
     VoidCallback refresh,
   ) {
     if (l is WeakChangeNotifier) {
-      // Explicit cast: Dart cannot intersect-promote `l` to both
-      // `ValueListenable<Object>` and `WeakChangeNotifier` even after
-      // the `is` check (the two types have no subtype relationship).
-      // We know it's safe because of the just-passed type test.
+      // Explicit cast: `ValueListenable<Object>` and `WeakChangeNotifier`
+      // have no subtype relationship, so Dart's `is` check can't
+      // intersect-promote `l`.
       (l as WeakChangeNotifier)
           .addStrongRefListener(strongRefListener: refresh);
     } else {
@@ -239,11 +213,7 @@ base class ReducerPod<T extends Object> extends PodNotifier<T>
     }
   }
 
-  /// Inverse of [_attachListener]. `removeListener` exists on the
-  /// `Listenable` interface for both code paths, so a single call
-  /// suffices — but we keep it as a named helper for symmetry and to
-  /// localise the future change if WeakChangeNotifier ever grows a
-  /// distinct removal entry point.
+  /// Inverse of [_attachListener]. Kept as a named helper for symmetry.
   static void _detachListener(
     ValueListenable<Object> l,
     VoidCallback refresh,

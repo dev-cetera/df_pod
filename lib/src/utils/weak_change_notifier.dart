@@ -63,34 +63,28 @@ mixin class WeakChangeNotifier implements Listenable {
 
   /// Whether [dispose] has been called.
   ///
-  /// Once true, [notifyListeners] is a no-op, [addStrongRefListener] asserts
-  /// in debug, and the listener list is cleared. Subclasses MUST consult this
-  /// getter rather than maintaining their own disposal flag — keeping two
-  /// flags in sync is brittle and was the source of split-state windows in
-  /// earlier revisions.
+  /// Once true, [notifyListeners] is a no-op, [addStrongRefListener]
+  /// asserts in debug, and the listener list is cleared. Subclasses MUST
+  /// consult this getter rather than maintaining their own disposal flag.
   bool get isDisposed => _isDisposed;
 
   /// Strong references for listeners that have no other owner (one-shot
-  /// closures from [addSingleExecutionListener], waiters from `cond()`, etc.).
-  /// Without this, a closure whose only owner is its own activation record
-  /// is racing the GC against the next [notifyListeners] call. Cleared on
-  /// [dispose].
+  /// closures from [addSingleExecutionListener], waiters from `cond()`,
+  /// etc.). Without this, a closure whose only owner is its own
+  /// activation record is racing the GC against the next
+  /// [notifyListeners] call. Cleared on [dispose].
   ///
-  /// Lazy-initialised (v0.20.0 P4): notifiers that never pin a listener
-  /// (the common case — pinning is only used by [addSingleExecutionListener]
-  /// and `GenericPodMixin.cond`) never allocate the backing Set. Saves
-  /// ~32 bytes per pod for pods that never use those helpers.
+  /// Lazy-initialised: notifiers that never pin a listener (the common
+  /// case) never allocate the backing Set.
   Set<VoidCallback>? _pinnedListeners;
 
-  /// Holds [listener] alive until [unpinListener] is called or this notifier
-  /// is disposed. Intended for callers that pass [addStrongRefListener] a
-  /// closure they themselves do not retain — most commonly, library-internal
-  /// helpers like [addSingleExecutionListener] or `GenericPodMixin.cond`.
+  /// Holds [listener] alive until [unpinListener] is called or this
+  /// notifier is disposed. Intended for callers that pass
+  /// [addStrongRefListener] a closure they themselves do not retain.
   ///
-  /// No-op after [dispose] — without this guard, [_pinnedListeners] would
-  /// be re-allocated after disposal and would hold the listener strongly
-  /// until the entire notifier is collected. Mirrors the spirit (though
-  /// not the letter) of the assert in [addStrongRefListener].
+  /// No-op after [dispose] — otherwise [_pinnedListeners] would be
+  /// re-allocated after disposal and pin the listener until the entire
+  /// notifier is collected.
   @protected
   void pinListener(VoidCallback listener) {
     if (_isDisposed) return;
@@ -105,13 +99,12 @@ mixin class WeakChangeNotifier implements Listenable {
   }
 
   /// Registers a listener that will be called only once when the object
-  /// notifies its listeners. After the listener is called, it is automatically
-  /// removed.
+  /// notifies its listeners. After the listener is called, it is
+  /// automatically removed.
   ///
-  /// The temporary wrapper is [pinListener]-ed for its full lifetime so the
-  /// GC cannot collect it before [notifyListeners] fires — previously the
-  /// `late final` local was the only thing keeping the closure alive, and
-  /// the notifier itself only stored a [WeakReference].
+  /// The temporary wrapper is [pinListener]-ed for its full lifetime so
+  /// the GC cannot collect it before [notifyListeners] fires — the
+  /// notifier itself only stores a [WeakReference].
   void addSingleExecutionListener(VoidCallback listener) {
     late final VoidCallback tempListener;
     tempListener = () {
@@ -207,14 +200,13 @@ mixin class WeakChangeNotifier implements Listenable {
     }
   }
 
-  /// Discards any resources used by the object. After this is called, the
-  /// object is not in a usable state and should be discarded.
+  /// Discards any resources used by the object. After this is called,
+  /// the object is not in a usable state and should be discarded.
   ///
-  /// Calling [dispose] from inside a listener of this notifier is supported:
-  /// the in-flight [notifyListeners] iteration sees [_isDisposed] flip to
-  /// true and breaks out of its loop, so listeners scheduled later in the
-  /// same dispatch do not fire. This was previously a debug-only assertion
-  /// that crashed in production with a `RangeError` on the next index access.
+  /// Calling [dispose] from inside a listener is supported: the
+  /// in-flight [notifyListeners] iteration sees [_isDisposed] flip to
+  /// true and breaks out of its loop, so listeners scheduled later in
+  /// the same dispatch do not fire.
   ///
   /// This method should only be called by the object's owner.
   @mustCallSuper
@@ -248,18 +240,15 @@ mixin class WeakChangeNotifier implements Listenable {
 
     final end = _count;
     for (var i = 0; i < end; i++) {
-      // A listener may have called [dispose] on this notifier — production
-      // builds skip the assert in [dispose] and replace [_listeners] with the
+      // A listener may have called [dispose] mid-iteration: production
+      // skips the assert in [dispose] and swaps [_listeners] for the
       // empty sentinel, so the next index access would throw RangeError.
-      // Guard the iteration so dispose-during-notify is graceful.
       if (_isDisposed) break;
       final listenerRef = _listeners[i];
       if (listenerRef == null) continue;
       final target = listenerRef.target;
-      // GC'd target: mark for compaction inline so the post-notify
-      // pass doesn't need to re-scan the whole array. This is v0.20.0
-      // O2 — pre-O2 every notify walked all slots looking for dead
-      // weak refs even when none had died.
+      // Mark GC'd targets inline so [_compactListeners] can skip the
+      // walk when nothing died.
       if (target == null) {
         _listeners[i] = null;
         _reentrantlyRemovedListeners++;
@@ -284,9 +273,7 @@ mixin class WeakChangeNotifier implements Listenable {
     _notificationCallStackDepth--;
 
     if (_notificationCallStackDepth == 0 && !_isDisposed) {
-      // Fast path: only run the shrink/compact pass when something
-      // actually died. Saves an O(N) walk per notify in the common
-      // case where listeners are stable and alive.
+      // Skip the compact pass when no listeners died this dispatch.
       _compactListeners();
     }
   }
@@ -332,13 +319,9 @@ mixin class WeakChangeNotifier implements Listenable {
     }
   }
 
-  /// Compacts the list by removing all null references.
-  /// This is called after notifications are complete.
-  ///
-  /// v0.20.0 (O2): GC'd targets are now detected inline during
-  /// [notifyListeners], so the previous full-array scan here was
-  /// redundant. Fast-paths when nothing was removed during the
-  /// notify pass.
+  /// Compacts the list by removing all null references. Called after
+  /// notifications are complete. Fast-paths when nothing was removed
+  /// during the notify pass.
   void _compactListeners() {
     if (_reentrantlyRemovedListeners == 0) return;
 

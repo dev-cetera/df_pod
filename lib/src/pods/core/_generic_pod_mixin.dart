@@ -31,9 +31,8 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   /// away) gets a [Resolvable] error instead of hanging forever. Removed
   /// from the set when the predicate matches normally.
   ///
-  /// Lazy-initialised (v0.20.0 P3): pods that never call [cond] never
-  /// allocate the backing Set. Saves ~32 bytes per pod in the common
-  /// case where cond is unused.
+  /// Lazy-initialised: pods that never call [cond] never allocate the
+  /// backing Set.
   Set<SafeCompleter<T>>? _pendingConds;
 
   /// Returns the value of the Pod when the [test] returns `true`.
@@ -44,20 +43,13 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   ///
   /// Failure modes — all surface as `Err` on the returned [Resolvable]
   /// rather than crashing the caller or hanging forever:
-  /// - **Pod disposed before [test] ever matches** → `Err(StateError(...))`
-  ///   ("Pod disposed before cond predicate became true").
+  /// - **Pod disposed before [test] ever matches** → `Err(StateError(...))`.
   /// - **[test] throws** (sync first call or any later notify) →
-  ///   `Err(thrown error)`. Previously a throwing predicate left the
-  ///   [SafeCompleter] permanently pending and a throwing initial sync
-  ///   check propagated out of [cond] itself, depending on timing.
+  ///   `Err(thrown error)`.
   Resolvable<T> cond(bool Function(T value) test) {
-    // Guard against calls on an already-disposed pod. Without this,
-    // a non-matching predicate would (re-)allocate [_pendingConds],
-    // pin the listener via [addStrongRefListener] (which only asserts
-    // in debug and silently appends in release), and the
-    // [SafeCompleter] would never resolve — the caller's `await` would
-    // hang forever. Brings post-dispose behaviour in line with the
-    // dispose-during-wait path that [_failPendingConds] handles.
+    // Bail out on a disposed pod: addStrongRefListener is a release-mode
+    // no-op on a disposed notifier, so subscribing would mean the
+    // SafeCompleter never resolves and the caller's await hangs.
     if (isDisposed) {
       return Sync.err(
         Err(StateError('Cannot call cond() on a disposed pod')),
@@ -66,9 +58,8 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
     final finisher = SafeCompleter<T>();
     late final VoidCallback check;
     check = () {
-      // Defensive try/catch: a throwing predicate must NOT leave the
-      // completer stuck pending. Convert any throw into an Err on the
-      // returned Resolvable so awaiting code can react.
+      // A throwing predicate must not leave the completer stuck — convert
+      // throws into an Err on the returned Resolvable.
       try {
         if (test(value)) {
           finisher.complete(value).end();
@@ -84,17 +75,30 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
       }
     };
     check();
-    // Whether the initial sync check resolved with Ok or Err, return the
-    // finisher's resolvable so the caller's await observes the actual
-    // result.
     if (finisher.isCompleted) {
       return finisher.resolvable();
-    } else {
-      (_pendingConds ??= <SafeCompleter<T>>{}).add(finisher);
-      pinListener(check);
-      addStrongRefListener(strongRefListener: check);
+    }
+    // A side-effecting predicate may have disposed the pod during the
+    // sync check above. Without this guard, subscribing would be a no-op
+    // and the finisher would never resolve.
+    if (isDisposed) {
+      finisher
+          .resolve(
+            Sync.err(
+              Err(
+                StateError(
+                  'Pod was disposed during cond() predicate execution',
+                ),
+              ),
+            ),
+          )
+          .end();
       return finisher.resolvable();
     }
+    (_pendingConds ??= <SafeCompleter<T>>{}).add(finisher);
+    pinListener(check);
+    addStrongRefListener(strongRefListener: check);
+    return finisher.resolvable();
   }
 
   /// Children of this pod. Stored as [WeakReference]s so a derived
@@ -135,22 +139,13 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   }
 
   /// Tracks whether a deferred notify has been scheduled but not yet
-  /// fired. v0.20.0 (P2) coalesces multiple back-to-back
-  /// `set(.., notifyImmediately: false)` calls into a single notify —
-  /// pre-coalescing, N rapid sets scheduled N post-frame callbacks and
-  /// every listener was invoked N times in the same frame (each call
-  /// seeing the same final [value]). Listeners now get exactly one
-  /// notification per frame regardless of how many writes happen.
+  /// fired. Multiple `set(.., notifyImmediately: false)` calls within a
+  /// frame coalesce into a single notify that sees the latest [value].
   bool _hasPendingDeferredNotify = false;
 
   bool _set(T newValue, {bool notifyImmediately = true}) {
-    // Short-circuit on disposed pods. Earlier revisions mutated [value]
-    // and only the (debug-only) assert in [notifyListeners] flagged the
-    // misuse — in release builds, [value] was silently overwritten on a
-    // dead pod, leaving readers with a freshly-mutated field on an object
-    // that no longer notifies. For medical-grade callers this is the most
-    // dangerous failure mode: the data looks live but the world has moved
-    // on.
+    // Disposed pods must not mutate [value] — readers would otherwise
+    // see a freshly-overwritten field on a notifier that no longer fires.
     if (isDisposed) return false;
     if (!isDefinitelyComparableOrEquatable(newValue) ||
         _safeNotEquals(newValue)) {
@@ -189,10 +184,9 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   }
 
   /// Compares [newValue] against the current [value] via `!=` with a
-  /// defensive try/catch. A custom `operator ==` that throws would
-  /// otherwise propagate out of [set] / [update], leaving the pod in an
-  /// unknown state — for medical-grade we treat a throwing equality as
-  /// "definitely changed" (over-notify is safer than missing a notify).
+  /// defensive try/catch. A throwing custom `operator ==` would otherwise
+  /// propagate out of [set] / [update]; we treat a throwing equality as
+  /// "definitely changed" — over-notify is safer than missing a notify.
   bool _safeNotEquals(T newValue) {
     try {
       return newValue != value;
@@ -224,13 +218,9 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   /// disposes `this`.
   ///
   /// Each step is independently guarded so a throw in one cannot
-  /// prevent the others from running. Specifically, [super.dispose]
-  /// MUST run — without it the pod is left half-disposed
-  /// (`isDisposed == false`, `_listeners` still attached) and
-  /// subsequent `set` calls keep firing listeners. Previous
-  /// implementations wrapped only [disposeChildren] in try/finally,
-  /// so a throw inside [_failPendingConds] (rare — only via a
-  /// misbehaving `SafeCompleter` chain) would skip [super.dispose].
+  /// prevent the others from running — [super.dispose] in particular
+  /// MUST run, or the pod is left half-disposed (`_listeners` still
+  /// attached) and subsequent `set` calls would keep firing.
   @override
   void dispose() {
     try {
@@ -275,13 +265,9 @@ mixin GenericPodMixin<T extends Object> on PodNotifier<T>, ValueListenable<T> {
   /// Disposes and removes all children.
   ///
   /// Iterates a snapshot of currently-live children. Dead [WeakReference]s
-  /// (children that were GC'd because no one held them) are skipped and
-  /// will be pruned on the next mutation of [_children]. [ChildPod.dispose]
-  /// already walks `_parents` and calls `parent._removeChild(this)`, which
-  /// mutates [_children] from underneath us — that's why we iterate a
-  /// snapshot. Calling `_removeChild` again here would be a no-op (the
-  /// child has already been pulled from the set and its listener removed),
-  /// so the loop body just disposes.
+  /// are skipped and pruned lazily. We must iterate a snapshot because
+  /// [ChildPod.dispose] calls back into `parent._removeChild(this)` and
+  /// mutates [_children] from underneath us.
   @protected
   void disposeChildren() {
     final live = <ChildPod<Object, Object>>[];

@@ -460,9 +460,6 @@ void main() {
       expect(sum.getValue(), 3);
 
       pa.set(10);
-      // After one parent update we expect exactly one additional responder
-      // call. Earlier versions of the helper invoked the responder twice
-      // per refresh (once for parents, once for values).
       expect(
         responderCalls - initialCalls,
         1,

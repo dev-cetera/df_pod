@@ -23,11 +23,9 @@ void main() {
     testWidgets(
       'non-zero cacheDuration preserves value across fresh same-key remount',
       (tester) async {
-        // v0.20.0 A1: cache is scoped per (widget-key, pod-identity).
-        // This test uses the SAME pod across remounts to exercise the
-        // "cache survives an unmount/remount" case. The "different pod
-        // → cache miss" case is covered by a separate test (no cross-pod
-        // contamination).
+        // Cache is scoped per (widget-key, pod-identity). This test
+        // uses the same pod across remounts; the "different pod →
+        // cache miss" case is covered elsewhere.
         final key = ValueKey(
           'cache-verify-${DateTime.now().microsecondsSinceEpoch}',
         );

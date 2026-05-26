@@ -276,7 +276,7 @@ final class PodResultListBuilderState<T extends Object>
   //
 
   /// Memoised cache key. Stable across the State's lifetime until
-  /// [didUpdateWidget] invalidates it. See v0.20.0 O4.
+  /// [didUpdateWidget] invalidates it.
   String? _cachedCacheKey;
   bool _cacheKeyComputed = false;
 
@@ -285,7 +285,7 @@ final class PodResultListBuilderState<T extends Object>
   ///
   /// The identityHashCode of each pod is folded into the key so two
   /// `PodListBuilder`s with the same `Key` but different pod lists
-  /// cannot read each other's cached values. See v0.20.0 A1.
+  /// cannot read each other's cached values.
   String? _resolvedCacheKey() {
     if (_cacheKeyComputed) return _cachedCacheKey;
     final widgetKey = widget.key;
@@ -310,8 +310,9 @@ final class PodResultListBuilderState<T extends Object>
     return _cachedCacheKey;
   }
 
-  /// See `PodResultBuilderState._setValue` — same shadowing-bug fix applies
-  /// here. Live pod fires must read from the pods, not from the cache.
+  /// Reads from the cache only when [useCache] is true. Live pod fires
+  /// must read from the pods, not the cache, or stale values shadow the
+  /// new values for one frame.
   void _setValue({bool useCache = false}) {
     if (useCache) {
       final key = _resolvedCacheKey();
@@ -377,9 +378,8 @@ final class PodResultListBuilderState<T extends Object>
 
   /// Stable tear-off so add/remove listener calls always see the same
   /// identity across rebuilds. Reads [widget.debounceDuration] at call
-  /// time so a parent that swaps debounce on the fly takes effect on the
-  /// next event — earlier this was a `late` closure that captured the
-  /// *initial* duration and silently ignored updates.
+  /// time so a parent that swaps debounce on the fly takes effect on
+  /// the next event.
   late final VoidCallback _valueChanged = _onPodChange;
 
   void _onPodChange() {

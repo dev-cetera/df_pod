@@ -18,8 +18,8 @@
 //   - PodCollectionBuilder runtime mutations of the inner list (grow,
 //     shrink, source swap, duplicate identity, reorder).
 //   - PollingPodBuilder didUpdateWidget paths (interval swap, poller swap).
-//   - PodResultBuilder cache shadowing: the v0.18.18 fix — live pod fires
-//     must beat the cached value.
+//   - PodResultBuilder cache shadowing: live pod fires must beat the
+//     cached value.
 //   - RootPod misc: updateValue getter side effect, refresh() after dispose,
 //     onAfterDispose that throws.
 //   - ChildPod.parents getter (@visibleForTesting), reducer identity
@@ -491,18 +491,12 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // PodResultBuilder — cache shadowing fix (v0.18.18)
-  // ───────────────────────────────────────────────────────────────────────────
   group('PodBuilder live-value beats cache', () {
     testWidgets('live pod fire wins over cached value after first build', (
       tester,
     ) async {
-      // v0.20.0 A1 update: cache keys now include identityHashCode(pod)
-      // so a value planted under just the widget-key string can never be
-      // read by a PodBuilder (the lookup uses a compound key). We plant
-      // under the same compound key the widget will use, so the cache
-      // hit actually exercises the read path being tested.
+      // Cache keys include identityHashCode(pod), so we plant under the
+      // same compound key the widget will use to exercise the read path.
       const key = ValueKey('shadow_fix_key');
       final pod = Pod<int>(0);
       final compoundKey = '$key|${identityHashCode(pod)}';
@@ -536,7 +530,7 @@ void main() {
       // The live value must overwrite, NOT be shadowed by the stale cache.
       pod.set(42);
       await tester.pump();
-      expect(seen, 42, reason: 'v0.18.18 fix: live fire beats cache');
+      expect(seen, 42, reason: 'live fire must beat cache');
 
       // Subsequent fires keep flowing live.
       pod.set(43);

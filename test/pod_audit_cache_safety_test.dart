@@ -1,25 +1,4 @@
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-//
-// Regression tests for the v0.20.0 medical-grade audit pass.
-//
-// One test per finding fixed:
-//   - A1: PodBuilder cache key includes pod identity — different pods
-//         under the same widget key never read each other's cached
-//         value (the worst-case medical-grade hazard: showing the wrong
-//         patient's data for even one frame).
-//   - A2: cond() predicate that throws surfaces as Err on the returned
-//         Resolvable, not as a sync throw or a permanent-pending hang.
-//   - A3: PodCollectionBuilder._syncSubscriptions is exception-safe;
-//         one rogue Listenable doesn't desync the bookkeeping.
-//   - A4: PodBuilderCacheManager is bounded by `maxEntries`; oldest
-//         entries evicted on overflow.
-//   - A5: Custom `operator ==` that throws does NOT propagate out of
-//         pod.set() — over-notify is safer than throwing.
-//   - A6: PodFinalizerWrapper covers wrap, detach, and dispose-when-
-//         wrapper-collected (best-effort; on web finalizer timing is
-//         non-deterministic so we only exercise the synchronous paths).
-//
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+// Cache-safety regression tests. Group titles describe each scenario.
 
 import 'package:df_pod/df_pod.dart';
 import 'package:flutter/widgets.dart';
@@ -29,10 +8,7 @@ Widget _wrap(Widget child) =>
     Directionality(textDirection: TextDirection.ltr, child: child);
 
 void main() {
-  // ───────────────────────────────────────────────────────────────────────────
-  // A1: pod-identity-scoped cache keys
-  // ───────────────────────────────────────────────────────────────────────────
-  group('A1: cache keys are pod-identity-scoped', () {
+  group('cache keys are pod-identity-scoped', () {
     setUp(PodBuilderCacheManager.i.clear);
 
     testWidgets(
@@ -76,7 +52,7 @@ void main() {
         expect(
           observedFirst,
           200,
-          reason: 'A1: podB must never read podA\'s cached value, '
+          reason: 'podB must never read podA\'s cached value, '
               'even for one frame',
         );
 
@@ -131,10 +107,7 @@ void main() {
     );
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // A2: cond() predicate throws surfaces as Err
-  // ───────────────────────────────────────────────────────────────────────────
-  group('A2: cond() predicate throws → Err', () {
+  group('cond() predicate throws → Err', () {
     test('initial sync check that throws surfaces as Err', () async {
       final pod = Pod<int>(0);
       final r = pod.cond((_) => throw StateError('initial boom'));
@@ -164,10 +137,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // A3: PodCollectionBuilder exception safety
-  // ───────────────────────────────────────────────────────────────────────────
-  group('A3: PodCollectionBuilder exception safety', () {
+  group('PodCollectionBuilder exception safety', () {
     testWidgets(
       'innerPods() that throws does not crash the tree; current '
       'subscription set is preserved',
@@ -204,10 +174,7 @@ void main() {
     );
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // A4: PodBuilderCacheManager is bounded
-  // ───────────────────────────────────────────────────────────────────────────
-  group('A4: cache size cap', () {
+  group('cache size cap', () {
     setUp(PodBuilderCacheManager.i.clear);
 
     test('cap enforced; oldest entry evicted on overflow', () {
@@ -241,18 +208,13 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // A5: throwing == is contained
-  // ───────────────────────────────────────────────────────────────────────────
-  group('A5: throwing operator == does not propagate out of pod.set', () {
+  group('throwing operator == does not propagate out of pod.set', () {
     test('set with a throwing == still updates value (over-notifies)', () {
       final pod = Pod<_ThrowingEq>(const _ThrowingEq('initial'));
       var fires = 0;
       final l = () => fires++;
       pod.addStrongRefListener(strongRefListener: l);
 
-      // The new value's == throws when compared. Pre-A5, this would
-      // propagate out of pod.set. Post-A5 it's contained — over-notify.
       expect(
         () => pod.set(const _ThrowingEq('second')),
         returnsNormally,
@@ -262,10 +224,7 @@ void main() {
     });
   });
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // A6: PodFinalizerWrapper basic coverage
-  // ───────────────────────────────────────────────────────────────────────────
-  group('A6: PodFinalizerWrapper', () {
+  group('PodFinalizerWrapper', () {
     test('constructs and exposes the wrapped pod as a WeakReference', () {
       final pod = Pod<int>(42);
       final wrapper = PodFinalizerWrapper(pod);

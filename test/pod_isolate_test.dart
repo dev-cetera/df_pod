@@ -1,6 +1,6 @@
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 //
-// Worker-isolate friendliness tests (v0.20.0).
+// Worker-isolate friendliness tests.
 //
 // Spawns real Dart isolates via `Isolate.spawn` from within
 // `flutter_test`. Worker isolates do NOT have `WidgetsBinding` set up

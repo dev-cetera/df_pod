@@ -49,10 +49,8 @@ abstract class DisposablePod<T extends Object> extends WeakChangeNotifier
   /// Successive calls to this method will be ignored.
   ///
   /// The single source of truth for "is this disposed?" is
-  /// [WeakChangeNotifier.isDisposed] — earlier revisions maintained a
-  /// second flag here that briefly disagreed with the parent's flag while
-  /// `super.dispose()` ran, opening a window where re-entrant code saw
-  /// inconsistent state.
+  /// [WeakChangeNotifier.isDisposed]. Subclasses must consult that
+  /// getter rather than maintaining their own flag.
   @override
   @mustCallSuper
   void dispose() {

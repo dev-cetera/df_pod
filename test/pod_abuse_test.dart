@@ -928,8 +928,8 @@ void main() {
   // ───────────────────────────────────────────────────────────────────────────
   group('PodBuilder cache key/type collisions', () {
     testWidgets(
-      'A1 fix: cache entry from a previous pod with the same key is '
-      'NEVER read by a new pod (medical-grade isolation)',
+      'cache entry from a previous pod with the same key is NEVER read '
+      'by a new pod',
       (tester) async {
         final key =
             ValueKey('abuse_cache_${DateTime.now().microsecondsSinceEpoch}');
@@ -952,11 +952,9 @@ void main() {
         await tester.pumpWidget(make(podA));
         expect(seen, 111);
 
-        // Tear down and remount with a NEW pod under the SAME widget key.
-        // Pre-v0.20.0 this would briefly show 111 (podA's cached value) —
-        // a medical-grade data-integrity bug. The A1 fix scopes cache
-        // entries by pod identity, so this lookup misses and podB wins
-        // immediately.
+        // Tear down and remount with a new pod under the same widget
+        // key. Cache entries are scoped by pod identity, so the lookup
+        // misses and podB wins immediately.
         await tester.pumpWidget(_wrap(const SizedBox.shrink()));
 
         final podB = Pod<int>(222);
@@ -964,7 +962,7 @@ void main() {
         expect(
           seen,
           222,
-          reason: 'A1: different pod must not read podA\'s cached value '
+          reason: 'different pod must not read podA\'s cached value '
               'even for one frame',
         );
 
