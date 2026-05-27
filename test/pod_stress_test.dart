@@ -177,8 +177,11 @@ void main() {
         pod.set(const _NeverEqual(3));
         pod.set(const _NeverEqual(4));
 
-        expect(fires, 3,
-            reason: 'T.== returning false means every set notifies');
+        expect(
+          fires,
+          3,
+          reason: 'T.== returning false means every set notifies',
+        );
         expect(pod.getValue().tag, 4);
         pod.dispose();
       },
