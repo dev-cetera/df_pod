@@ -67,8 +67,7 @@ void main() {
   });
 
   group('A. churn: 1 000 SharedPod writes in sequence', () {
-    test('queue drains in FIFO order, final value is the last write',
-        () async {
+    test('queue drains in FIFO order, final value is the last write', () async {
       SharedPreferences.setMockInitialValues(<String, Object>{});
       final pod = await SharedPod.create<int, int>(
         'stress_key',
@@ -155,8 +154,7 @@ void main() {
         expect(
           fires,
           0,
-          reason:
-              'T.== returning true means _safeNotEquals returns false → '
+          reason: 'T.== returning true means _safeNotEquals returns false → '
               'no notify, no value change',
         );
         // value remains the first one.
@@ -179,7 +177,8 @@ void main() {
         pod.set(const _NeverEqual(3));
         pod.set(const _NeverEqual(4));
 
-        expect(fires, 3, reason: 'T.== returning false means every set notifies');
+        expect(fires, 3,
+            reason: 'T.== returning false means every set notifies');
         expect(pod.getValue().tag, 4);
         pod.dispose();
       },
