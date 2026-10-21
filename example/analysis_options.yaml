@@ -33,6 +33,7 @@ analyzer:
     strict-raw-types: true
   exclude:
     - build/**
+    - web/**
     # - '**.g.dart'
 
   errors:

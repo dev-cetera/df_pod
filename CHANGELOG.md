@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.20.1]
+
+- Released @ 10/2026 (UTC)
+- Widen `df_log` to `^0.6.1` so apps on the current `df_log` (and `df_flutter_services` 0.2.1) resolve without a dependency override.
+
 ## [0.20.0]
 
 - Released @ 2026-05 (UTC)
