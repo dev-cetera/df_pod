@@ -423,10 +423,10 @@ void main() {
       tester,
     ) async {
       var pollerCalls = 0;
-      // ignore: no_future_outcome_type_or_error
+      // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
       Option<FutureOr<ValueListenable<int>>> poller() {
         pollerCalls++;
-        // ignore: no_future_outcome_type_or_error
+        // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
         return const None();
       }
 
@@ -464,10 +464,10 @@ void main() {
     ) async {
       final pod = Pod<int>(7);
       var pollerCalls = 0;
-      // ignore: no_future_outcome_type_or_error
+      // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
       Option<FutureOr<ValueListenable<int>>> poller() {
         pollerCalls++;
-        // ignore: no_future_outcome_type_or_error
+        // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
         return Some(pod);
       }
 
@@ -700,7 +700,7 @@ void main() {
         toValue: (v) => v,
         initialValue: '',
       ).value;
-      // ignore: must_use_unsafe_wrapper_or_error
+      // ignore: df_safer_dart_lints/must_use_unsafe_wrapper_or_error
       final pod = created.unwrap();
       expect(pod.getValue(), '');
       await pod.set('hello');

@@ -19,7 +19,7 @@ class PollingPodBuilder<T extends Object>
     extends ResolvablePollingPodBuilder<T> {
   PollingPodBuilder({
     super.key,
-    // ignore: no_future_outcome_type_or_error
+    // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
     required Option<FutureOr<ValueListenable<T>>> Function() podPoller,
     required super.builder,
     super.onDispose,

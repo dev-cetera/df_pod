@@ -95,7 +95,7 @@ void main() {
             podPoller: () {
               pollerCalls++;
               if (throws) throw StateError('poller transient failure');
-              // ignore: no_future_outcome_type_or_error
+              // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
               return Some(Pod<int>(42));
             },
             interval: const Duration(milliseconds: 30),

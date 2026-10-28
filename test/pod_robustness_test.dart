@@ -123,7 +123,7 @@ void main() {
       final pod = Pod<int>(0);
       // Deliberately drop the returned Resolvable — earlier the listener was
       // GC-fragile and could miss the matching event.
-      // ignore: must_use_outcome_or_error
+      // ignore: df_safer_dart_lints/must_use_outcome_or_error
       pod.cond((v) => v == 5);
       // Force a GC opportunity.
       for (var i = 0; i < 1000; i++) {

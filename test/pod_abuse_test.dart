@@ -649,7 +649,7 @@ void main() {
             PollingPodBuilder<int>(
               podPoller: () {
                 pollerCalls++;
-                // ignore: no_future_outcome_type_or_error
+                // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
                 return const None();
               },
               interval: const Duration(milliseconds: 50),
@@ -694,14 +694,14 @@ void main() {
             podPoller: () {
               pollerCalls++;
               final r = resolved;
-              // ignore: no_future_outcome_type_or_error
+              // ignore: df_safer_dart_lints/no_future_outcome_type_or_error
               return r == null ? const None() : Some(r);
             },
             interval: const Duration(milliseconds: 30),
             builder: (_, snap) {
               return Text(
                 snap.value.isSome()
-                    // ignore: invalid_use_of_visible_for_testing_member, must_use_unsafe_wrapper_or_error
+                    // ignore: invalid_use_of_visible_for_testing_member, df_safer_dart_lints/must_use_unsafe_wrapper_or_error
                     ? '${snap.value.unwrap().unwrap()}'
                     : 'pending',
                 textDirection: TextDirection.ltr,
