@@ -13,13 +13,9 @@
 
 name: df_pod
 homepage: https://dev-cetera.com/
-repository: https://github.com/robmllze/df_pod
-funding:
-  - https://www.buymeacoffee.com/dev_cetera
-  - https://www.patreon.com/c/robelator
-  - https://github.com/sponsors/robelator
+repository: https://github.com/dev-cetera/df_pod
 description: A package offering tools to manage app state using ValueListenable objects called Pods.
-version: 0.20.1
+version: 0.21.0
 topics:
   - bloc
   - provider
