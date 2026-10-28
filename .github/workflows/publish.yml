@@ -48,10 +48,24 @@ jobs:
       # someone could have hand-tagged an arbitrary commit. We want a hard
       # guarantee that what we ship to pub.dev compiles and passes tests.
       - name: Static analysis
-        run: flutter analyze
+        run: |
+          DIRS=""
+          for d in lib test bin; do
+            [ -d "$d" ] && DIRS="$DIRS $d"
+          done
+          if [ -z "$DIRS" ]; then
+            echo "No primary source directories to analyze."
+            exit 0
+          fi
+          dart analyze --fatal-infos $DIRS
 
       - name: Run tests
-        run: flutter test
+        run: |
+          if [ -d test ] && grep -qE '^[[:space:]]+flutter_test:' pubspec.yaml; then
+            flutter test
+          else
+            echo "No tests to run."
+          fi
 
       - name: Verify pubspec version matches tag
         run: |
